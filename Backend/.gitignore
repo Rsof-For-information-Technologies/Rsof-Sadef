@@ -1,0 +1,49 @@
+# Build artifacts
+bin/
+obj/
+
+# .NET Core specific
+project.lock.json
+project.fragment.lock.json
+*.ide.*
+*.csproj.user
+*.csproj.DotSettings
+*.userprefs
+
+# Visual Studio specific
+.vs/
+.vscode/
+.idea/
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Application files
+appsettings.*.json
+
+# npm package folder
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Publish output
+publish/
+
+# Secrets
+secrets.json
+
+# Resharper
+_ReSharper*
+
+# Exclude .env files if used
+.env
