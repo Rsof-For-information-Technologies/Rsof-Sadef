@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Sadef.Application.DTOs;
 using Sadef.Application.Constants;
+using Sadef.Application.DTOs.UserDtos;
 namespace Sadef.Application.Services.User
 {
     public class UserRegisterValidator : AbstractValidator<RegisterUserWithEmailDto>

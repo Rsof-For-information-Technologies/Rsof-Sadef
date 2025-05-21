@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Common.Infrastructure.Wrappers;
-using Sadef.Application.DTOs;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +10,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using Sadef.Application.Services.Email;
+using Sadef.Application.DTOs.UserDtos;
 
 namespace Sadef.Application.Services.User
 {

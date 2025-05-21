@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sadef.Application.Abstractions.Interfaces;
-using Sadef.Application.DTOs;
+using Sadef.Application.DTOs.UserDtos;
 namespace Sadef.API.Controllers
 {
 

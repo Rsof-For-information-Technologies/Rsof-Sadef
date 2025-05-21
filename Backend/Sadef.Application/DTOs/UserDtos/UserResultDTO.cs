@@ -1,4 +1,4 @@
-﻿namespace Sadef.Application.DTOs
+﻿namespace Sadef.Application.DTOs.UserDtos
 {
     public class UserResultDTO
     {

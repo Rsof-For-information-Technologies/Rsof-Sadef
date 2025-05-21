@@ -1,4 +1,4 @@
-﻿using Sadef.Application.DTOs;
+﻿using Sadef.Application.DTOs.UserDtos;
 using Sadef.Common.Infrastructure.Wrappers;
 
 namespace Sadef.Application.Abstractions.Interfaces
