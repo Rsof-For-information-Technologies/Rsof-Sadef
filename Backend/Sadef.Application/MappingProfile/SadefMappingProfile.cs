@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Sadef.Application.DTOs;
+using Sadef.Application.DTOs.UserDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 
 namespace Sadef.Application.MappingProfile
