@@ -84,8 +84,9 @@ namespace Sadef.Application.Services.PropertyListing
 
             var totalCount = await query.CountAsync();
             var items = await query
-            .Skip((request.PageNumber - 1) * request.PageSize)
-            .Take(request.PageSize)
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .ToListAsync();
 
             var result = items.Select(p =>
@@ -243,6 +244,7 @@ namespace Sadef.Application.Services.PropertyListing
             int total = await query.CountAsync();
 
             var items = await query
+                .OrderByDescending(p => p.CreatedAt)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
