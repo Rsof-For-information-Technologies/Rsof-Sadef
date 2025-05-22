@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Azure.Core;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
@@ -14,16 +14,26 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IUnitOfWorkAsync _uow;
         private readonly IMapper _mapper;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
+        private readonly IValidator<CreatePropertyDto> _createPropertyValidator;
+        private readonly IValidator<UpdatePropertyDto> _updatePropertyValidator;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto)
         {
             _uow = uow;
             _mapper = mapper;
             _queryRepositoryFactory = queryRepositoryFactory;
+            _updatePropertyValidator = updatePropertyValidator;
+            _createPropertyValidator = createPropertyDto;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
         {
+            var validationResult = await _createPropertyValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessage = validationResult.Errors.First().ErrorMessage;
+                return new Response<PropertyDto>(errorMessage);
+            }
             var property = _mapper.Map<Property>(dto);
             property.Images = new List<PropertyImage>();
 
@@ -114,6 +124,12 @@ namespace Sadef.Application.Services.PropertyListing
 
         public async Task<Response<PropertyDto>> UpdatePropertyAsync(UpdatePropertyDto dto)
         {
+            var validationResult = await _updatePropertyValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessage = validationResult.Errors.First().ErrorMessage;
+                return new Response<PropertyDto>(errorMessage);
+            }
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
             var existing = await queryRepo
                 .Queryable()
