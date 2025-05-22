@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Application.Utils;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Domain.Constants;
@@ -220,6 +221,48 @@ namespace Sadef.Application.Services.PropertyListing
             var updatedDto = _mapper.Map<PropertyDto>(property);
 
             return new Response<PropertyDto>(updatedDto, $"Status updated successfully from {currentStatus} to {property.Status}");
+        }
+
+        public async Task<Response<PaginatedResponse<PropertyDto>>> GetFilteredPropertiesAsync(PropertyFilterRequest request)
+        {
+            string cacheKey = $"property:page={request.PageNumber}&size={request.PageSize}&city={request.City}&type={request.PropertyType}&status={request.Status}&min={request.MinPrice}&max={request.MaxPrice}";
+
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cached))
+            {
+                var fromCache = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
+                return new Response<PaginatedResponse<PropertyDto>>(fromCache, "Fetched from cache");
+            }
+
+            var query = _queryRepositoryFactory.QueryRepository<Property>()
+                .Queryable()
+                .Include(p => p.Images)
+                .AsQueryable()
+                .ApplyFilters(request);
+
+            int total = await query.CountAsync();
+
+            var items = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync();
+
+            var result = items.Select(p =>
+            {
+                var dto = _mapper.Map<PropertyDto>(p);
+                dto.ImageBase64Strings = p.Images?.Select(img =>
+                    $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
+                return dto;
+            }).ToList();
+
+            var paged = new PaginatedResponse<PropertyDto>(result, total, request.PageNumber, request.PageSize);
+
+            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
+
+            return new Response<PaginatedResponse<PropertyDto>>(paged, "Fetched with filters");
         }
 
     }

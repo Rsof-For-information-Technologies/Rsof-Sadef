@@ -56,6 +56,12 @@ namespace Sadef.API.Controllers
             var result = await _propertyService.ChangeStatusAsync(dto);
             return Ok(result);
         }
+        [HttpGet("filtered")]
+        public async Task<ActionResult<Response<PaginatedResponse<PropertyDto>>>> GetFiltered([FromQuery] PropertyFilterRequest request)
+        {
+            var result = await _propertyService.GetFilteredPropertiesAsync(request);
+            return Ok(result);
+        }
 
     }
 }
