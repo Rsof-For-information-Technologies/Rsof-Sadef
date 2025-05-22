@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Common.Domain;
@@ -16,14 +18,16 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IValidator<CreatePropertyDto> _createPropertyValidator;
         private readonly IValidator<UpdatePropertyDto> _updatePropertyValidator;
+        private readonly IDistributedCache _cache;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache)
         {
             _uow = uow;
             _mapper = mapper;
             _queryRepositoryFactory = queryRepositoryFactory;
             _updatePropertyValidator = updatePropertyValidator;
             _createPropertyValidator = createPropertyDto;
+            _cache = cache;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -66,6 +70,13 @@ namespace Sadef.Application.Services.PropertyListing
 
         public async Task<Response<PaginatedResponse<PropertyDto>>> GetAllPropertiesAsync(PaginationRequest request)
         {
+            string cacheKey = $"property:page={request.PageNumber}&size={request.PageSize}";
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cached))
+            {
+                var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
+                return new Response<PaginatedResponse<PropertyDto>>(cachedResult, "Properties retrieved successfully");
+            }
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
             var query = queryRepo.Queryable().Include(p => p.Images!);
 
@@ -84,7 +95,15 @@ namespace Sadef.Application.Services.PropertyListing
             }).ToList();
 
             var paged = new PaginatedResponse<PropertyDto>(result, totalCount, request.PageNumber, request.PageSize);
-            return new Response<PaginatedResponse<PropertyDto>>(paged, "Paged properties retrieved successfully");
+
+            // cache for 10 minutes
+            var cacheOptions = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            };
+            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
+
+            return new Response<PaginatedResponse<PropertyDto>>(paged, "Properties retrieved successfully");
 
         }
 
