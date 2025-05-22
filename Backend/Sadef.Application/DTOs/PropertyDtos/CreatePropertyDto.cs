@@ -20,5 +20,6 @@ namespace Sadef.Application.DTOs.PropertyDtos
             public int? Bedrooms { get; set; }
             public int? Bathrooms { get; set; }
             public List<IFormFile>? Images { get; set; }
-        }
+            public PropertyStatus Status { get; set; }
+    }
 }

@@ -7,6 +7,7 @@ using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Wrappers;
+using Sadef.Domain.Constants;
 using Sadef.Domain.PropertyEntity;
 
 namespace Sadef.Application.Services.PropertyListing
@@ -184,5 +185,42 @@ namespace Sadef.Application.Services.PropertyListing
 
             return new Response<PropertyDto>(updatedDto, "Property updated successfully");
         }
+
+        public async Task<Response<PropertyDto>> ChangeStatusAsync(PropertyStatusUpdateDto dto)
+        {
+            var repo = _uow.RepositoryAsync<Property>();
+            var property = await _queryRepositoryFactory.QueryRepository<Property>()
+                .Queryable()
+                .FirstOrDefaultAsync(p => p.Id == dto.Id);
+
+            if (property == null)
+                return new Response<PropertyDto>("Property not found");
+
+            var currentStatus = property.Status;
+
+            var allowedTransitions = new Dictionary<PropertyStatus, PropertyStatus[]>
+            {
+                { PropertyStatus.Pending,   new[] { PropertyStatus.Approved, PropertyStatus.Rejected, PropertyStatus.Archived } },
+                { PropertyStatus.Approved,  new[] { PropertyStatus.Sold, PropertyStatus.Rejected, PropertyStatus.Archived } },
+                { PropertyStatus.Sold,      new[] { PropertyStatus.Archived } },
+                { PropertyStatus.Rejected,  new[] { PropertyStatus.Archived } },
+                { PropertyStatus.Archived,  Array.Empty<PropertyStatus>() }
+            };
+
+            if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
+                !validNextStatuses.Contains(dto.status))
+            {
+                return new Response<PropertyDto>($"Invalid status transition from {currentStatus} to {dto.status}");
+            }
+
+            property.Status = dto.status;
+            await repo.UpdateAsync(property);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+
+            var updatedDto = _mapper.Map<PropertyDto>(property);
+
+            return new Response<PropertyDto>(updatedDto, $"Status updated successfully from {currentStatus} to {property.Status}");
+        }
+
     }
 }

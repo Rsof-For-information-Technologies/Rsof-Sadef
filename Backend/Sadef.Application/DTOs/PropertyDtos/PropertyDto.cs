@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sadef.Domain.Constants;
 
 namespace Sadef.Application.DTOs.PropertyDtos
 {
@@ -19,5 +15,6 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public int? Bedrooms { get; set; }
         public int? Bathrooms { get; set; }
         public List<string> ImageBase64Strings { get; set; }
+        public PropertyStatus Status { get; set; }
     }
 }

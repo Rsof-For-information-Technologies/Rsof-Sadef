@@ -2,6 +2,7 @@
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Common.Infrastructure.Wrappers;
+using Sadef.Domain.Constants;
 
 namespace Sadef.API.Controllers
 {
@@ -48,5 +49,13 @@ namespace Sadef.API.Controllers
             var result = await _propertyService.DeletePropertyAsync(id);
             return Ok(result);
         }
+
+        [HttpPatch("update-status")]
+        public async Task<ActionResult<Response<string>>> ChangeStatus(PropertyStatusUpdateDto dto)
+        {
+            var result = await _propertyService.ChangeStatusAsync(dto);
+            return Ok(result);
+        }
+
     }
 }

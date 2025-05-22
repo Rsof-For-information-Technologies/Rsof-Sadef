@@ -1,5 +1,6 @@
 ﻿using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Domain.Constants;
 namespace Sadef.Application.Abstractions.Interfaces
 {
     public interface IPropertyService
@@ -9,6 +10,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<PropertyDto>> GetPropertyByIdAsync(int id);
         Task<Response<string>> DeletePropertyAsync(int id);
         Task<Response<PropertyDto>> UpdatePropertyAsync(UpdatePropertyDto dto);
+        Task<Response<PropertyDto>> ChangeStatusAsync(PropertyStatusUpdateDto status);
 
     }
 
