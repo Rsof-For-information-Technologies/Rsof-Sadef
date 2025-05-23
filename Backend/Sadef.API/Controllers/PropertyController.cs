@@ -68,5 +68,12 @@ namespace Sadef.API.Controllers
             var result = await _propertyService.UpdateExpiryAsync(dto);
             return Ok(result);
         }
+        [HttpGet("dashboard")]
+        public async Task<ActionResult<Response<PropertyDashboardStatsDto>>> GetDashboardStats()
+        {
+            var result = await _propertyService.GetPropertyDashboardStatsAsync();
+            return Ok(result);
+        }
+
     }
 }

@@ -13,6 +13,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<PropertyDto>> ChangeStatusAsync(PropertyStatusUpdateDto status);
         Task<Response<PaginatedResponse<PropertyDto>>> GetFilteredPropertiesAsync(PropertyFilterRequest request);
         Task<Response<PropertyDto>> UpdateExpiryAsync(PropertyExpiryUpdateDto dto);
+        Task<Response<PropertyDashboardStatsDto>> GetPropertyDashboardStatsAsync();
 
     }
 

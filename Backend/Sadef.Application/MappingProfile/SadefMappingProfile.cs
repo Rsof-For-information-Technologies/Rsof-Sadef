@@ -24,10 +24,16 @@ namespace Sadef.Application.MappingProfile
             //CreateMap<Property, PropertyDto>()
             //    .ForMember(dest => dest.ImageBase64Strings, opt => opt.Ignore());
 
-            CreateMap<CreatePropertyDto, Property>();
-            CreateMap<UpdatePropertyDto, Property>();
+            CreateMap<CreatePropertyDto, Property>()
+               .ForMember(dest => dest.Images, opt => opt.Ignore())
+               .ForMember(dest => dest.Videos, opt => opt.Ignore());
+
+            CreateMap<UpdatePropertyDto, Property>()
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.Videos, opt => opt.Ignore());
+
             CreateMap<Property, PropertyDto>()
-            .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.ExpiryDate.HasValue && src.ExpiryDate.Value <= DateTime.UtcNow));
+                .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.ExpiryDate.HasValue && src.ExpiryDate.Value <= DateTime.UtcNow));
 
         }
     }

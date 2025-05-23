@@ -59,7 +59,21 @@ namespace Sadef.Application.Services.PropertyListing
                     property.Images.Add(image);
                 }
             }
-
+            property.Videos = new List<PropertyVideo>();
+            if (dto.Videos != null)
+            {
+                foreach (var file in dto.Videos)
+                {
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
+                    var video = new PropertyVideo
+                    {
+                        VideoData = ms.ToArray(),
+                        ContentType = file.ContentType
+                    };
+                    property.Videos.Add(video);
+                }
+            }
             await _uow.RepositoryAsync<Property>().AddAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("property:page=1&size=10");
@@ -180,6 +194,21 @@ namespace Sadef.Application.Services.PropertyListing
                     existing.Images.Add(image);
                 }
             }
+            existing.Videos = new List<PropertyVideo>();
+            if (dto.Videos != null)
+            {
+                foreach (var file in dto.Videos)
+                {
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
+                    var video = new PropertyVideo
+                    {
+                        VideoData = ms.ToArray(),
+                        ContentType = file.ContentType
+                    };
+                    existing.Videos.Add(video);
+                }
+            }
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(existing);
             await _uow.SaveChangesAsync(CancellationToken.None);
@@ -291,6 +320,52 @@ namespace Sadef.Application.Services.PropertyListing
             var result = _mapper.Map<PropertyDto>(property);
             return new Response<PropertyDto>(result, $"Expiry set to {dto.ExpiryDate:yyyy-MM-dd}");
         }
+        public async Task<Response<PropertyDashboardStatsDto>> GetPropertyDashboardStatsAsync()
+        {
+            string cacheKey = "property:dashboard:stats";
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cached))
+            {
+                var dtoData = JsonConvert.DeserializeObject<PropertyDashboardStatsDto>(cached);
+                return new Response<PropertyDashboardStatsDto>(dtoData, "Dashboard stats loaded");
+            }
 
+            var query = _queryRepositoryFactory.QueryRepository<Property>().Queryable();
+            var now = DateTime.UtcNow;
+            var oneWeekAgo = now.AddDays(-7);
+
+            var total = await query.CountAsync();
+            var active = await query.CountAsync(p => !p.ExpiryDate.HasValue || p.ExpiryDate > now);
+            var expired = await query.CountAsync(p => p.ExpiryDate.HasValue && p.ExpiryDate <= now);
+
+            var pending = await query.CountAsync(p => p.Status == PropertyStatus.Pending);
+            var approved = await query.CountAsync(p => p.Status == PropertyStatus.Approved);
+            var sold = await query.CountAsync(p => p.Status == PropertyStatus.Sold);
+            var rejected = await query.CountAsync(p => p.Status == PropertyStatus.Rejected);
+            var archived = await query.CountAsync(p => p.Status == PropertyStatus.Archived);
+
+            var listedThisWeek = await query.CountAsync(p => p.CreatedAt >= oneWeekAgo);
+
+            var dto = new PropertyDashboardStatsDto
+            {
+                TotalProperties = total,
+                ActiveProperties = active,
+                ExpiredProperties = expired,
+                PendingCount = pending,
+                ApprovedCount = approved,
+                SoldCount = sold,
+                RejectedCount = rejected,
+                ArchivedCount = archived,
+                ListedThisWeek = listedThisWeek
+            };
+
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+            };
+            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
+
+            return new Response<PropertyDashboardStatsDto>(dto, "Dashboard stats loaded");
+        }
     }
 }

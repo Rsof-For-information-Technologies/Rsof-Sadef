@@ -18,5 +18,7 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public PropertyStatus Status { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public bool IsExpired => ExpiryDate.HasValue && ExpiryDate.Value <= DateTime.UtcNow;
+        public List<string> VideoUrls { get; set; }
+
     }
 }

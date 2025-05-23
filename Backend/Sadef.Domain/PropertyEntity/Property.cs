@@ -17,6 +17,7 @@ namespace Sadef.Domain.PropertyEntity
         public ICollection<PropertyImage>? Images { get; set; }
         public PropertyStatus Status { get; set; } = PropertyStatus.Pending;
         public DateTime? ExpiryDate { get; set; }
+        public ICollection<PropertyVideo>? Videos { get; set; }
 
     }
 

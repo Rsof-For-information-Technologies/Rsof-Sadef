@@ -34,6 +34,17 @@ namespace Sadef.Application.Services.PropertyListing
             RuleFor(x => x.Bathrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bathrooms.HasValue)
                 .WithMessage("Bathrooms must be zero or more.");
+
+            RuleFor(x => x.Videos)
+                .Must(v => v == null || v.Count <= 3)
+                .When(x => x.Videos != null && x.Videos.Any())
+                .WithMessage("You can upload up to 3 videos only.");
+
+            RuleForEach(x => x.Videos)
+                .Must(v => v.Length <= 50 * 1024 * 1024) // 50MB
+                .When(x => x.Videos != null && x.Videos.Any())
+                .WithMessage("Each video must be 50MB or smaller.");
+
         }
     }
 
@@ -71,6 +82,17 @@ namespace Sadef.Application.Services.PropertyListing
             RuleFor(x => x.Bathrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bathrooms.HasValue)
                 .WithMessage("Bathrooms must be zero or more.");
+
+            RuleFor(x => x.Videos)
+                 .Must(v => v == null || v.Count <= 3)
+                 .When(x => x.Videos != null && x.Videos.Any())
+                 .WithMessage("You can upload up to 3 videos only.");
+
+            RuleForEach(x => x.Videos)
+                .Must(v => v.Length <= 50 * 1024 * 1024) // 50MB
+                .When(x => x.Videos != null && x.Videos.Any())
+                .WithMessage("Each video must be 50MB or smaller.");
+
         }
     }
     public class PropertyExpiryUpdateValidator : AbstractValidator<PropertyExpiryUpdateDto>
