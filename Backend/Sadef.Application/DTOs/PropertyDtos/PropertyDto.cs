@@ -16,5 +16,7 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public int? Bathrooms { get; set; }
         public List<string> ImageBase64Strings { get; set; }
         public PropertyStatus Status { get; set; }
+        public DateTime? ExpiryDate { get; set; }
+        public bool IsExpired => ExpiryDate.HasValue && ExpiryDate.Value <= DateTime.UtcNow;
     }
 }

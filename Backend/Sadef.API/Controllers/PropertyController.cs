@@ -62,6 +62,11 @@ namespace Sadef.API.Controllers
             var result = await _propertyService.GetFilteredPropertiesAsync(request);
             return Ok(result);
         }
-
+        [HttpPatch("expire-duration")]
+        public async Task<ActionResult<Response<PropertyDto>>> SetDuration([FromBody] PropertyExpiryUpdateDto dto)
+        {
+            var result = await _propertyService.UpdateExpiryAsync(dto);
+            return Ok(result);
+        }
     }
 }

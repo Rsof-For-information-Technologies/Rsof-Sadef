@@ -8,6 +8,8 @@ namespace Sadef.Application.Utils
             this IQueryable<Property> query,
             PropertyFilterRequest request)
         {
+            query = query.Where(p => !p.ExpiryDate.HasValue || p.ExpiryDate > DateTime.UtcNow);
+
             if (!string.IsNullOrWhiteSpace(request.City))
                 query = query.Where(p => p.City == request.City);
 

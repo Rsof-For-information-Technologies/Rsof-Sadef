@@ -73,4 +73,13 @@ namespace Sadef.Application.Services.PropertyListing
                 .WithMessage("Bathrooms must be zero or more.");
         }
     }
+    public class PropertyExpiryUpdateValidator : AbstractValidator<PropertyExpiryUpdateDto>
+    {
+        public PropertyExpiryUpdateValidator()
+        {
+            RuleFor(x => x.ExpiryDate)
+                .GreaterThan(DateTime.UtcNow).WithMessage("Expiry date must be in the future.");
+        }
+    }
+
 }

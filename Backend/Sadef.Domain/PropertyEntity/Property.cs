@@ -16,6 +16,7 @@ namespace Sadef.Domain.PropertyEntity
         public int? Bathrooms { get; set; }
         public ICollection<PropertyImage>? Images { get; set; }
         public PropertyStatus Status { get; set; } = PropertyStatus.Pending;
+        public DateTime? ExpiryDate { get; set; }
 
     }
 

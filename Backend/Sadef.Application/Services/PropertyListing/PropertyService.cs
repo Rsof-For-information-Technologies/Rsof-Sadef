@@ -20,9 +20,10 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IValidator<CreatePropertyDto> _createPropertyValidator;
         private readonly IValidator<UpdatePropertyDto> _updatePropertyValidator;
+        private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator;
         private readonly IDistributedCache _cache;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator)
         {
             _uow = uow;
             _mapper = mapper;
@@ -30,6 +31,7 @@ namespace Sadef.Application.Services.PropertyListing
             _updatePropertyValidator = updatePropertyValidator;
             _createPropertyValidator = createPropertyDto;
             _cache = cache;
+            _expireValidator = expireValidator;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -60,7 +62,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             await _uow.RepositoryAsync<Property>().AddAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
-
+            await _cache.RemoveAsync("property:page=1&size=10");
             var createdDto = _mapper.Map<PropertyDto>(property);
             createdDto.ImageBase64Strings = property.Images?
                 .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
@@ -83,7 +85,7 @@ namespace Sadef.Application.Services.PropertyListing
             var query = queryRepo.Queryable().Include(p => p.Images!);
 
             var totalCount = await query.CountAsync();
-            var items = await query
+            var items = await query.Where(p => !p.ExpiryDate.HasValue || p.ExpiryDate > DateTime.UtcNow)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
@@ -140,7 +142,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             await _uow.RepositoryAsync<Property>().DeleteAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
-
+            await _cache.RemoveAsync("property:page=1&size=10");
             return new Response<string>("Property deleted successfully");
         }
 
@@ -181,7 +183,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(existing);
             await _uow.SaveChangesAsync(CancellationToken.None);
-
+            await _cache.RemoveAsync("property:page=1&size=10");
             var updatedDto = _mapper.Map<PropertyDto>(existing);
             updatedDto.ImageBase64Strings = existing.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
 
@@ -220,7 +222,7 @@ namespace Sadef.Application.Services.PropertyListing
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var updatedDto = _mapper.Map<PropertyDto>(property);
-
+            await _cache.RemoveAsync("property:page=1&size=10");
             return new Response<PropertyDto>(updatedDto, $"Status updated successfully from {currentStatus} to {property.Status}");
         }
 
@@ -265,6 +267,29 @@ namespace Sadef.Application.Services.PropertyListing
             });
 
             return new Response<PaginatedResponse<PropertyDto>>(paged, "Fetched with filters");
+        }
+        public async Task<Response<PropertyDto>> UpdateExpiryAsync(PropertyExpiryUpdateDto dto)
+        {
+            var validationResult = await _expireValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessage = validationResult.Errors.First().ErrorMessage;
+                return new Response<PropertyDto>(errorMessage);
+            }
+            var repo = _uow.RepositoryAsync<Property>();
+            var property = await _queryRepositoryFactory.QueryRepository<Property>()
+                .Queryable()
+                .FirstOrDefaultAsync(p => p.Id == dto.Id);
+
+            if (property == null)
+                return new Response<PropertyDto>("Property not found");
+
+            property.ExpiryDate = dto.ExpiryDate;
+            await repo.UpdateAsync(property);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+            await _cache.RemoveAsync("property:page=1&size=10");
+            var result = _mapper.Map<PropertyDto>(property);
+            return new Response<PropertyDto>(result, $"Expiry set to {dto.ExpiryDate:yyyy-MM-dd}");
         }
 
     }
