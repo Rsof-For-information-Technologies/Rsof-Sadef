@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sadef.Infrastructure.DBContext;
 
@@ -11,9 +12,11 @@ using Sadef.Infrastructure.DBContext;
 namespace Sadef.Infrastructure.Migrations
 {
     [DbContext(typeof(SadefDbContext))]
-    partial class SadefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250522140620_updatedPropertyTable2")]
+    partial class updatedPropertyTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,44 +337,6 @@ namespace Sadef.Infrastructure.Migrations
                     b.ToTable("PropertyImages", (string)null);
                 });
 
-            modelBuilder.Entity("Sadef.Domain.PropertyEntity.PropertyVideo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PropertyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("VideoData")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PropertyId");
-
-                    b.ToTable("PropertyVideos", (string)null);
-                });
-
             modelBuilder.Entity("Sadef.Domain.User", b =>
                 {
                     b.Property<int>("Id")
@@ -482,22 +447,9 @@ namespace Sadef.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("Sadef.Domain.PropertyEntity.PropertyVideo", b =>
-                {
-                    b.HasOne("Sadef.Domain.PropertyEntity.Property", "Property")
-                        .WithMany("Videos")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Property");
-                });
-
             modelBuilder.Entity("Sadef.Domain.PropertyEntity.Property", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("Videos");
                 });
 #pragma warning restore 612, 618
         }
