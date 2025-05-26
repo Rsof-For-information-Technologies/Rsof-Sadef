@@ -1,5 +1,6 @@
 using Sadef.Common.Infrastructure.Validator;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Sadef.Common.Infrastructure.AspNetCore.Validation
 {
@@ -43,7 +44,10 @@ namespace Sadef.Common.Infrastructure.AspNetCore.Validation
             //};
             var problemDetails = new ValidationResultModel(errors);
             //context.HttpContext.Response.WriteJson(problemDetails);
-            throw new ValidationException(problemDetails);
+            //throw new ValidationException(problemDetails);
+            context.HttpContext.Response.StatusCode = 400;
+            context.HttpContext.Response.ContentType = "application/json";
+            return context.HttpContext.Response.WriteAsJsonAsync(problemDetails);
             //return Task.CompletedTask;
         }
     }

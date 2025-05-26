@@ -15,15 +15,6 @@ namespace Sadef.Application.MappingProfile
             CreateMap<ApplicationUser, UserResultDTO>();
 
             //Property
-            //CreateMap<CreatePropertyDto, Property>()
-            //.ForMember(dest => dest.Images, opt => opt.Ignore());   
-
-            //CreateMap<UpdatePropertyDto, Property>()
-            //.ForMember(dest => dest.Images, opt => opt.Ignore());
-
-            //CreateMap<Property, PropertyDto>()
-            //    .ForMember(dest => dest.ImageBase64Strings, opt => opt.Ignore());
-
             CreateMap<CreatePropertyDto, Property>()
                .ForMember(dest => dest.Images, opt => opt.Ignore())
                .ForMember(dest => dest.Videos, opt => opt.Ignore());
