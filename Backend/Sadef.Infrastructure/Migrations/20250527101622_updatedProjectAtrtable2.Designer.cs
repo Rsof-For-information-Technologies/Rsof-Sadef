@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sadef.Infrastructure.DBContext;
 
@@ -11,9 +12,11 @@ using Sadef.Infrastructure.DBContext;
 namespace Sadef.Infrastructure.Migrations
 {
     [DbContext(typeof(SadefDbContext))]
-    partial class SadefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250527101622_updatedProjectAtrtable2")]
+    partial class updatedProjectAtrtable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,17 +313,8 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<decimal?>("ExpectedAnnualRent")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("ExpectedDeliveryDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Features")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsInvestorOnly")
-                        .HasColumnType("bit");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("float");

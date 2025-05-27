@@ -9,6 +9,7 @@ namespace Sadef.Domain.PropertyEntity
         public required string Description { get; set; }
         public required decimal Price { get; set; }
         public required PropertyType PropertyType { get; set; }
+        public UnitCategory? UnitCategory { get; set; }
         public required string? City { get; set; }
         public required string Location { get; set; }
         public required double AreaSize { get; set; }
@@ -18,6 +19,16 @@ namespace Sadef.Domain.PropertyEntity
         public PropertyStatus Status { get; set; } = PropertyStatus.Pending;
         public DateTime? ExpiryDate { get; set; }
         public ICollection<PropertyVideo>? Videos { get; set; }
+        public string? UnitName { get; set; }
+        public decimal? ProjectedResaleValue { get; set; }
+        public decimal? ExpectedAnnualRent { get; set; }
+        public string? WarrantyInfo { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? WhatsAppNumber { get; set; }
+        public DateTime? ExpectedDeliveryDate { get; set; }
+        public bool IsInvestorOnly { get; set; } = false;
+        public List<string>? Features { get; set; }
 
     }
 

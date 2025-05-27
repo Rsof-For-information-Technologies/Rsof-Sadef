@@ -26,7 +26,9 @@ namespace Sadef.Application.MappingProfile
                 .ForMember(dest => dest.Videos, opt => opt.Ignore());
 
             CreateMap<Property, PropertyDto>()
-                .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.ExpiryDate.HasValue && src.ExpiryDate.Value <= DateTime.UtcNow));
+                .ForMember(dest => dest.PropertyType, opt => opt.MapFrom(src => src.PropertyType.ToString()))
+                .ForMember(dest => dest.VideoUrls, opt => opt.Ignore())
+                .ForMember(dest => dest.ImageBase64Strings, opt => opt.Ignore());
 
             //Blogs
             CreateMap<CreateBlogDto, Blog>();

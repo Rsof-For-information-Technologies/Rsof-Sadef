@@ -81,7 +81,9 @@ namespace Sadef.Application.Services.PropertyListing
             createdDto.ImageBase64Strings = property.Images?
                 .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
                 .ToList() ?? new();
-
+            createdDto.VideoUrls = property.Videos?
+                .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
+                .ToList() ?? new();
             return new Response<PropertyDto>(createdDto, "Property created successfully");
         }
 
@@ -96,7 +98,8 @@ namespace Sadef.Application.Services.PropertyListing
                 return new Response<PaginatedResponse<PropertyDto>>(cachedResult, "Properties retrieved successfully");
             }
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
-            var query = queryRepo.Queryable().Include(p => p.Images!);
+                var query = queryRepo.Queryable()
+                            .Include(p => p.Images);
 
             var totalCount = await query.CountAsync();
             var items = await query.Where(p => !p.ExpiryDate.HasValue || p.ExpiryDate > DateTime.UtcNow)
@@ -111,6 +114,7 @@ namespace Sadef.Application.Services.PropertyListing
                 dto.ImageBase64Strings = p.Images?.Select(img =>
                     $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
                 return dto;
+
             }).ToList();
 
             var paged = new PaginatedResponse<PropertyDto>(result, totalCount, request.PageNumber, request.PageSize);
@@ -139,6 +143,9 @@ namespace Sadef.Application.Services.PropertyListing
 
             var dto = _mapper.Map<PropertyDto>(property);
             dto.ImageBase64Strings = property.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
+            dto.VideoUrls = property.Videos?
+                .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
+                .ToList() ?? new();
 
             return new Response<PropertyDto>(dto, "Property found successfully");
         }
@@ -215,6 +222,9 @@ namespace Sadef.Application.Services.PropertyListing
             await _cache.RemoveAsync("property:page=1&size=10");
             var updatedDto = _mapper.Map<PropertyDto>(existing);
             updatedDto.ImageBase64Strings = existing.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
+            updatedDto.VideoUrls = existing.Videos?
+                .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
+                .ToList() ?? new();
 
             return new Response<PropertyDto>(updatedDto, "Property updated successfully");
         }
@@ -285,7 +295,7 @@ namespace Sadef.Application.Services.PropertyListing
                 var dto = _mapper.Map<PropertyDto>(p);
                 dto.ImageBase64Strings = p.Images?.Select(img =>
                     $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
-                return dto;
+               return dto;
             }).ToList();
 
             var paged = new PaginatedResponse<PropertyDto>(result, total, request.PageNumber, request.PageSize);
@@ -346,6 +356,22 @@ namespace Sadef.Application.Services.PropertyListing
 
             var listedThisWeek = await query.CountAsync(p => p.CreatedAt >= oneWeekAgo);
 
+            var propertiesWithInvestmentData = await query
+                .CountAsync(p => p.ProjectedResaleValue.HasValue || p.ExpectedAnnualRent.HasValue);
+
+            var totalRent = await query
+                .Where(p => p.ExpectedAnnualRent.HasValue)
+                .SumAsync(p => p.ExpectedAnnualRent.Value);
+
+            var totalResale = await query
+                .Where(p => p.ProjectedResaleValue.HasValue)
+                .SumAsync(p => p.ProjectedResaleValue.Value);
+
+            var unitCategoryCounts = await query
+                .GroupBy(p => p.UnitCategory)
+                .Select(g => new { Category = g.Key.ToString(), Count = g.Count() })
+                .ToDictionaryAsync(g => g.Category ?? "Unknown", g => g.Count);
+
             var dto = new PropertyDashboardStatsDto
             {
                 TotalProperties = total,
@@ -356,7 +382,11 @@ namespace Sadef.Application.Services.PropertyListing
                 SoldCount = sold,
                 RejectedCount = rejected,
                 ArchivedCount = archived,
-                ListedThisWeek = listedThisWeek
+                ListedThisWeek = listedThisWeek,
+                PropertiesWithInvestmentData = propertiesWithInvestmentData,
+                TotalExpectedAnnualRent = totalRent,
+                TotalProjectedResaleValue = totalResale,
+                UnitCategoryCounts = unitCategoryCounts
             };
 
             var options = new DistributedCacheEntryOptions

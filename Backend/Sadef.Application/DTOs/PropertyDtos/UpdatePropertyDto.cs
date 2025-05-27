@@ -15,6 +15,7 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public  string Description { get; set; }
         public  decimal Price { get; set; }
         public PropertyType PropertyType { get; set; }
+        public UnitCategory? UnitCategory { get; set; }
         public  string City { get; set; }
         public  string Location { get; set; }
         public  double AreaSize { get; set; }
@@ -23,6 +24,15 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public List<IFormFile>? Images { get; set; }
         public PropertyStatus Status { get; set; }
         public List<IFormFile>? Videos { get; set; }
-
+        public string? UnitName { get; set; }
+        public decimal? ProjectedResaleValue { get; set; }
+        public decimal? ExpectedAnnualRent { get; set; }
+        public string? WarrantyInfo { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? WhatsAppNumber { get; set; }
+        public DateTime? ExpectedDeliveryDate { get; set; }
+        public bool IsInvestorOnly { get; set; } = false;
+        public List<string>? Features { get; set; }
     }
 }
