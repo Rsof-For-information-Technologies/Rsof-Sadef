@@ -3,7 +3,8 @@ using Sadef.Common.Infrastructure.EfCore.Db;
 using Sadef.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-
+using Sadef.Domain.BlogsEntity;
+using Sadef.Domain.PropertyEntity;
 namespace Sadef.Infrastructure.DBContext
 {
     public class SadefDbContext : AppDbContextIdentity
@@ -22,6 +23,6 @@ namespace Sadef.Infrastructure.DBContext
         {
             optionsBuilder.AddInterceptors(_auditInterceptor);
         }
-
+        public DbSet<Blog> Blogs { get; set; }
     }
 }
