@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.Services.Blogs;
 using Sadef.Application.Services.Email;
+using Sadef.Application.Services.Favorites;
 using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
 using Sadef.Common.EFCore.Middleware;
@@ -23,6 +24,7 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddCustomValidators<UserRegisterValidator>();
                    svc.AddScoped<IPropertyService, PropertyService>();
                    svc.AddScoped<IBlogService, BlogService>();
+                   svc.AddScoped<IFavoriteService, FavoriteService>();
 
                }
            );
