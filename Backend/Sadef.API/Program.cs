@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sadef.Application.Abstractions.Interfaces;
+using Sadef.Application.Services.Blogs;
 using Sadef.Application.Services.Email;
 using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
@@ -9,7 +10,6 @@ using Sadef.Common.Infrastructure.Validator;
 using Sadef.Common.RestTemplate;
 using Sadef.Common.RestTemplate.Db;
 using Sadef.Infrastructure.DBContext;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCustomTemplate<SadefDbContext>(
@@ -21,7 +21,9 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddTransient<IEmailService, EmailService>();
                    svc.AddScoped<IUserManagementService, UserManagementService>();
                    svc.AddCustomValidators<UserRegisterValidator>();
-                   svc.AddScoped<IPropertyService , PropertyService>();
+                   svc.AddScoped<IPropertyService, PropertyService>();
+                   svc.AddScoped<IBlogService, BlogService>();
+
                }
            );
 
