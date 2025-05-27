@@ -17,6 +17,11 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public int RejectedCount { get; set; }
         public int ArchivedCount { get; set; }
         public int ListedThisWeek { get; set; }
+        public decimal? TotalExpectedAnnualRent { get; set; }
+        public decimal? TotalProjectedResaleValue { get; set; }
+        public int PropertiesWithInvestmentData { get; set; }
+        public Dictionary<string, int> UnitCategoryCounts { get; set; } = new();
+
     }
 
 }
