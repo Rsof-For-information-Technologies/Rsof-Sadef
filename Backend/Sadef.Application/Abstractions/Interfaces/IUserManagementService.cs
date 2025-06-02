@@ -15,5 +15,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<bool>> ForgotPasswordAsync(ForgotPasswordDto dto);
         Task<Response<bool>> ResetPasswordAsync(ResetPasswordDto dto);
         Task<Response<UserLoginResultDTO>> RefreshTokenAsync(RefreshTokenDto dto);
+        Task<Response<string>> VerifyEmailAsync(VerifyEmailRequestDto request);
+
     }
 }
