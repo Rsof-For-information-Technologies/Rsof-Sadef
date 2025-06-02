@@ -102,5 +102,15 @@ namespace Sadef.API.Controllers
             return Ok(response);
 
         }
+        // verify email 
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromQuery] VerifyEmailRequestDto dto)
+        {
+            var result = await _userManagementService.VerifyEmailAsync(dto);
+            if (result.Succeeded)
+                return Ok(new { message = result.Data });
+
+            return BadRequest(new { message = result.Message });
+        }
     }
 }

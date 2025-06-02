@@ -29,7 +29,6 @@ namespace Sadef.Application.Services.User
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmailService _emailService;
 
-
         public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IValidator<RegisterUserWithEmailDto> registerValidator, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IValidator<LoginUserDto> loginValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<UpdateUserDto> updateUserValidator, IValidator<UpdateUserPasswordDto> updateUserPasswordValidator, IValidator<RefreshTokenDto> refreshTokendValidator)
         {
             _userManager = userManager;
@@ -51,42 +50,50 @@ namespace Sadef.Application.Services.User
             var validationResult = await _registerValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
+                var errorMessage = validationResult.Errors.Select(e => e.ErrorMessage).FirstOrDefault();
                 return new Response<bool>(errorMessage);
-            }
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser != null)
-            {
-                return new Response<bool>("Email is already in use.");
             }
 
             var user = new ApplicationUser
             {
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                Email = request.Email,
                 UserName = request.Email,
+                Email = request.Email,
+                IsActive = true,
                 Role = request.Role
             };
 
-            if (!await _roleManager.RoleExistsAsync(request.Role))
-            {
-                return new Response<bool>($"Role '{request.Role}' does not exist.");
-            }
-
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return new Response<bool>($"Failed to register user: {errors}");
-            }
-            var roleResult = await _userManager.AddToRoleAsync(user, request.Role);
-            if (!roleResult.Succeeded)
-            {
-                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                return new Response<bool>($"Failed to assign role: {errors}");
-            }
-            return new Response<bool>(true, "User registered successfully.");
+                return new Response<bool>(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            await _userManager.AddToRoleAsync(user, request.Role);
+
+            // Generate and send email verification link
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var encodedToken = WebUtility.UrlEncode(token);
+            var verificationUrl = $"{_configuration["App:BaseUrl"]}/api/user/verify-email?userId={user.Id}&token={encodedToken}";
+
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Verify your email",
+                $"<p>Click <a href=\"{verificationUrl}\">here</a> to verify your email.</p>"
+            );
+            return new Response<bool>(true , "User registered successfully");
+        }
+
+        public async Task<Response<string>> VerifyEmailAsync(VerifyEmailRequestDto request)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId);
+            if (user == null)
+                return new Response<string>("User not found");
+
+            var result = await _userManager.ConfirmEmailAsync(user, request.Token);
+            if (result.Succeeded)
+                return new Response<string>("Email verified successfully");
+
+            return new Response<string>("Email verification failed");
         }
 
         public async Task<Response<UserLoginResultDTO>> LoginUserAsync(LoginUserDto request)
