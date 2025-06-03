@@ -80,7 +80,7 @@ namespace Sadef.Application.Services.User
                 "Verify your email",
                 $"<p>Click <a href=\"{verificationUrl}\">here</a> to verify your email.</p>"
             );
-            return new Response<bool>(true , "User registered successfully");
+            return new Response<bool>(true , "User registered successfully and a verification email sent.");
         }
 
         public async Task<Response<string>> VerifyEmailAsync(VerifyEmailRequestDto request)
@@ -88,8 +88,8 @@ namespace Sadef.Application.Services.User
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
                 return new Response<string>("User not found");
-
-            var result = await _userManager.ConfirmEmailAsync(user, request.Token);
+            var decodedToken = Uri.UnescapeDataString(request.Token);
+            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
             if (result.Succeeded)
                 return new Response<string>("Email verified successfully");
 
@@ -110,7 +110,10 @@ namespace Sadef.Application.Services.User
             {
                 return new Response<UserLoginResultDTO>("Invalid email or password.");
             }
-
+            if (!user.EmailConfirmed)
+            {
+                return new Response<UserLoginResultDTO>("Email not verified. Please verify your email before logging in.");
+            }
             if (await _userManager.IsLockedOutAsync(user))
             {
                 return new Response<UserLoginResultDTO>("User account is locked due to multiple failed login attempts.");
