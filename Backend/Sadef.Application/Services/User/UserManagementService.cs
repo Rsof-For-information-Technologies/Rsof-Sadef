@@ -250,7 +250,7 @@ namespace Sadef.Application.Services.User
             {
                 Id = u.Id,
                 FirstName = u.FirstName,
-                LastName = u.LastName, 
+                LastName = u.LastName,
                 Email = u.Email,
                 Role = u.Role,
                 IsActive = u.IsActive,
