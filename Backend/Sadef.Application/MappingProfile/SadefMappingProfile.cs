@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Sadef.Application.DTOs.BlogDtos;
+using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
+using Sadef.Domain.LeadEntity;
 
 namespace Sadef.Application.MappingProfile
 {
@@ -34,6 +36,11 @@ namespace Sadef.Application.MappingProfile
             CreateMap<CreateBlogDto, Blog>();
             CreateMap<UpdateBlogDto, Blog>();
             CreateMap<Blog, BlogDto>();
+
+            //Lead
+            CreateMap<CreateLeadDto, Lead>();
+            CreateMap<Lead, LeadDto>();
+
 
         }
     }
