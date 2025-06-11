@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
+using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Domain.Constants;
@@ -54,5 +55,26 @@ namespace Sadef.Application.Services.Lead
             var responseDto = _mapper.Map<LeadDto>(lead);
             return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");
         }
+
+        public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
+        {
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
+            var query = repo.Queryable().OrderByDescending(b => b.CreatedAt);
+            var total = await query.CountAsync();
+            var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            var dtoList = _mapper.Map<List<LeadDto>>(items);
+
+            var paged = new PaginatedResponse<LeadDto>(dtoList, total, pageNumber, pageSize);
+            return new Response<PaginatedResponse<LeadDto>>(paged);
+        }
+
+        public async Task<Response<LeadDto>> GetByIdAsync(int id)
+        {
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
+            var lead = await repo.Queryable().FirstOrDefaultAsync(b => b.Id == id);
+            if (lead == null) return new Response<LeadDto>("Lead not found");
+            return new Response<LeadDto>(_mapper.Map<LeadDto>(lead));
+        }
+
     }
 }
