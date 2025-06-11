@@ -70,17 +70,40 @@ namespace Sadef.Application.Services.User
 
             await _userManager.AddToRoleAsync(user, request.Role);
 
+            if (string.Equals(request.Role, "Admin", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(request.Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase))
+            {
+                var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmResult = await _userManager.ConfirmEmailAsync(user, emailToken);
+
+                if (!confirmResult.Succeeded)
+                {
+                    return new Response<bool>("Failed to auto-verify Admin/SuperAdmin email.");
+                }
+
+                return new Response<bool>(true, "User registered successfully.");
+            }
             // Generate and send email verification link
+            await SendEmailVerificationAsync(user);
+            return new Response<bool>(true , "User registered successfully and a verification email sent.");
+        }
+
+        private async Task SendEmailVerificationAsync(ApplicationUser user)
+        {
+            if (string.IsNullOrEmpty(user?.Email))
+            {
+                throw new ArgumentNullException(nameof(user.Email), "User email cannot be null or empty.");
+            }
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var encodedToken = WebUtility.UrlEncode(token);
-            var verificationUrl = $"{_configuration["App:BaseUrl"]}/api/user/verify-email?userId={user.Id}&token={encodedToken}";
+            var baseUrl = _configuration["App:BaseUrl"];
+            var verificationUrl = $"{baseUrl}/api/user/verify-email?userId={user.Id}&token={encodedToken}";
 
-            await _emailService.SendEmailAsync(
-                user.Email,
-                "Verify your email",
-                $"<p>Click <a href=\"{verificationUrl}\">here</a> to verify your email.</p>"
-            );
-            return new Response<bool>(true , "User registered successfully and a verification email sent.");
+            var subject = "Verify your email";
+            var body = $"<p>Click <a href=\"{verificationUrl}\">here</a> to verify your email.</p>";
+
+            await _emailService.SendEmailAsync(user.Email, subject, body);
         }
 
         public async Task<Response<string>> VerifyEmailAsync(VerifyEmailRequestDto request)
