@@ -56,14 +56,37 @@ namespace Sadef.Application.Services.Lead
             return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");
         }
 
-        public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
+        public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize, LeadFilterDto filters)
         {
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
-            var query = repo.Queryable().OrderByDescending(b => b.CreatedAt);
+            var query = repo.Queryable();
+
+            if (!string.IsNullOrWhiteSpace(filters.FullName))
+                query = query.Where(x => x.FullName.Contains(filters.FullName));
+
+            if (!string.IsNullOrWhiteSpace(filters.Email))
+                query = query.Where(x => x.Email.Contains(filters.Email));
+
+            if (!string.IsNullOrWhiteSpace(filters.Phone))
+                query = query.Where(x => x.Phone == filters.Phone);
+
+            if (filters.PropertyId.HasValue)
+                query = query.Where(x => x.PropertyId == filters.PropertyId);
+
+            if (!string.IsNullOrWhiteSpace(filters.Status) && Enum.TryParse<LeadStatus>(filters.Status, true, out var statusEnum))
+                query = query.Where(x => x.Status == statusEnum);
+
+            if (filters.CreatedAtFrom.HasValue)
+                query = query.Where(x => x.CreatedAt >= filters.CreatedAtFrom.Value);
+
+            if (filters.CreatedAtTo.HasValue)
+                query = query.Where(x => x.CreatedAt <= filters.CreatedAtTo.Value);
+
+            // Pagination
+            query = query.OrderByDescending(b => b.CreatedAt);
             var total = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var dtoList = _mapper.Map<List<LeadDto>>(items);
-
             var paged = new PaginatedResponse<LeadDto>(dtoList, total, pageNumber, pageSize);
             return new Response<PaginatedResponse<LeadDto>>(paged);
         }

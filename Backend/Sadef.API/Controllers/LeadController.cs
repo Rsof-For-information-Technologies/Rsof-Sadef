@@ -21,9 +21,9 @@ namespace Sadef.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] LeadFilterDto filters, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _leadService.GetPaginatedAsync(pageNumber, pageSize);
+            var result = await _leadService.GetPaginatedAsync(pageNumber, pageSize, filters);
             return Ok(result);
         }
 
