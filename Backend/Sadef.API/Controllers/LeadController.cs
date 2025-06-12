@@ -33,5 +33,20 @@ namespace Sadef.API.Controllers
             var result = await _leadService.GetByIdAsync(id);
             return Ok(result);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateLead([FromBody] UpdateLeadDto dto)
+        {
+            if (dto.id != 0)
+            {
+                var result = await _leadService.UpdateLeadAsync(dto);
+                return Ok(result);
+            }
+
+            return BadRequest(dto.id == 0
+                ? "ID in URL must not be zero."
+                : "ID in URL and body do not match.");
+        }
+
     }
 }

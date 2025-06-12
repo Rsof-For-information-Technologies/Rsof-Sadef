@@ -16,14 +16,16 @@ namespace Sadef.Application.Services.Lead
         private readonly IUnitOfWorkAsync _uow;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateLeadDto> _createLeadValidator;
+        private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator , IQueryRepositoryFactory queryRepositoryFactory)
+        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator , IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator)
         {
             _uow = uow;
             _mapper = mapper;
             _createLeadValidator = createLeadValidator;
             _queryRepositoryFactory = queryRepositoryFactory;
+            _updateLeadValidator = updateLeadValidator;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -99,5 +101,48 @@ namespace Sadef.Application.Services.Lead
             return new Response<LeadDto>(_mapper.Map<LeadDto>(lead));
         }
 
+        public async Task<Response<LeadDto>> UpdateLeadAsync(UpdateLeadDto dto)
+        {
+            var validationResult = await _updateLeadValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessage = validationResult.Errors.First().ErrorMessage;
+                return new Response<LeadDto>(errorMessage);
+            }
+
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
+            var lead = await repo.Queryable().FirstOrDefaultAsync(b => b.Id == dto.id);
+
+
+            if (lead == null)
+            {
+                return new Response<LeadDto>("Lead not found");
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.FullName))
+                lead.FullName = dto.FullName;
+
+            if (!string.IsNullOrWhiteSpace(dto.Email))
+                lead.Email = dto.Email;
+
+            if (!string.IsNullOrWhiteSpace(dto.Phone))
+                lead.Phone = dto.Phone;
+
+            if (!string.IsNullOrWhiteSpace(dto.Message))
+                lead.Message = dto.Message;
+
+            if (dto.PropertyId.HasValue)
+                lead.PropertyId = dto.PropertyId;
+
+            if (dto.Status.HasValue && Enum.IsDefined(typeof(LeadStatus), dto.Status.Value))
+                lead.Status = (LeadStatus)dto.Status.Value;
+
+            lead.UpdatedAt = DateTime.UtcNow;
+
+            await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().UpdateAsync(lead);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+
+            return new Response<LeadDto>(_mapper.Map<LeadDto>(lead), "Lead updated successfully.");
+        }
     }
 }
