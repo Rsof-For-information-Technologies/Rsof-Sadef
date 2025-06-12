@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
@@ -18,14 +20,16 @@ namespace Sadef.Application.Services.Lead
         private readonly IValidator<CreateLeadDto> _createLeadValidator;
         private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
+        private readonly IDistributedCache _cache;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator , IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator)
+        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache)
         {
             _uow = uow;
             _mapper = mapper;
             _createLeadValidator = createLeadValidator;
             _queryRepositoryFactory = queryRepositoryFactory;
             _updateLeadValidator = updateLeadValidator;
+            _cache = cache;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -53,6 +57,7 @@ namespace Sadef.Application.Services.Lead
 
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await IncrementLeadVersionAsync();
 
             var responseDto = _mapper.Map<LeadDto>(lead);
             return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");
@@ -60,6 +65,33 @@ namespace Sadef.Application.Services.Lead
 
         public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize, LeadFilterDto filters)
         {
+            string versionKey = "leads:version";
+            string? version = await _cache.GetStringAsync(versionKey); 
+            if (string.IsNullOrEmpty(version))
+            {
+                version = "1";
+                await _cache.SetStringAsync(versionKey, version);
+            }
+
+            string cacheKey = $"leads:version={version}:page={pageNumber}&size={pageSize}" +
+                $"&name={filters.FullName}" +
+                $"&email={filters.Email}" +
+                $"&phone={filters.Phone}" +
+                $"&prop={filters.PropertyId}" +
+                $"&status={filters.Status}" +
+                $"&from={filters.CreatedAtFrom?.ToString("yyyyMMdd")}" +
+                $"&to={filters.CreatedAtTo?.ToString("yyyyMMdd")}";
+
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cached))
+            {
+                var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<LeadDto>>(cached);
+                if (cachedResult != null)
+                {
+                    return new Response<PaginatedResponse<LeadDto>>(cachedResult, "Leads retrieved successfully");
+                }
+            }
+
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             var query = repo.Queryable();
 
@@ -84,12 +116,17 @@ namespace Sadef.Application.Services.Lead
             if (filters.CreatedAtTo.HasValue)
                 query = query.Where(x => x.CreatedAt <= filters.CreatedAtTo.Value);
 
-            // Pagination
             query = query.OrderByDescending(b => b.CreatedAt);
             var total = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var dtoList = _mapper.Map<List<LeadDto>>(items);
             var paged = new PaginatedResponse<LeadDto>(dtoList, total, pageNumber, pageSize);
+
+            var cacheOptions = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            };
+            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
             return new Response<PaginatedResponse<LeadDto>>(paged);
         }
 
@@ -142,7 +179,21 @@ namespace Sadef.Application.Services.Lead
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().UpdateAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
 
+            await IncrementLeadVersionAsync();
+
             return new Response<LeadDto>(_mapper.Map<LeadDto>(lead), "Lead updated successfully.");
+        }
+
+        private async Task IncrementLeadVersionAsync()
+        {
+            string versionKey = "leads:version";
+            string? currentVersion = await _cache.GetStringAsync(versionKey);
+            int newVersion = 1;
+            if (!string.IsNullOrEmpty(currentVersion) && int.TryParse(currentVersion, out int parsedVersion))
+            {
+                newVersion = parsedVersion + 1;
+            }
+            await _cache.SetStringAsync(versionKey, newVersion.ToString());
         }
     }
 }
