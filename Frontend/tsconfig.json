@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "target": "es2020", // Specifies the target ECMAScript version
+    "module": "esnext", // Specifies the module code generation
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ], // Specify library files to be included in the compilation
+    "outDir": "./dist", // Redirect output structure to the directory
+    "rootDir": "./", // Specify the root directory of input files
+    "strict": true, // Enable all strict type-checking options
+    "esModuleInterop": true, // Enables emit interoperability between CommonJS and ES Modules
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "noErrorTruncation": true,
+    "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file
+    "moduleResolution": "bundler", // Use Node.js-style resolution
+    "resolveJsonModule": true, // Include modules imported with .json extension
+    "isolatedModules": true, // Ensure each file can be safely transpiled without relying on other imports
+    "noImplicitAny": true, // Raise error on expressions and declarations with an implied 'any' type
+    "noImplicitThis": true, // Raise error on 'this' expressions with an implied 'any' type
+    "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statements
+    "strictNullChecks": true, // Enable strict null checks
+    "strictFunctionTypes": true, // Enable strict checking of function types
+    "strictPropertyInitialization": true, // Enable strict checking of property initialization in classes
+    "baseUrl": ".", // Base directory to resolve non-relative module names
+    "paths": {
+      // Paths to specify module resolution
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types",
+    ], // Specify multiple type root locations
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next",
+        "config": {
+          "appDir": true, // Enable app directory support
+        }
+      },
+    ]
+  },
+  "include": [
+    "src",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.d.ts",
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "next.config.js",
+    "src/types/*.d.ts"
+  ], // Specify which paths should be included in the program
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ], // Exclude test files and node_modules
+}
