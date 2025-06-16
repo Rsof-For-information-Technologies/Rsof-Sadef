@@ -108,8 +108,8 @@ namespace Sadef.Application.Services.Lead
             if (filters.PropertyId.HasValue)
                 query = query.Where(x => x.PropertyId == filters.PropertyId);
 
-            if (!string.IsNullOrWhiteSpace(filters.Status) && Enum.TryParse<LeadStatus>(filters.Status, true, out var statusEnum))
-                query = query.Where(x => x.Status == statusEnum);
+            if (filters.Status.HasValue)
+                query = query.Where(x => x.Status == filters.Status.Value);
 
             if (filters.CreatedAtFrom.HasValue)
                 query = query.Where(x => x.CreatedAt >= filters.CreatedAtFrom.Value);
