@@ -12,7 +12,7 @@ namespace Sadef.Application.DTOs.LeadDtos
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public int? PropertyId { get; set; }
-        public string? Status { get; set; }
+        public LeadStatus? Status { get; set; }
         public DateTime? CreatedAtFrom { get; set; }
         public DateTime? CreatedAtTo { get; set; }
     }
