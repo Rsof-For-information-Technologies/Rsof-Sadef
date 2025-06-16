@@ -48,5 +48,12 @@ namespace Sadef.API.Controllers
                 : "ID in URL and body do not match.");
         }
 
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetLeadStats()
+        {
+            var result = await _leadService.GetLeadDashboardStatsAsync();
+            return Ok(result);
+        }
+
     }
 }

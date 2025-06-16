@@ -195,5 +195,56 @@ namespace Sadef.Application.Services.Lead
             }
             await _cache.SetStringAsync(versionKey, newVersion.ToString());
         }
+
+        public async Task<Response<LeadDashboardStatsDto>> GetLeadDashboardStatsAsync()
+        {
+            string cacheKey = "lead:dashboard:stats";
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cached))
+            {
+                var dtoData = JsonConvert.DeserializeObject<LeadDashboardStatsDto>(cached);
+                if (dtoData != null)
+                {
+                    return new Response<LeadDashboardStatsDto>(dtoData, "Lead dashboard stats loaded");
+                }
+            }
+
+            var query = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>().Queryable();
+            var now = DateTime.UtcNow;
+            var currentMonthStart = new DateTime(now.Year, now.Month, 1);
+
+            var total = await query.CountAsync();
+            var leadsThisMonth = await query.CountAsync(l => l.CreatedAt >= currentMonthStart);
+
+            var active = await query.CountAsync(l => l.Status != LeadStatus.Rejected && l.Status != LeadStatus.Converted);
+
+            var newLeads = await query.CountAsync(l => l.Status == LeadStatus.New);
+            var contacted = await query.CountAsync(l => l.Status == LeadStatus.Contacted);
+            var inDiscussion = await query.CountAsync(l => l.Status == LeadStatus.InDiscussion);
+            var visitScheduled = await query.CountAsync(l => l.Status == LeadStatus.VisitScheduled);
+            var converted = await query.CountAsync(l => l.Status == LeadStatus.Converted);
+            var rejected = await query.CountAsync(l => l.Status == LeadStatus.Rejected);
+
+            var dto = new LeadDashboardStatsDto
+            {
+                TotalLeads = total,
+                LeadsThisMonth = leadsThisMonth,
+                ActiveLeads = active,
+                NewLeads = newLeads,
+                Contacted = contacted,
+                InDiscussion = inDiscussion,
+                VisitScheduled = visitScheduled,
+                Converted = converted,
+                Rejected = rejected
+            };
+
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+            };
+            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
+
+            return new Response<LeadDashboardStatsDto>(dto, "Lead dashboard stats loaded");
+        }
     }
 }

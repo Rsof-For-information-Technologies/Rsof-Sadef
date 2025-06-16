@@ -10,6 +10,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize, LeadFilterDto filters);
         Task<Response<LeadDto>> GetByIdAsync(int id);
         Task<Response<LeadDto>> UpdateLeadAsync(UpdateLeadDto dto);
+        Task<Response<LeadDashboardStatsDto>> GetLeadDashboardStatsAsync();
 
     }
 }
