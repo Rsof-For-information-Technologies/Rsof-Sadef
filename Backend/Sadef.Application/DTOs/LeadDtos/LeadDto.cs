@@ -14,6 +14,6 @@ namespace Sadef.Application.DTOs.LeadDtos
         public string? Phone { get; set; }
         public string? Message { get; set; }
         public int? PropertyId { get; set; }
-        public int? status { get; set; }
+        public LeadStatus? status { get; set; }
     }
 }
