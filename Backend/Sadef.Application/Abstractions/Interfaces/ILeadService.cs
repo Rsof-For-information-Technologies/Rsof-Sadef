@@ -11,6 +11,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<LeadDto>> GetByIdAsync(int id);
         Task<Response<LeadDto>> UpdateLeadAsync(UpdateLeadDto dto);
         Task<Response<LeadDashboardStatsDto>> GetLeadDashboardStatsAsync();
+        Task<byte[]> ExportLeadDashboardStatsToExcelAsync();
 
     }
 }

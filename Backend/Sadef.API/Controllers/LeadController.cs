@@ -55,5 +55,16 @@ namespace Sadef.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("dashboard/report")]
+        public async Task<IActionResult> ExportLeadStatsToExcel()
+        {
+            var fileBytes = await _leadService.ExportLeadDashboardStatsToExcelAsync();
+            if (fileBytes == null)
+                return BadRequest("Failed to export lead stats.");
+
+            var fileName = $"LeadStats_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
     }
 }

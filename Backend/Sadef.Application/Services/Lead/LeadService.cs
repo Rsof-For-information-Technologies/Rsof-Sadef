@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using ClosedXML.Excel;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
@@ -245,6 +246,40 @@ namespace Sadef.Application.Services.Lead
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
 
             return new Response<LeadDashboardStatsDto>(dto, "Lead dashboard stats loaded");
+        }
+        public async Task<byte[]> ExportLeadDashboardStatsToExcelAsync()
+        {
+            var statsResponse = await GetLeadDashboardStatsAsync();
+            if (!statsResponse.Succeeded || statsResponse.Data == null)
+                return Array.Empty<byte>();
+
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Lead Stats");
+
+            worksheet.Cell(1, 1).Value = "Total Leads";
+            worksheet.Cell(1, 2).Value = "Leads This Month";
+            worksheet.Cell(1, 3).Value = "Active Leads";
+            worksheet.Cell(1, 4).Value = "New Leads";
+            worksheet.Cell(1, 5).Value = "Contacted";
+            worksheet.Cell(1, 6).Value = "In Discussion";
+            worksheet.Cell(1, 7).Value = "Visit Scheduled";
+            worksheet.Cell(1, 8).Value = "Converted";
+            worksheet.Cell(1, 9).Value = "Rejected";
+
+            var stats = statsResponse.Data;
+            worksheet.Cell(2, 1).Value = stats.TotalLeads;
+            worksheet.Cell(2, 2).Value = stats.LeadsThisMonth;
+            worksheet.Cell(2, 3).Value = stats.ActiveLeads;
+            worksheet.Cell(2, 4).Value = stats.NewLeads;
+            worksheet.Cell(2, 5).Value = stats.Contacted;
+            worksheet.Cell(2, 6).Value = stats.InDiscussion;
+            worksheet.Cell(2, 7).Value = stats.VisitScheduled;
+            worksheet.Cell(2, 8).Value = stats.Converted;
+            worksheet.Cell(2, 9).Value = stats.Rejected;
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
         }
     }
 }
