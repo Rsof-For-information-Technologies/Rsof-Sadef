@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sadef.Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Sadef.Application.DTOs.LeadDtos
         public string? Phone { get; set; }
         public string? Message { get; set; }
         public int? PropertyId { get; set; }
-        public int? Status { get; set; }
+        public LeadStatus? Status { get; set; }
     }
 
 }

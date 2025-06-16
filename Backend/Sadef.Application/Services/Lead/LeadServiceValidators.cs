@@ -44,8 +44,10 @@ namespace Sadef.Application.Services.Lead
                 .When(x => !string.IsNullOrWhiteSpace(x.Message));
 
             RuleFor(x => x.Status)
-                .InclusiveBetween(0, 1).WithMessage("Status must be 0 (False) or 1 (True)")
-                .When(x => x.Status.HasValue);
+            .IsInEnum()
+            .When(x => x.Status.HasValue)
+            .WithMessage("Invalid lead status value.");
+
         }
     }
 }

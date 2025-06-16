@@ -171,8 +171,8 @@ namespace Sadef.Application.Services.Lead
             if (dto.PropertyId.HasValue)
                 lead.PropertyId = dto.PropertyId;
 
-            if (dto.Status.HasValue && Enum.IsDefined(typeof(LeadStatus), dto.Status.Value))
-                lead.Status = (LeadStatus)dto.Status.Value;
+            if (dto.Status.HasValue)
+                lead.Status = dto.Status.Value;
 
             lead.UpdatedAt = DateTime.UtcNow;
 
