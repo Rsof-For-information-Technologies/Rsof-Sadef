@@ -3,7 +3,6 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using ClosedXML.Excel;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
@@ -77,7 +76,7 @@ namespace Sadef.Application.Services.Lead
 
             string cacheKey = LeadServiceHelper.BuildCacheKey(version, pageNumber, pageSize, filters);
             var cached = await _cache.GetStringAsync(cacheKey);
-            if (!string.IsNullOrEmpty(cached))
+            if (!string.IsNullOrEmpty(cached) && !isExport)
             {
                 var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<LeadDto>>(cached);
                 if (cachedResult != null)
@@ -91,6 +90,7 @@ namespace Sadef.Application.Services.Lead
             query = LeadServiceHelper.ApplyFilters(query, filters);
             query = query.OrderByDescending(b => b.CreatedAt);
 
+            // Paginated data
             var total = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var dtoList = _mapper.Map<List<LeadDto>>(items);
@@ -102,7 +102,23 @@ namespace Sadef.Application.Services.Lead
             };
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
 
-            return new Response<PaginatedResponse<LeadDto>>(paged);
+            // Export logic
+            if (isExport)
+            {
+                var allItems = await query.ToListAsync();
+                var allDtoList = _mapper.Map<List<LeadDto>>(allItems);
+                var excelBytes = LeadServiceHelper.GenerateExcelReport(allDtoList);
+
+                string base64Excel = Convert.ToBase64String(excelBytes);
+
+                paged.Extra = new Dictionary<string, object>
+                {
+                    ["exportFileBase64"] = base64Excel,
+                    ["fileName"] = $"leads_report_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx"
+                };
+            }
+
+            return new Response<PaginatedResponse<LeadDto>>(paged, "Leads retrieved successfully");
         }
 
         public async Task<Response<LeadDto>> GetByIdAsync(int id)
@@ -125,39 +141,19 @@ namespace Sadef.Application.Services.Lead
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             var lead = await repo.Queryable().FirstOrDefaultAsync(b => b.Id == dto.id);
 
-
             if (lead == null)
             {
                 return new Response<LeadDto>("Lead not found");
             }
 
-            if (!string.IsNullOrWhiteSpace(dto.FullName))
-                lead.FullName = dto.FullName;
-
-            if (!string.IsNullOrWhiteSpace(dto.Email))
-                lead.Email = dto.Email;
-
-            if (!string.IsNullOrWhiteSpace(dto.Phone))
-                lead.Phone = dto.Phone;
-
-            if (!string.IsNullOrWhiteSpace(dto.Message))
-                lead.Message = dto.Message;
-
-            if (dto.PropertyId.HasValue)
-                lead.PropertyId = dto.PropertyId;
-
-            if (dto.Status.HasValue)
-                lead.Status = dto.Status.Value;
-
-            lead.UpdatedAt = DateTime.UtcNow;
-
+            _mapper.Map(dto, lead);
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().UpdateAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
-
             await IncrementLeadVersionAsync();
 
             return new Response<LeadDto>(_mapper.Map<LeadDto>(lead), "Lead updated successfully.");
         }
+
 
         private async Task IncrementLeadVersionAsync()
         {
@@ -220,40 +216,6 @@ namespace Sadef.Application.Services.Lead
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
 
             return new Response<LeadDashboardStatsDto>(dto, "Lead dashboard stats loaded");
-        }
-        public async Task<byte[]> ExportLeadDashboardStatsToExcelAsync()
-        {
-            var statsResponse = await GetLeadDashboardStatsAsync();
-            if (!statsResponse.Succeeded || statsResponse.Data == null)
-                return Array.Empty<byte>();
-
-            using var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add("Lead Stats");
-
-            worksheet.Cell(1, 1).Value = "Total Leads";
-            worksheet.Cell(1, 2).Value = "Leads This Month";
-            worksheet.Cell(1, 3).Value = "Active Leads";
-            worksheet.Cell(1, 4).Value = "New Leads";
-            worksheet.Cell(1, 5).Value = "Contacted";
-            worksheet.Cell(1, 6).Value = "In Discussion";
-            worksheet.Cell(1, 7).Value = "Visit Scheduled";
-            worksheet.Cell(1, 8).Value = "Converted";
-            worksheet.Cell(1, 9).Value = "Rejected";
-
-            var stats = statsResponse.Data;
-            worksheet.Cell(2, 1).Value = stats.TotalLeads;
-            worksheet.Cell(2, 2).Value = stats.LeadsThisMonth;
-            worksheet.Cell(2, 3).Value = stats.ActiveLeads;
-            worksheet.Cell(2, 4).Value = stats.NewLeads;
-            worksheet.Cell(2, 5).Value = stats.Contacted;
-            worksheet.Cell(2, 6).Value = stats.InDiscussion;
-            worksheet.Cell(2, 7).Value = stats.VisitScheduled;
-            worksheet.Cell(2, 8).Value = stats.Converted;
-            worksheet.Cell(2, 9).Value = stats.Rejected;
-
-            using var stream = new MemoryStream();
-            workbook.SaveAs(stream);
-            return stream.ToArray();
         }
     }
 }

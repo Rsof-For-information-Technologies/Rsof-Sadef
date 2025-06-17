@@ -12,6 +12,8 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public int TotalCount { get; set; }
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
+        public Dictionary<string, object>? Extra { get; set; }
+
 
         public PaginatedResponse(List<T> items, int totalCount, int pageNumber, int pageSize)
         {
