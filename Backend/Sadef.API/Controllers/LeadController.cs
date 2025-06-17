@@ -21,9 +21,9 @@ namespace Sadef.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] LeadFilterDto filters, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] LeadFilterDto filters, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, bool isExport = false)
         {
-            var result = await _leadService.GetPaginatedAsync(pageNumber, pageSize, filters);
+            var result = await _leadService.GetPaginatedAsync(pageNumber, pageSize, filters, isExport);
             return Ok(result);
         }
 
@@ -37,15 +37,8 @@ namespace Sadef.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateLead([FromBody] UpdateLeadDto dto)
         {
-            if (dto.id != 0)
-            {
-                var result = await _leadService.UpdateLeadAsync(dto);
-                return Ok(result);
-            }
-
-            return BadRequest(dto.id == 0
-                ? "ID in URL must not be zero."
-                : "ID in URL and body do not match.");
+            var result = await _leadService.UpdateLeadAsync(dto);
+            return Ok(result);
         }
 
         [HttpGet("dashboard")]
@@ -53,17 +46,6 @@ namespace Sadef.API.Controllers
         {
             var result = await _leadService.GetLeadDashboardStatsAsync();
             return Ok(result);
-        }
-
-        [HttpGet("dashboard/report")]
-        public async Task<IActionResult> ExportLeadStatsToExcel()
-        {
-            var fileBytes = await _leadService.ExportLeadDashboardStatsToExcelAsync();
-            if (fileBytes == null)
-                return BadRequest("Failed to export lead stats.");
-
-            var fileName = $"LeadStats_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
-            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
 
     }

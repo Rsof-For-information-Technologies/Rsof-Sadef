@@ -7,6 +7,7 @@ using ClosedXML.Excel;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Application.Utils;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Domain.Constants;
@@ -64,25 +65,17 @@ namespace Sadef.Application.Services.Lead
             return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");
         }
 
-        public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize, LeadFilterDto filters)
+        public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize, LeadFilterDto filters, bool isExport)
         {
             string versionKey = "leads:version";
-            string? version = await _cache.GetStringAsync(versionKey); 
+            string? version = await _cache.GetStringAsync(versionKey);
             if (string.IsNullOrEmpty(version))
             {
                 version = "1";
                 await _cache.SetStringAsync(versionKey, version);
             }
 
-            string cacheKey = $"leads:version={version}:page={pageNumber}&size={pageSize}" +
-                $"&name={filters.FullName}" +
-                $"&email={filters.Email}" +
-                $"&phone={filters.Phone}" +
-                $"&prop={filters.PropertyId}" +
-                $"&status={filters.Status}" +
-                $"&from={filters.CreatedAtFrom?.ToString("yyyyMMdd")}" +
-                $"&to={filters.CreatedAtTo?.ToString("yyyyMMdd")}";
-
+            string cacheKey = LeadServiceHelper.BuildCacheKey(version, pageNumber, pageSize, filters);
             var cached = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cached))
             {
@@ -95,29 +88,9 @@ namespace Sadef.Application.Services.Lead
 
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             var query = repo.Queryable();
-
-            if (!string.IsNullOrWhiteSpace(filters.FullName))
-                query = query.Where(x => x.FullName.Contains(filters.FullName));
-
-            if (!string.IsNullOrWhiteSpace(filters.Email))
-                query = query.Where(x => x.Email.Contains(filters.Email));
-
-            if (!string.IsNullOrWhiteSpace(filters.Phone))
-                query = query.Where(x => x.Phone == filters.Phone);
-
-            if (filters.PropertyId.HasValue)
-                query = query.Where(x => x.PropertyId == filters.PropertyId);
-
-            if (filters.Status.HasValue)
-                query = query.Where(x => x.Status == filters.Status.Value);
-
-            if (filters.CreatedAtFrom.HasValue)
-                query = query.Where(x => x.CreatedAt >= filters.CreatedAtFrom.Value);
-
-            if (filters.CreatedAtTo.HasValue)
-                query = query.Where(x => x.CreatedAt <= filters.CreatedAtTo.Value);
-
+            query = LeadServiceHelper.ApplyFilters(query, filters);
             query = query.OrderByDescending(b => b.CreatedAt);
+
             var total = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var dtoList = _mapper.Map<List<LeadDto>>(items);
@@ -128,6 +101,7 @@ namespace Sadef.Application.Services.Lead
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
             };
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
+
             return new Response<PaginatedResponse<LeadDto>>(paged);
         }
 
