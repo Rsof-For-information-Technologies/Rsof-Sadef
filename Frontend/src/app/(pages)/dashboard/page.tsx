@@ -2,9 +2,7 @@ import { Title } from "rizzui";
 
 const Dashboard = () => {
     return (
-        <>
-            <Title>Dashboard</Title>
-        </>
+        <Title>Dashboard</Title>
     );
 }
 

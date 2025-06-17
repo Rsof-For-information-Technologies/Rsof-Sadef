@@ -70,9 +70,11 @@ export const routes = {
   //   sessionHistory: "/session-history",
   // },
 
+  auth:{
+    login: "/auth/login",
+    signup: "/auth/signup",
+    forgotPassword: "/auth/forgot-password",
+  },
   profile: "/profile/edit-profile",
-  login: "/login",
-  signup: "/signup",
-  forgotPassword: "/forgot-password",
 
 };

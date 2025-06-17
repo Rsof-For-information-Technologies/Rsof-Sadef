@@ -18,6 +18,8 @@ function UnAuthenticated({ children, navigate = false }: T_UnAuthenticate) {
     const isMounted = useIsMounted();
     const router = useRouter();
 
+    console.log("UnAuthenticated Rendered", { userInfo, searchParams })
+
     const logout = searchParams.get("logout")
     useEffect(() => {
         if (isMounted) {
@@ -27,7 +29,7 @@ function UnAuthenticated({ children, navigate = false }: T_UnAuthenticate) {
                 DeleteLocalStorage("user-info");
                 setUserInfo()
                 urlSearchParams.delete("logout");
-                router.push(`/${routes.login}?${urlSearchParams}`)
+                router.push(`/${routes.auth.login}?${urlSearchParams}`)
             }
             else if (getLocalStorage("user-info"))
                 setUserInfo(getLocalStorage("user-info") as User)

@@ -3,7 +3,6 @@ import { useUserStore } from '@/store/user.store'
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useIsMounted } from '@/hooks/use-is-mounted'
-import { Params } from '@/types/params'
 import { routes } from '@/config/routes'
 import { getLocalStorage } from '@/utils/localStorage';
 import { User } from '@/types/user'
@@ -23,10 +22,10 @@ function Authenticate({ children, }: T_Authenticate) {
     const searchParams = useSearchParams()
 
     const pathName = usePathname()
-    const params = useParams<Params>()
+    
+    console.log("Authenticate Rendered", { userInfo, searchParams, pathName })
     useEffect(() => {
         setUserInfo(getLocalStorage("user-info") as User)
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setUserInfo])
 
@@ -38,7 +37,7 @@ function Authenticate({ children, }: T_Authenticate) {
 
             queryParams.set("navigate_to", pathName);
 
-            router.push(`/${routes.login}?${queryParams.toString()}`);
+            router.push(`/${routes.auth.login}?${queryParams.toString()}`);
 
         }
     }, [userInfo, router, mounted, pathName, searchParams])

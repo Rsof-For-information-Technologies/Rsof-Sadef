@@ -14,6 +14,7 @@ export const useUserStore = create<T_UserStore>((set, get) => ({
     setUserInfo: (userInfo) => set((store) => ({ ...store, userInfo })),
     logOutUser: async (request) => {
         if (request) {
+            DeleteLocalStorage("user-info")
             console.log({ request })
             try {
                 const { data } = await clientAxiosInstance.post("/api/logout");

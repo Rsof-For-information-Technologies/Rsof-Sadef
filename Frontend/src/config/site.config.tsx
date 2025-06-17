@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import { LAYOUT_OPTIONS } from "@/config/enums";
 import { OpenGraph } from "next/dist/lib/metadata/types/opengraph-types";
+import logoImg from "../../public/logo.svg"
+import logoIconImg from '../../public/logo-short.svg';
 
 enum MODE {
   DARK = "dark",
@@ -10,8 +12,8 @@ enum MODE {
 export const siteConfig = {
   title: "Sadef",
   description: `Sadef Property listing company`,
-  // logo: logoImg,
-  // icon: logoIconImg,
+  logo: logoImg,
+  icon: logoIconImg,
   mode: MODE.LIGHT,
   layout: LAYOUT_OPTIONS.HYDROGEN,
   // TODO: favicon

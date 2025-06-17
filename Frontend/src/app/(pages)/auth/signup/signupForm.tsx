@@ -18,7 +18,7 @@ const initialValues = {
     rememberMe: true,
 }
 
-function LoginForm() {
+function SignupForm() {
     const router = useRouter();
     const searchParams = useSearchParams()
     const isMedium = useMedia('(max-width: 1200px)', false);
@@ -30,8 +30,10 @@ function LoginForm() {
     const onSubmit = async (state: Login) => {
 
         try {
-            const { data } = await clientAxiosInstance.post('/api/login', state);
+            const { data } = await clientAxiosInstance.post('/api/v1/user/login', state);
 
+            console.log({ data })
+            
             setLocalStorage("user-info", data);
 
             if (searchParams.get("navigate_to"))
@@ -60,7 +62,7 @@ function LoginForm() {
             // setUserInfo()
 
             urlSearchParams.delete("logout");
-            router.push(`/${routes.login}?${urlSearchParams}`)
+            router.push(`/${routes.auth.login}?${urlSearchParams}`)
         }
     }, [logout, router, searchParams])
 
@@ -109,4 +111,4 @@ function LoginForm() {
     )
 }
 
-export default LoginForm
+export default SignupForm
