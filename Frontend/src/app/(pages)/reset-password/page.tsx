@@ -1,12 +1,10 @@
-import { Suspense } from "react";
 import ResetPasswordForm from "./resetPasswordForm";
 import { serverAxiosInstance } from "@/utils/axios.instance";
 import { AxiosError } from "axios";
 import { T_SearchParams } from "@/types/searchParams";
-import TextErrorCard from "../(components)/TextErrorCard";
 import { Metadata } from "next";
+import TextErrorCard from "../(components)/TextErrorCard";
 import { logoutOnCookieExpire } from "@/utils/logoutOnCookieExpire";
-import { Params } from "@/types/params";
 
 type QueryParams = T_SearchParams & {
     token: string
@@ -20,12 +18,12 @@ export const metadata: Metadata = {
     title: "Reset Password",
 };
 
-const getUserEmail = async (searchParams: QueryParams, params: Params) => {
+const getUserEmail = async (searchParams: QueryParams) => {
     try {
         const { data } = await serverAxiosInstance.get<UserEmail>('/api/user/verify/reset-token?token=' + searchParams.token)
         return { email: data.email }
     } catch (error) {
-        const deleted = logoutOnCookieExpire(error, searchParams, params)
+        const deleted = logoutOnCookieExpire(error)
         if (!deleted)
             return undefined
         console.log('error occurred while fetching user email')
@@ -33,9 +31,9 @@ const getUserEmail = async (searchParams: QueryParams, params: Params) => {
     }
 }
 
-export default async function Page({ searchParams, params }: { searchParams: QueryParams; params: Params; }) {
+export default async function Page({ searchParams }: { searchParams: QueryParams; }) {
 
-    const res = await getUserEmail(searchParams, params);
+    const res = await getUserEmail(searchParams);
     if (!res)
         return
 
@@ -50,9 +48,7 @@ export default async function Page({ searchParams, params }: { searchParams: Que
     }
     else {
         return (
-
             <ResetPasswordForm email={email as string} />
-
         )
     }
 
