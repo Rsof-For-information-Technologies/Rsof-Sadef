@@ -3,10 +3,12 @@ using Sadef.Application.DTOs.BlogDtos;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
+using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
+using Sadef.Domain.MaintenanceRequestEntity;
 
 namespace Sadef.Application.MappingProfile
 {
@@ -40,6 +42,11 @@ namespace Sadef.Application.MappingProfile
             //Lead
             CreateMap<CreateLeadDto, Lead>();
             CreateMap<Lead, LeadDto>();
+
+
+            // MaintenanceRequest
+            CreateMap<CreateMaintenanceRequestDto, MaintenanceRequest>();
+            CreateMap<MaintenanceRequest, MaintenanceRequestDto>();
 
 
         }

@@ -4,6 +4,7 @@ using Sadef.Application.Services.Blogs;
 using Sadef.Application.Services.Email;
 using Sadef.Application.Services.Favorites;
 using Sadef.Application.Services.Lead;
+using Sadef.Application.Services.MaintenanceRequest;
 using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
 using Sadef.Common.EFCore.Middleware;
@@ -27,6 +28,7 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<IBlogService, BlogService>();
                    svc.AddScoped<IFavoriteService, FavoriteService>();
                    svc.AddScoped<ILeadService, LeadService>();
+                   svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
 
                }
            );
