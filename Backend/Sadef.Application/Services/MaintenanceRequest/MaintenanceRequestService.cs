@@ -95,6 +95,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().AddAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
             responseDto.ImageBase64Strings = request.Images?
