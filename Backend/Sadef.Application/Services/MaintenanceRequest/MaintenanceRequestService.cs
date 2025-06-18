@@ -4,17 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
-using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
-using Sadef.Application.Services.Lead;
 using Sadef.Application.Utils;
 using Sadef.Common.Domain;
-using Sadef.Common.Infrastructure.EfCore;
 using Sadef.Common.Infrastructure.Validator;
 using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Domain.Constants;
-using Sadef.Domain.LeadEntity;
 using Sadef.Domain.MaintenanceRequestEntity;
 
 namespace Sadef.Application.Services.MaintenanceRequest
