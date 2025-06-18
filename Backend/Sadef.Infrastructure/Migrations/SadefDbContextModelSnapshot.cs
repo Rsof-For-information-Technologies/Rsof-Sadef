@@ -322,6 +322,44 @@ namespace Sadef.Infrastructure.Migrations
                     b.ToTable("Leads", (string)null);
                 });
 
+            modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("MaintenanceRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaintenanceRequestId");
+
+                    b.ToTable("MaintenanceImages", (string)null);
+                });
+
             modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -345,9 +383,6 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<int>("LeadId")
                         .HasColumnType("int");
 
-                    b.Property<string>("MediaUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
@@ -360,6 +395,44 @@ namespace Sadef.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MaintenanceRequests", (string)null);
+                });
+
+            modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceVideo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaintenanceRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("VideoData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaintenanceRequestId");
+
+                    b.ToTable("MaintenanceVideos", (string)null);
                 });
 
             modelBuilder.Entity("Sadef.Domain.PropertyEntity.FavoriteProperty", b =>
@@ -665,6 +738,28 @@ namespace Sadef.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceImage", b =>
+                {
+                    b.HasOne("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequest", "MaintenanceRequest")
+                        .WithMany("Images")
+                        .HasForeignKey("MaintenanceRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MaintenanceRequest");
+                });
+
+            modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceVideo", b =>
+                {
+                    b.HasOne("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequest", "MaintenanceRequest")
+                        .WithMany("Videos")
+                        .HasForeignKey("MaintenanceRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MaintenanceRequest");
+                });
+
             modelBuilder.Entity("Sadef.Domain.PropertyEntity.FavoriteProperty", b =>
                 {
                     b.HasOne("Sadef.Domain.PropertyEntity.Property", "Property")
@@ -696,6 +791,13 @@ namespace Sadef.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequest", b =>
+                {
+                    b.Navigation("Images");
+
+                    b.Navigation("Videos");
                 });
 
             modelBuilder.Entity("Sadef.Domain.PropertyEntity.Property", b =>

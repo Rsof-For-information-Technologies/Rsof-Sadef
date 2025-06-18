@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,8 @@ namespace Sadef.Application.DTOs.MaintenanceRequestDtos
     {
         public int LeadId { get; set; }
         public required string Description { get; set; }
-        public string? MediaUrl { get; set; }
+        public List<IFormFile>? Images { get; set; }
+        public List<IFormFile>? Videos { get; set; }
     }
 
 }

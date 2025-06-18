@@ -12,11 +12,10 @@ namespace Sadef.Application.DTOs.MaintenanceRequestDtos
         public int Id { get; set; }
         public int LeadId { get; set; }
         public string? Description { get; set; }
-        public string? MediaUrl { get; set; }
         public MaintenanceRequestStatus? Status { get; set; }
+        public List<string>? ImageBase64Strings { get; set; }
+        public List<string>? VideoUrls { get; set; }
         public string? AdminResponse { get; set; }
         public DateTime CreatedAt { get; set; }
     }
-
-
 }

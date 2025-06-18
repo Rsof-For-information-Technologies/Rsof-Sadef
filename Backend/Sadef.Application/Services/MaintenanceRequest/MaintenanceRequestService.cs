@@ -6,6 +6,7 @@ using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Domain.Constants;
+using Sadef.Domain.MaintenanceRequestEntity;
 
 namespace Sadef.Application.Services.MaintenanceRequest
 {
@@ -45,6 +46,38 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 return new Response<MaintenanceRequestDto>("Only converted leads can submit maintenance requests.");
 
             var request = _mapper.Map<Domain.MaintenanceRequestEntity.MaintenanceRequest>(dto);
+            request.Images = new List<MaintenanceImage>();
+            if (dto.Images != null)
+            {
+                foreach (var file in dto.Images)
+                {
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
+                    var image = new MaintenanceImage
+                    {
+                        ImageData = ms.ToArray(),
+                        ContentType = file.ContentType
+                    };
+                    request.Images.Add(image);
+                }
+            }
+
+            request.Videos = new List<MaintenanceVideo>();
+            if (dto.Videos != null)
+            {
+                foreach (var file in dto.Videos)
+                {
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
+                    var video = new MaintenanceVideo
+                    {
+                        VideoData = ms.ToArray(),
+                        ContentType = file.ContentType
+                    };
+                    request.Videos.Add(video);
+                }
+            }
+
             request.Status = MaintenanceRequestStatus.Pending;
             request.CreatedAt = DateTime.UtcNow;
             request.CreatedBy = "system";

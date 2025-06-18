@@ -14,7 +14,7 @@ namespace Sadef.API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateRequest([FromBody] CreateMaintenanceRequestDto dto)
+        public async Task<IActionResult> CreateRequest([FromForm] CreateMaintenanceRequestDto dto)
         {
             var result = await _maintenanceService.CreateRequestAsync(dto);
             return Ok(result);
