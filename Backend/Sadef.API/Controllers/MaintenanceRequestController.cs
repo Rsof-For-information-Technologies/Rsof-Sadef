@@ -34,5 +34,13 @@ namespace Sadef.API.Controllers
             var result = await _maintenanceService.GetByIdAsync(id);
             return Ok(result);
         }
+
+        [HttpGet("dashboard-stats")]
+        public async Task<IActionResult> GetDashboardStats()
+        {
+            var result = await _maintenanceService.GetDashboardStatsAsync();
+            return Ok(result);
+        }
+
     }
 }

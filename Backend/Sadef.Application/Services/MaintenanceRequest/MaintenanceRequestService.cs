@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
@@ -18,17 +20,20 @@ namespace Sadef.Application.Services.MaintenanceRequest
         private readonly IMapper _mapper;
         private readonly IValidator<CreateMaintenanceRequestDto> _validator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
+        private readonly IDistributedCache _cache;
 
         public MaintenanceRequestService(
             IUnitOfWorkAsync uow,
             IMapper mapper,
             IValidator<CreateMaintenanceRequestDto> validator,
-            IQueryRepositoryFactory queryRepositoryFactory)
+            IQueryRepositoryFactory queryRepositoryFactory,
+            IDistributedCache cache)
         {
             _uow = uow;
             _mapper = mapper;
             _validator = validator;
             _queryRepositoryFactory = queryRepositoryFactory;
+            _cache = cache;
         }
 
         public async Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto)
@@ -121,7 +126,6 @@ namespace Sadef.Application.Services.MaintenanceRequest
             return new Response<PaginatedResponse<MaintenanceRequestDto>>(paged, "Maintenance requests retrieved successfully.");
         }
 
-
         public async Task<Response<MaintenanceRequestDto>> GetByIdAsync(int id)
         {
             var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
@@ -146,5 +150,50 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             return new Response<MaintenanceRequestDto>(dto, "Maintenance request found successfully");
         }
+
+        public async Task<Response<MaintenanceRequestDashboardStatsDto>> GetDashboardStatsAsync()
+        {
+            string cacheKey = "maintenancerequest:dashboard:stats";
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cached))
+            {
+                var dtoData = JsonConvert.DeserializeObject<MaintenanceRequestDashboardStatsDto>(cached);
+                if (dtoData != null)
+                {
+                    return new Response<MaintenanceRequestDashboardStatsDto>(dtoData, "Maintenance dashboard stats loaded");
+                }
+            }
+
+            var query = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>().Queryable();
+            var now = DateTime.UtcNow;
+            var currentMonthStart = new DateTime(now.Year, now.Month, 1);
+
+            var total = await query.CountAsync();
+            var requestsThisMonth = await query.CountAsync(r => r.CreatedAt >= currentMonthStart);
+
+            var pending = await query.CountAsync(r => r.Status == MaintenanceRequestStatus.Pending);
+            var inProgress = await query.CountAsync(r => r.Status == MaintenanceRequestStatus.InProgress);
+            var resolved = await query.CountAsync(r => r.Status == MaintenanceRequestStatus.Resolved);
+            var rejected = await query.CountAsync(r => r.Status == MaintenanceRequestStatus.Rejected);
+
+            var dto = new MaintenanceRequestDashboardStatsDto
+            {
+                TotalRequests = total,
+                RequestsThisMonth = requestsThisMonth,
+                Pending = pending,
+                InProgress = inProgress,
+                Resolved = resolved,
+                Rejected = rejected
+            };
+
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+            };
+            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
+
+            return new Response<MaintenanceRequestDashboardStatsDto>(dto, "Maintenance dashboard stats loaded");
+        }
+
     }
 }
