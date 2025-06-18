@@ -97,6 +97,13 @@ namespace Sadef.Application.Services.MaintenanceRequest
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
+            responseDto.ImageBase64Strings = request.Images?
+                .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
+                .ToList() ?? new();
+            responseDto.VideoUrls = request.Videos?
+                .Select(video => $"data:{video.ContentType};base64,{Convert.ToBase64String(video.VideoData)}")
+                .ToList() ?? new();
+
             return new Response<MaintenanceRequestDto>(responseDto, "Maintenance request submitted successfully.");
         }
         public async Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters)
