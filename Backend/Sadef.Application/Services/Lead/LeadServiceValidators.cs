@@ -22,4 +22,32 @@ namespace Sadef.Application.Services.Lead
                 .MaximumLength(500);
         }
     }
+
+    public class UpdateLeadValidator : AbstractValidator<UpdateLeadDto>
+    {
+        public UpdateLeadValidator()
+        {
+            RuleFor(x => x.FullName)
+                .MaximumLength(100)
+                .When(x => !string.IsNullOrWhiteSpace(x.FullName));
+
+            RuleFor(x => x.Email)
+                .EmailAddress().WithMessage("Invalid email format")
+                .When(x => !string.IsNullOrWhiteSpace(x.Email));
+
+            RuleFor(x => x.Phone)
+                .MaximumLength(20)
+                .When(x => !string.IsNullOrWhiteSpace(x.Phone));
+
+            RuleFor(x => x.Message)
+                .MaximumLength(500)
+                .When(x => !string.IsNullOrWhiteSpace(x.Message));
+
+            RuleFor(x => x.Status)
+            .IsInEnum()
+            .When(x => x.Status.HasValue)
+            .WithMessage("Invalid lead status value.");
+
+        }
+    }
 }

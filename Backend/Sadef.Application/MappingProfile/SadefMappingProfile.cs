@@ -42,6 +42,9 @@ namespace Sadef.Application.MappingProfile
             //Lead
             CreateMap<CreateLeadDto, Lead>();
             CreateMap<Lead, LeadDto>();
+            CreateMap<UpdateLeadDto, Lead>()
+            .ForAllMembers(opts =>
+                opts.Condition((src, dest, srcMember) => srcMember != null));
 
 
             // MaintenanceRequest
