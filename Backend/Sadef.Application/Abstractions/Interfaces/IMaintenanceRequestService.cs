@@ -6,11 +6,11 @@ namespace Sadef.Application.Abstractions.Interfaces
 {
     public interface IMaintenanceRequestService
     {
-        Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto);
         Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters);
+        Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto);
+        Task<Response<bool>> UpdateStatusAsync(UpdateMaintenanceRequestStatusDto dto);
         Task<Response<MaintenanceRequestDashboardStatsDto>> GetDashboardStatsAsync();
         Task<Response<MaintenanceRequestDto>> GetByIdAsync(int id);
 
     }
-
 }

@@ -4,12 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
+using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Application.Services.Lead;
 using Sadef.Application.Utils;
 using Sadef.Common.Domain;
+using Sadef.Common.Infrastructure.EfCore;
+using Sadef.Common.Infrastructure.Validator;
 using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Domain.Constants;
+using Sadef.Domain.LeadEntity;
 using Sadef.Domain.MaintenanceRequestEntity;
 
 namespace Sadef.Application.Services.MaintenanceRequest
@@ -18,27 +23,30 @@ namespace Sadef.Application.Services.MaintenanceRequest
     {
         private readonly IUnitOfWorkAsync _uow;
         private readonly IMapper _mapper;
-        private readonly IValidator<CreateMaintenanceRequestDto> _validator;
+        private readonly IValidator<CreateMaintenanceRequestDto> _createMaintenanceRequestValidator;
+        private readonly IValidator<UpdateMaintenanceRequestStatusDto> _updateMaintenanceRequestStatusValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IDistributedCache _cache;
 
         public MaintenanceRequestService(
             IUnitOfWorkAsync uow,
             IMapper mapper,
-            IValidator<CreateMaintenanceRequestDto> validator,
+            IValidator<CreateMaintenanceRequestDto> createMaintenanceRequestValidator,
+            IValidator<UpdateMaintenanceRequestStatusDto> updateMaintenanceRequestStatusValidator,
             IQueryRepositoryFactory queryRepositoryFactory,
             IDistributedCache cache)
         {
             _uow = uow;
             _mapper = mapper;
-            _validator = validator;
+            _createMaintenanceRequestValidator = createMaintenanceRequestValidator;
             _queryRepositoryFactory = queryRepositoryFactory;
+            _updateMaintenanceRequestStatusValidator = updateMaintenanceRequestStatusValidator;
             _cache = cache;
         }
 
         public async Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto)
         {
-            var validation = await _validator.ValidateAsync(dto);
+            var validation = await _createMaintenanceRequestValidator.ValidateAsync(dto);
             if (!validation.IsValid)
                 return new Response<MaintenanceRequestDto>(validation.Errors.First().ErrorMessage);
 
@@ -193,6 +201,35 @@ namespace Sadef.Application.Services.MaintenanceRequest
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
 
             return new Response<MaintenanceRequestDashboardStatsDto>(dto, "Maintenance dashboard stats loaded");
+        }
+        public async Task<Response<bool>> UpdateStatusAsync(UpdateMaintenanceRequestStatusDto dto)
+        {
+            var validationResult = await _updateMaintenanceRequestStatusValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessage = validationResult.Errors.First().ErrorMessage;
+
+                return new Response<bool>
+                {
+                    Succeeded = false,
+                    Message = errorMessage,
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
+            }
+
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
+            var request = await repo.Queryable().FirstOrDefaultAsync(r => r.Id == dto.Id);
+            if (request == null)
+                return new Response<bool>("Maintenance request not found");
+
+            _mapper.Map(dto, request);
+            request.UpdatedAt = DateTime.UtcNow;
+
+            await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().UpdateAsync(request);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+
+            return new Response<bool>(true, "Maintenance request status updated successfully.");
         }
 
     }

@@ -49,10 +49,13 @@ namespace Sadef.Application.MappingProfile
 
             // MaintenanceRequest
             CreateMap<CreateMaintenanceRequestDto, MaintenanceRequest>()
-            .ForMember(dest => dest.Images, opt => opt.Ignore())
-            .ForMember(dest => dest.Videos, opt => opt.Ignore());
-
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.Videos, opt => opt.Ignore());
             CreateMap<MaintenanceRequest, MaintenanceRequestDto>();
+            CreateMap<UpdateMaintenanceRequestStatusDto, MaintenanceRequest>()
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+
 
 
         }
