@@ -39,9 +39,9 @@ export default function Header({ className }: { className?: string }) {
 
           <HamburgerButton
             view={<Suspense>
-              <Authenticate>
+              {/* <Authenticate> */}
                 <Sidebar className="static w-full 2xl:w-full" />
-              </Authenticate>
+              {/* </Authenticate> */}
             </Suspense>}
           />
 

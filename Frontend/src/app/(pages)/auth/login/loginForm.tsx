@@ -99,7 +99,7 @@ function LoginForm() {
                         className="[&>label>span]:font-medium"
                     />
                     <Link
-                        href={`/${routes.auth.forgotPassword}`}
+                        href={`${routes.auth.forgotPassword}`}
                         className="h-auto p-0 text-sm font-semibold text-gray-700 underline transition-colors hover:text-primary hover:no-underline"
                     >
                         Forgot Password

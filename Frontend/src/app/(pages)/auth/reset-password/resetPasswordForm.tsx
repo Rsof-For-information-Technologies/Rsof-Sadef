@@ -8,10 +8,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useSearchParams, useRouter, useParams } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import useMedia from "react-use/lib/useMedia";
 import { Input } from 'rizzui'
 import { toast } from 'sonner';
 
 export default function ResetPasswordForm({ email }: { email: string}) {
+    const isMedium = useMedia('(max-width: 1200px)', false);
     const router = useRouter()
     const searchParams = useSearchParams()
     const params = useParams<Params>();
@@ -19,6 +21,7 @@ export default function ResetPasswordForm({ email }: { email: string}) {
         resolver: zodResolver(resetPasswordValidator),
         mode: "all",
         defaultValues: {
+            email: "",
             confirmNewPassword: "",
             newPassword: "",
         }
@@ -27,7 +30,7 @@ export default function ResetPasswordForm({ email }: { email: string}) {
     const submitForm: SubmitHandler<T_ResetPasswordBody> = async (state) => {
         try {
             const token = searchParams.get("token")
-            const { data } = await clientAxiosInstance.post(`/api/user/reset-password?token=${token}`, state);
+            const { data } = await clientAxiosInstance.post(`/api/v1/user/reset-password?token=${token}`, state);
             router.push(`/${params.locale}/login`)
             reset()
             toast.success("Password reset successfully")
@@ -48,16 +51,14 @@ export default function ResetPasswordForm({ email }: { email: string}) {
         <div className="flex w-full flex-col justify-between" >
             <div className=" flex w-full flex-col justify-center px-5">
                 <div className=" mx-auto w-full max-w-md py-12 md:max-w-lg lg:max-w-xl 2xl:pb-8 2xl:pt-2">
-                    <h1 className="mb-4 text-center text-[28px] font-bold md:text-3xl md:!leading-normal lg:text-4xl">
-                        Reset account password.
-                    </h1>
                     <p className="text-center mb-10">
                         Enter a new password for your {email}
                     </p>
                     <form action={() => handleSubmit(submitForm)()}>
                         <div className="space-y-6">
                             <Input
-                                className="max-w-[400px] @4xl:max-w-none  w-full"
+                                className="[&>label>span]:font-medium"
+                                size={isMedium ? 'lg' : 'xl'}
                                 placeholder="Enter new password"
                                 label="New password"
                                 id='newPassword'
@@ -66,7 +67,7 @@ export default function ResetPasswordForm({ email }: { email: string}) {
                                 error={errors.newPassword?.message}
                             />
                             <Input
-                                className="max-w-[400px] @4xl:max-w-none  w-full"
+                                className="[&>label>span]:font-medium"
                                 label="Confirm new Password"
                                 placeholder="Confirm new Password"
                                 id='confirmNewPassword'
@@ -84,7 +85,6 @@ export default function ResetPasswordForm({ email }: { email: string}) {
                                     Reset password
                                 </span>
                             </FormStatusButton>
-
                         </div>
                     </form>
                 </div>
@@ -92,7 +92,3 @@ export default function ResetPasswordForm({ email }: { email: string}) {
         </div >
     )
 }
-
-
-
-

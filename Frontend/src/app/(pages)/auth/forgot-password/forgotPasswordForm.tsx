@@ -17,11 +17,6 @@ const initialValues = {
     email: "",
 }
 
-export const metadata: Metadata = {
-    title: "Forgot Password",
-    description: "Reset your password",
-};
-
 export default function ForgotPasswordForm() {
     const isMedium = useMedia('(max-width: 1200px)', false);
     const router = useRouter()
@@ -49,11 +44,7 @@ export default function ForgotPasswordForm() {
     return (
         <div className="flex w-full flex-col justify-between">
             <div className=" flex w-full flex-col justify-center px-5">
-                <div className=" mx-auto w-full max-w-md py-12 md:max-w-lg lg:max-w-xl 2xl:pb-8 2xl:pt-2">
-                    <h1 className="mb-7 text-center text-[28px] font-bold leading-snug md:text-3xl md:!leading-normal lg:mb-10 lg:text-4xl lea">
-                        Having trouble to sign in? <br className="hidden sm:inline-block" />
-                        Reset your password.
-                    </h1>
+                <div className=" mx-auto w-full max-w-md pb-12 md:max-w-lg lg:max-w-xl 2xl:pb-8 2xl:pt-2">
                     <form action={() => handleSubmit(onSubmit)()}>
                         <div className="space-y-6">
                             <Input

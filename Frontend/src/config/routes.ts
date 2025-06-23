@@ -70,6 +70,13 @@ export const routes = {
   //   sessionHistory: "/session-history",
   // },
 
+  blog:{
+    list: "/blogs",
+    create: "/blogs/create",
+    details: (blogId: string) => `/blogs/${blogId}`,
+    update: (blogId: string) => `/blogs/${blogId}/update`,
+  },
+
   auth:{
     login: "/auth/login",
     signup: "/auth/signup",
