@@ -287,6 +287,7 @@ namespace Sadef.Application.Services.User
 
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
+            user.Role = request.Role;
 
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
