@@ -114,3 +114,14 @@ export const deleteBlog = async (id: string | number) => {
         throw error;
     }
 };
+
+export const getBlogById = async (id: string | number) => {
+    const api = apiCall();
+    try {
+        const response = await api.get<CreateBlogResponse>(`/api/v1/blog/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Get blog by ID failed:', error);
+        throw error;
+    }
+};
