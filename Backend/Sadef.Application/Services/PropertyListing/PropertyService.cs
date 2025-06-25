@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -139,7 +140,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
-                return new Response<PropertyDto>("Property not found");
+                return new Response<PropertyDto>("Property not found.");
 
             var dto = _mapper.Map<PropertyDto>(property);
             dto.ImageBase64Strings = property.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
@@ -160,8 +161,10 @@ namespace Sadef.Application.Services.PropertyListing
 
             if (property == null)
                 return new Response<string>("Property not found");
+            property.IsActive = false; // Soft delete
 
-            await _uow.RepositoryAsync<Property>().DeleteAsync(property);
+
+            await _uow.RepositoryAsync<Property>().UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("property:page=1&size=10");
             return new Response<string>("Property deleted successfully");
@@ -339,8 +342,8 @@ namespace Sadef.Application.Services.PropertyListing
                 var dtoData = JsonConvert.DeserializeObject<PropertyDashboardStatsDto>(cached);
                 return new Response<PropertyDashboardStatsDto>(dtoData, "Dashboard stats loaded");
             }
-
             var query = _queryRepositoryFactory.QueryRepository<Property>().Queryable();
+
             var now = DateTime.UtcNow;
             var oneWeekAgo = now.AddDays(-7);
 
@@ -371,6 +374,9 @@ namespace Sadef.Application.Services.PropertyListing
                 .GroupBy(p => p.UnitCategory)
                 .Select(g => new { Category = g.Key.ToString(), Count = g.Count() })
                 .ToDictionaryAsync(g => g.Category ?? "Unknown", g => g.Count);
+            var activeProperties = await query
+                .Where(p => p.IsActive.HasValue && p.IsActive.Value)
+                .CountAsync();
 
             var dto = new PropertyDashboardStatsDto
             {
@@ -386,7 +392,8 @@ namespace Sadef.Application.Services.PropertyListing
                 PropertiesWithInvestmentData = propertiesWithInvestmentData,
                 TotalExpectedAnnualRent = totalRent,
                 TotalProjectedResaleValue = totalResale,
-                UnitCategoryCounts = unitCategoryCounts
+                UnitCategoryCounts = unitCategoryCounts,
+                activeProperties = activeProperties
             };
 
             var options = new DistributedCacheEntryOptions
