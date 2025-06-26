@@ -29,6 +29,8 @@ namespace Sadef.Domain.PropertyEntity
         public DateTime? ExpectedDeliveryDate { get; set; }
         public bool IsInvestorOnly { get; set; } = false;
         public List<string>? Features { get; set; }
+        public int? TotalFloors { get; set; }
+        public bool? IsActive { get; set; } = true;
 
     }
 

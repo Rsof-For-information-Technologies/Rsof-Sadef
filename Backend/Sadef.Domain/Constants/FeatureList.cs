@@ -1,0 +1,37 @@
+﻿namespace Sadef.Domain.Constants
+{
+    public enum FeatureList
+    {
+        AirConditioning,
+        Balcony,
+        BuiltInWardrobes,
+        CentralHeating,
+        CoveredParking,
+        Elevator,
+        Garden,
+        FitnessCenter,
+        MaidsRoom,
+        PetsAllowed,
+        PrivateGarage,
+        PrivatePool,
+        SecuritySystem,
+        SharedPool,
+        SmartHomeSystem,
+        StorageRoom,
+        StudyOrOffice,
+        ViewofLandmark,
+        ViewofWater,
+        WalkinCloset,
+        WheelchairAccess,
+        ChildrenPlayArea,
+        BarbecueArea,
+        LaundryRoom,
+        HighFloor,
+        LowFloor,
+        NearPublicTransport,
+        NearSchool,
+        NearSupermarket,
+        ConciergeService,
+        InternetOrWiFiReady
+    }
+}

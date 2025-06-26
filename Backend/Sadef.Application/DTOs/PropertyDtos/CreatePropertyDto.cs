@@ -21,7 +21,6 @@ namespace Sadef.Application.DTOs.PropertyDtos
             public int? Bedrooms { get; set; }
             public int? Bathrooms { get; set; }
             public List<IFormFile>? Images { get; set; }
-            public PropertyStatus Status { get; set; }
             public List<IFormFile>? Videos { get; set; }
             public string? UnitName { get; set; }
             public decimal? ProjectedResaleValue { get; set; }
@@ -32,6 +31,8 @@ namespace Sadef.Application.DTOs.PropertyDtos
             public string? WhatsAppNumber { get; set; }
             public DateTime? ExpectedDeliveryDate { get; set; }
             public bool IsInvestorOnly { get; set; } = false;
-            public List<string>? Features { get; set; }
+            public List<FeatureList>? Features { get; set; }
+            public int? TotalFloors { get; set; }
+
     }
 }
