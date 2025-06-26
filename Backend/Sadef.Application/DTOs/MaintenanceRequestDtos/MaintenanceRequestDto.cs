@@ -17,5 +17,6 @@ namespace Sadef.Application.DTOs.MaintenanceRequestDtos
         public List<string>? VideoUrls { get; set; }
         public string? AdminResponse { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

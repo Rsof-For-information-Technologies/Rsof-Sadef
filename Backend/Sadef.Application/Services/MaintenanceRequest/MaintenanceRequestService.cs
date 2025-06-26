@@ -236,5 +236,24 @@ namespace Sadef.Application.Services.MaintenanceRequest
             return new Response<bool>(true, "Maintenance request status updated successfully.");
         }
 
+        public async Task<Response<string>> DeletePropertyAsync(int id)
+        {
+            var queryRepo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
+            var request = await queryRepo
+                .Queryable()
+                .Include(p => p.Images!)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (request == null)
+                return new Response<string>("Maintenance Request not found");
+            request.IsActive = false; // Soft delete
+
+            await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().UpdateAsync(request);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            var response = new Response<string>("Request deleted successfully");
+            response.Succeeded = true;
+            return response;
+        }
     }
 }
