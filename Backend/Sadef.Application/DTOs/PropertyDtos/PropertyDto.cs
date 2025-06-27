@@ -8,8 +8,8 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public string Title { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        public string PropertyType { get; set; }
-        public string UnitCategory { get; set; }
+        public PropertyType PropertyType { get; set; }
+        public UnitCategory? UnitCategory { get; set; }
         public string City { get; set; }
         public string Location { get; set; }
         public double AreaSize { get; set; }
@@ -29,7 +29,7 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public string? WhatsAppNumber { get; set; }
         public DateTime? ExpectedDeliveryDate { get; set; }
         public bool IsInvestorOnly { get; set; } = false;
-        public List<string>? Features { get; set; }
+        public List<FeatureList>? Features { get; set; }
         public bool? IsActive { get; set; } = true;
     }
 }
