@@ -227,19 +227,70 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 };
             }
 
-            var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
-            var request = await repo.Queryable().FirstOrDefaultAsync(r => r.Id == dto.Id);
+            var repo = _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
+            var request = await _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>()
+                .Queryable()
+                .Include(r => r.Images)
+                .Include(r => r.Videos)
+                .FirstOrDefaultAsync(r => r.Id == dto.Id);
+
             if (request == null)
                 return new Response<MaintenanceRequestDto>("Maintenance request not found");
 
-            _mapper.Map(dto, request);
+            request.Description = dto.Description;
             request.UpdatedAt = DateTime.UtcNow;
 
-            await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().UpdateAsync(request);
+            if (dto.Images != null && dto.Images.Any())
+                request.Images?.Clear();
+
+            if (dto.Videos != null && dto.Videos.Any())
+                request.Videos?.Clear();
+
+            if (dto.Images != null)
+            {
+                request.Images ??= new List<MaintenanceImage>();
+                foreach (var file in dto.Images)
+                {
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
+                    var image = new MaintenanceImage
+                    {
+                        ImageData = ms.ToArray(),
+                        ContentType = file.ContentType
+                    };
+                    request.Images.Add(image);
+                }
+            }
+
+            if (dto.Videos != null)
+            {
+                request.Videos ??= new List<MaintenanceVideo>();
+                foreach (var file in dto.Videos)
+                {
+                    using var ms = new MemoryStream();
+                    await file.CopyToAsync(ms);
+                    var video = new MaintenanceVideo
+                    {
+                        VideoData = ms.ToArray(),
+                        ContentType = file.ContentType
+                    };
+                    request.Videos.Add(video);
+                }
+            }
+
+            await repo.UpdateAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
+            responseDto.ImageBase64Strings = request.Images?
+                .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
+                .ToList() ?? new();
+
+            responseDto.VideoUrls = request.Videos?
+                .Select(video => $"data:{video.ContentType};base64,{Convert.ToBase64String(video.VideoData)}")
+                .ToList() ?? new();
+
             return new Response<MaintenanceRequestDto>(responseDto, "Maintenance request updated successfully.");
         }
 
