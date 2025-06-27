@@ -11,7 +11,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<bool>> UpdateMaintenanceRequestAsync(UpdateMaintenanceRequestDto dto);
         Task<Response<MaintenanceRequestDashboardStatsDto>> GetDashboardStatsAsync();
         Task<Response<MaintenanceRequestDto>> GetByIdAsync(int id);
-        Task<Response<string>> DeletePropertyAsync(int id);
+        Task<Response<string>> DeleteMaintenanceRequestAsync(int id);
 
     }
 }

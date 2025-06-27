@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
-using Sadef.Application.Services.MaintenanceRequest;
 using Sadef.Common.Infrastructure.Wrappers;
 
 namespace Sadef.API.Controllers
@@ -53,7 +52,7 @@ namespace Sadef.API.Controllers
         [HttpDelete("delete")]
         public async Task<ActionResult<Response<string>>> Delete(int id)
         {
-            var result = await _maintenanceService.DeletePropertyAsync(id);
+            var result = await _maintenanceService.DeleteMaintenanceRequestAsync(id);
             return Ok(result);
         }
 

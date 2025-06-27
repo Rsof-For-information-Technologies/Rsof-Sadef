@@ -236,7 +236,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             return new Response<bool>(true, "Maintenance request status updated successfully.");
         }
 
-        public async Task<Response<string>> DeletePropertyAsync(int id)
+        public async Task<Response<string>> DeleteMaintenanceRequestAsync(int id)
         {
             var queryRepo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
             var request = await queryRepo
