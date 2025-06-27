@@ -20,7 +20,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
         private readonly IUnitOfWorkAsync _uow;
         private readonly IMapper _mapper;
         private readonly IValidator<CreateMaintenanceRequestDto> _createMaintenanceRequestValidator;
-        private readonly IValidator<UpdateMaintenanceRequestStatusDto> _updateMaintenanceRequestStatusValidator;
+        private readonly IValidator<UpdateMaintenanceRequestDto> _updateMaintenanceRequestStatusValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IDistributedCache _cache;
 
@@ -28,7 +28,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             IUnitOfWorkAsync uow,
             IMapper mapper,
             IValidator<CreateMaintenanceRequestDto> createMaintenanceRequestValidator,
-            IValidator<UpdateMaintenanceRequestStatusDto> updateMaintenanceRequestStatusValidator,
+            IValidator<UpdateMaintenanceRequestDto> updateMaintenanceRequestStatusValidator,
             IQueryRepositoryFactory queryRepositoryFactory,
             IDistributedCache cache)
         {
@@ -206,7 +206,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             return new Response<MaintenanceRequestDashboardStatsDto>(dto, "Maintenance dashboard stats loaded");
         }
-        public async Task<Response<bool>> UpdateStatusAsync(UpdateMaintenanceRequestStatusDto dto)
+        public async Task<Response<bool>> UpdateMaintenanceRequestAsync(UpdateMaintenanceRequestDto dto)
         {
             var validationResult = await _updateMaintenanceRequestStatusValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)

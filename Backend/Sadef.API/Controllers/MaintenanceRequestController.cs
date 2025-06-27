@@ -44,9 +44,9 @@ namespace Sadef.API.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateStatus([FromBody] UpdateMaintenanceRequestStatusDto dto)
+        public async Task<IActionResult> UpdateMaintenanceRequest([FromBody] UpdateMaintenanceRequestDto dto)
         {
-            var result = await _maintenanceService.UpdateStatusAsync(dto);
+            var result = await _maintenanceService.UpdateMaintenanceRequestAsync(dto);
             return Ok(result);
         }
 

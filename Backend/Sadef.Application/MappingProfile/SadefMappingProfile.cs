@@ -52,9 +52,9 @@ namespace Sadef.Application.MappingProfile
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.Videos, opt => opt.Ignore());
             CreateMap<MaintenanceRequest, MaintenanceRequestDto>();
-            CreateMap<UpdateMaintenanceRequestStatusDto, MaintenanceRequest>()
-                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
-
+            CreateMap<UpdateMaintenanceRequestDto, MaintenanceRequest>()
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
 
 

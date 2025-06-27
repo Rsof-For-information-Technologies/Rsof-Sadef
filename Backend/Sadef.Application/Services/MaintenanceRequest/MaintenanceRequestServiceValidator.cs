@@ -17,17 +17,13 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .WithMessage("Description is required and must be less than 1000 characters.");
         }
     }
-    public class UpdateMaintenanceRequestStatusValidator : AbstractValidator<UpdateMaintenanceRequestStatusDto>
+    public class UpdateMaintenanceRequestStatusValidator : AbstractValidator<UpdateMaintenanceRequestDto>
     {
         public UpdateMaintenanceRequestStatusValidator()
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
                 .WithMessage("Maintenance request ID must be a positive number.");
-
-            RuleFor(x => x.Status)
-                .IsInEnum()
-                .WithMessage("Invalid status provided.");
         }
     }
 }
