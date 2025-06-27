@@ -255,5 +255,53 @@ namespace Sadef.Application.Services.MaintenanceRequest
             response.Succeeded = true;
             return response;
         }
+
+        public async Task<Response<MaintenanceRequestDto>> UpdateStatusAsync(UpdateMaintenanceRequestStatusDto dto)
+        {
+            var repo = _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
+            var request = await _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>()
+                .Queryable()
+                .FirstOrDefaultAsync(m => m.Id == dto.Id);
+
+            if (request == null)
+                return new Response<MaintenanceRequestDto>("Maintenance request not found");
+
+            var allowedTransitions = new Dictionary<MaintenanceRequestStatus, MaintenanceRequestStatus[]>
+            {
+                { MaintenanceRequestStatus.Pending,    new[] { MaintenanceRequestStatus.InProgress, MaintenanceRequestStatus.Rejected } },
+                { MaintenanceRequestStatus.InProgress, new[] { MaintenanceRequestStatus.Resolved, MaintenanceRequestStatus.Rejected } },
+                { MaintenanceRequestStatus.Resolved,   Array.Empty<MaintenanceRequestStatus>() },
+                { MaintenanceRequestStatus.Rejected,   Array.Empty<MaintenanceRequestStatus>() }
+            };
+
+
+            if (!request.Status.HasValue)
+                return new Response<MaintenanceRequestDto>("Current status is not set for this request");
+
+            if (!dto.Status.HasValue)
+                return new Response<MaintenanceRequestDto>("New status cannot be null");
+
+            var currentStatus = request.Status.Value;
+            var newStatus = dto.Status.Value;
+
+            if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
+                !validNextStatuses.Contains(newStatus))
+            {
+                return new Response<MaintenanceRequestDto>($"Invalid status transition from {currentStatus} to {newStatus}");
+            }
+
+            request.Status = newStatus;
+            request.UpdatedAt = DateTime.UtcNow;
+
+
+            await repo.UpdateAsync(request);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+
+            var updatedDto = _mapper.Map<MaintenanceRequestDto>(request);
+            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+
+            return new Response<MaintenanceRequestDto>(updatedDto, $"Status updated from {currentStatus} to {dto.Status}");
+        }
+
     }
 }

@@ -7,6 +7,7 @@ namespace Sadef.Application.Abstractions.Interfaces
     public interface IMaintenanceRequestService
     {
         Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters);
+        Task<Response<MaintenanceRequestDto>> UpdateStatusAsync(UpdateMaintenanceRequestStatusDto dto);
         Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto);
         Task<Response<bool>> UpdateMaintenanceRequestAsync(UpdateMaintenanceRequestDto dto);
         Task<Response<MaintenanceRequestDashboardStatsDto>> GetDashboardStatsAsync();
