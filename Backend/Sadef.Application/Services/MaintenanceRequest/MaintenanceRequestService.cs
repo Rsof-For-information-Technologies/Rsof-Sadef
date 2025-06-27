@@ -119,32 +119,29 @@ namespace Sadef.Application.Services.MaintenanceRequest
         public async Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters)
         {
             var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
-            var query = repo.Queryable();
-            query = MaintenanceRequestHelper.ApplyFilters(query, filters);
+            var query = MaintenanceRequestHelper.ApplyFilters(repo.Queryable(), filters);
 
-            var total = await query.CountAsync();
-            var items = await query
-                .Include(r => r.Images!)
-                .Include(r => r.Videos!)
+            var totalCount = await query.CountAsync();
+
+            var paginatedItems = await query
                 .OrderByDescending(x => x.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            var dtoList = items.Select(item =>
-            {
-                var dto = _mapper.Map<MaintenanceRequestDto>(item);
-                dto.ImageBase64Strings = item.Images?
-                    .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
-                    .ToList() ?? new();
-                dto.VideoUrls = item.Videos?
-                    .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
-                    .ToList() ?? new();
-                return dto;
-            }).ToList();
+            var dtoList = _mapper.Map<List<MaintenanceRequestDto>>(paginatedItems);
 
-            var paged = new PaginatedResponse<MaintenanceRequestDto>(dtoList, total, pageNumber, pageSize);
-            return new Response<PaginatedResponse<MaintenanceRequestDto>>(paged, "Maintenance requests retrieved successfully.");
+            var paginatedResponse = new PaginatedResponse<MaintenanceRequestDto>(
+                dtoList,
+                totalCount,
+                pageNumber,
+                pageSize
+            );
+
+            return new Response<PaginatedResponse<MaintenanceRequestDto>>(
+                paginatedResponse,
+                "Maintenance requests retrieved successfully."
+            );
         }
 
         public async Task<Response<MaintenanceRequestDto>> GetByIdAsync(int id)
@@ -215,14 +212,14 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             return new Response<MaintenanceRequestDashboardStatsDto>(dto, "Maintenance dashboard stats loaded");
         }
-        public async Task<Response<bool>> UpdateMaintenanceRequestAsync(UpdateMaintenanceRequestDto dto)
+        public async Task<Response<MaintenanceRequestDto>> UpdateMaintenanceRequestAsync(UpdateMaintenanceRequestDto dto)
         {
             var validationResult = await _updateMaintenanceRequestStatusValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
 
-                return new Response<bool>
+                return new Response<MaintenanceRequestDto>
                 {
                     Succeeded = false,
                     Message = errorMessage,
@@ -233,7 +230,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
             var request = await repo.Queryable().FirstOrDefaultAsync(r => r.Id == dto.Id);
             if (request == null)
-                return new Response<bool>("Maintenance request not found");
+                return new Response<MaintenanceRequestDto>("Maintenance request not found");
 
             _mapper.Map(dto, request);
             request.UpdatedAt = DateTime.UtcNow;
@@ -242,7 +239,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
 
-            return new Response<bool>(true, "Maintenance request status updated successfully.");
+            var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
+            return new Response<MaintenanceRequestDto>(responseDto, "Maintenance request updated successfully.");
         }
 
         public async Task<Response<string>> DeleteMaintenanceRequestAsync(int id)
@@ -275,15 +273,6 @@ namespace Sadef.Application.Services.MaintenanceRequest
             if (request == null)
                 return new Response<MaintenanceRequestDto>("Maintenance request not found");
 
-            var allowedTransitions = new Dictionary<MaintenanceRequestStatus, MaintenanceRequestStatus[]>
-            {
-                { MaintenanceRequestStatus.Pending,    new[] { MaintenanceRequestStatus.InProgress, MaintenanceRequestStatus.Rejected } },
-                { MaintenanceRequestStatus.InProgress, new[] { MaintenanceRequestStatus.Resolved, MaintenanceRequestStatus.Rejected } },
-                { MaintenanceRequestStatus.Resolved,   Array.Empty<MaintenanceRequestStatus>() },
-                { MaintenanceRequestStatus.Rejected,   Array.Empty<MaintenanceRequestStatus>() }
-            };
-
-
             if (!request.Status.HasValue)
                 return new Response<MaintenanceRequestDto>("Current status is not set for this request");
 
@@ -293,15 +282,13 @@ namespace Sadef.Application.Services.MaintenanceRequest
             var currentStatus = request.Status.Value;
             var newStatus = dto.Status.Value;
 
-            if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
-                !validNextStatuses.Contains(newStatus))
+            if (!MaintenanceRequestHelper.IsValidStatusTransition(currentStatus, newStatus, out var errorMessage))
             {
-                return new Response<MaintenanceRequestDto>($"Invalid status transition from {currentStatus} to {newStatus}");
+                return new Response<MaintenanceRequestDto>(errorMessage!);
             }
 
             request.Status = newStatus;
             request.UpdatedAt = DateTime.UtcNow;
-
 
             await repo.UpdateAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
@@ -309,7 +296,41 @@ namespace Sadef.Application.Services.MaintenanceRequest
             var updatedDto = _mapper.Map<MaintenanceRequestDto>(request);
             await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
 
-            return new Response<MaintenanceRequestDto>(updatedDto, $"Status updated from {currentStatus} to {dto.Status}");
+            return new Response<MaintenanceRequestDto>(updatedDto, $"Status updated from {currentStatus} to {newStatus}");
+        }
+
+        public async Task<Response<MaintenanceRequestDto>> UpdateAdminResponseAsync(UpdateAdminResponseDto dto)
+        {
+            var repo = _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
+            var request = await _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>()
+                .Queryable()
+                .FirstOrDefaultAsync(m => m.Id == dto.Id);
+
+            if (request == null)
+                return new Response<MaintenanceRequestDto>("Maintenance request not found");
+
+            if (dto.AdminResponse != null)
+                request.AdminResponse = dto.AdminResponse;
+
+            if (dto.Status.HasValue)
+            {
+                var currentStatus = request.Status.GetValueOrDefault();
+                var newStatus = dto.Status.GetValueOrDefault();
+
+                if (!MaintenanceRequestHelper.IsValidStatusTransition(currentStatus, newStatus, out var errorMessage))
+                {
+                    return new Response<MaintenanceRequestDto>(errorMessage!);
+                }
+                request.Status = dto.Status.Value;
+            }
+
+            request.UpdatedAt = DateTime.UtcNow;
+
+            await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().UpdateAsync(request);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+
+            var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
+            return new Response<MaintenanceRequestDto>(responseDto, "Updated successfully.");
         }
 
     }

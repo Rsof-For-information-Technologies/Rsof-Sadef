@@ -1,4 +1,5 @@
 ﻿using Sadef.Application.DTOs.MaintenanceRequestDtos;
+using Sadef.Domain.Constants;
 using Sadef.Domain.MaintenanceRequestEntity;
 
 namespace Sadef.Application.Utils
@@ -20,6 +21,32 @@ namespace Sadef.Application.Utils
                 query = query.Where(x => x.CreatedAt <= filters.ToDate.Value);
 
             return query;
+        }
+
+        public static bool IsValidStatusTransition(MaintenanceRequestStatus currentStatus, MaintenanceRequestStatus newStatus, out string? errorMessage)
+        {
+            var allowedTransitions = new Dictionary<MaintenanceRequestStatus, MaintenanceRequestStatus[]>
+            {
+                { MaintenanceRequestStatus.Pending,    new[] { MaintenanceRequestStatus.InProgress, MaintenanceRequestStatus.Rejected } },
+                { MaintenanceRequestStatus.InProgress, new[] { MaintenanceRequestStatus.Resolved, MaintenanceRequestStatus.Rejected } },
+                { MaintenanceRequestStatus.Resolved,   Array.Empty<MaintenanceRequestStatus>() },
+                { MaintenanceRequestStatus.Rejected,   Array.Empty<MaintenanceRequestStatus>() }
+            };
+
+            if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses))
+            {
+                errorMessage = $"Current status '{currentStatus}' is not recognized.";
+                return false;
+            }
+
+            if (!validNextStatuses.Contains(newStatus))
+            {
+                errorMessage = $"Invalid status transition from {currentStatus} to {newStatus}.";
+                return false;
+            }
+
+            errorMessage = null;
+            return true;
         }
     }
 }

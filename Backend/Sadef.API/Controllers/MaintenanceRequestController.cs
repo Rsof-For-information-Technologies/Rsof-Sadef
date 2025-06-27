@@ -43,7 +43,7 @@ namespace Sadef.API.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateMaintenanceRequest([FromBody] UpdateMaintenanceRequestDto dto)
+        public async Task<ActionResult<Response<MaintenanceRequestDto>>> UpdateMaintenanceRequest([FromBody] UpdateMaintenanceRequestDto dto)
         {
             var result = await _maintenanceService.UpdateMaintenanceRequestAsync(dto);
             return Ok(result);
@@ -63,6 +63,11 @@ namespace Sadef.API.Controllers
             return Ok(result);
         }
 
-
+        [HttpPatch("admin-response")]
+        public async Task<ActionResult<Response<MaintenanceRequestDto>>> UpdateAdminResponseAsync([FromBody] UpdateAdminResponseDto dto)
+        {
+            var result = await _maintenanceService.UpdateAdminResponseAsync(dto);
+            return Ok(result);
+        }
     }
 }
