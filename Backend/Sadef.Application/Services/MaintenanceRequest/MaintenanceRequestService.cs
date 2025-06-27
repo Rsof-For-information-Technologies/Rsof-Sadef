@@ -44,7 +44,16 @@ namespace Sadef.Application.Services.MaintenanceRequest
         {
             var validation = await _createMaintenanceRequestValidator.ValidateAsync(dto);
             if (!validation.IsValid)
-                return new Response<MaintenanceRequestDto>(validation.Errors.First().ErrorMessage);
+            {
+                var errorMessage = validation.Errors.First().ErrorMessage;
+
+                return new Response<MaintenanceRequestDto>
+                {
+                    Succeeded = false,
+                    Message = errorMessage,
+                    ValidationResultModel = new ValidationResultModel(validation)
+                };
+            }
 
             var leadQuery = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             var lead = await leadQuery.Queryable()
