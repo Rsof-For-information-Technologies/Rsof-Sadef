@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
+using Sadef.Common.Infrastructure.Wrappers;
 
 namespace Sadef.API.Controllers
 {
@@ -45,6 +46,13 @@ namespace Sadef.API.Controllers
         public async Task<IActionResult> GetLeadStats()
         {
             var result = await _leadService.GetLeadDashboardStatsAsync();
+            return Ok(result);
+        }
+
+        [HttpPatch("update-status")]
+        public async Task<ActionResult<Response<string>>> ChangeStatus(UpdateLeadStatusDto dto)
+        {
+            var result = await _leadService.ChangeStatusAsync(dto);
             return Ok(result);
         }
 

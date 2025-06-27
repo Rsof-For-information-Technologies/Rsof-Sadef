@@ -217,5 +217,48 @@ namespace Sadef.Application.Services.Lead
 
             return new Response<LeadDashboardStatsDto>(dto, "Lead dashboard stats loaded");
         }
+
+        public async Task<Response<LeadDto>> ChangeStatusAsync(UpdateLeadStatusDto dto)
+        {
+            var repo = _uow.RepositoryAsync<Domain.LeadEntity.Lead>();
+            var lead = await _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>()
+                .Queryable()
+                .FirstOrDefaultAsync(p => p.Id == dto.id);
+
+            if (lead == null)
+                return new Response<LeadDto>("Lead not found");
+
+            var currentStatus = lead.Status;
+
+            var allowedTransitions = new Dictionary<LeadStatus, LeadStatus[]>
+            {
+                { LeadStatus.New,             new[] { LeadStatus.Contacted, LeadStatus.Rejected } },
+                { LeadStatus.Contacted,       new[] { LeadStatus.InDiscussion, LeadStatus.Rejected } },
+                { LeadStatus.InDiscussion,    new[] { LeadStatus.VisitScheduled, LeadStatus.Rejected } },
+                { LeadStatus.VisitScheduled,  new[] { LeadStatus.Converted, LeadStatus.Rejected } },
+                { LeadStatus.Converted,       Array.Empty<LeadStatus>() },
+                { LeadStatus.Rejected,        Array.Empty<LeadStatus>() }
+            };
+
+            if (!dto.status.HasValue)
+                return new Response<LeadDto>("Status cannot be null");
+
+            if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
+                !validNextStatuses.Contains(dto.status.Value))
+            {
+                return new Response<LeadDto>($"Invalid status transition from {currentStatus} to {dto.status.Value}");
+            }
+
+            lead.Status = dto.status.Value;
+            lead.UpdatedAt = DateTime.UtcNow;
+
+            await repo.UpdateAsync(lead);
+            await _uow.SaveChangesAsync(CancellationToken.None);
+
+            var updatedDto = _mapper.Map<LeadDto>(lead);
+            await IncrementLeadVersionAsync();
+
+            return new Response<LeadDto>(updatedDto, $"Status updated successfully from {currentStatus} to {dto.status.Value}");
+        }
     }
 }
