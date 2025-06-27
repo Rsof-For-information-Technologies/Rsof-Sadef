@@ -15,6 +15,16 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .NotEmpty()
                 .MaximumLength(1000)
                 .WithMessage("Description is required and must be less than 1000 characters.");
+
+            RuleFor(x => x.Videos)
+                .Must(v => v == null || v.Count <= 3)
+                .When(x => x.Videos != null && x.Videos.Any())
+                .WithMessage("You can upload up to 3 videos only.");
+
+            RuleForEach(x => x.Videos)
+                .Must(v => v.Length <= 50 * 1024 * 1024) // 50MB
+                .When(x => x.Videos != null && x.Videos.Any())
+                .WithMessage("Each video must be 50MB or smaller.");
         }
     }
     public class UpdateMaintenanceRequestStatusValidator : AbstractValidator<UpdateMaintenanceRequestDto>
