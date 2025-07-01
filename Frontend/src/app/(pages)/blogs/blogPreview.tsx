@@ -17,7 +17,7 @@ function BlogPreview({
   isPublished,
 }: BlogPreviewProps) {
   return (
-    <div className="block">
+    <div className="block w-full">
       <p className="text-[14px] mb-[6px]">Preview</p>
       <div className="rounded-lg border-2 overflow-hidden">
         <div className="bg-white p-2">

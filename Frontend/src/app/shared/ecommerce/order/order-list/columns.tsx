@@ -1,0 +1,308 @@
+'use client';
+
+import Link from 'next/link';
+import { Badge, Text, Tooltip, ActionIcon } from 'rizzui';
+import { routes } from '@/config/routes';
+import EyeIcon from '@/components/icons/eye';
+import PencilIcon from '@/components/icons/pencil';
+import DateCell from '@/components/ui/date-cell';
+import DeletePopover from '@/app/shared/delete-popover';
+import TableAvatar from '@/components/ui/avatar-card';
+import { HeaderCell } from '@/components/ui/table';
+
+function getStatusBadge(status: string) {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return (
+        <div className="flex items-center">
+          <Badge color="warning" renderAsDot />
+          <Text className="ms-2 font-medium text-orange-dark">{status}</Text>
+        </div>
+      );
+    case 'completed':
+      return (
+        <div className="flex items-center">
+          <Badge color="success" renderAsDot />
+          <Text className="ms-2 font-medium text-green-dark">{status}</Text>
+        </div>
+      );
+    case 'cancelled':
+      return (
+        <div className="flex items-center">
+          <Badge color="danger" renderAsDot />
+          <Text className="ms-2 font-medium text-red-dark">{status}</Text>
+        </div>
+      );
+    default:
+      return (
+        <div className="flex items-center">
+          <Badge renderAsDot className="bg-gray-400" />
+          <Text className="ms-2 font-medium text-gray-600">{status}</Text>
+        </div>
+      );
+  }
+}
+
+type Columns = {
+  sortConfig?: any;
+  onDeleteItem: (id: string) => void;
+  onHeaderCellClick: (value: string) => void;
+  onChecked?: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;
+};
+
+export const getBlogColumns = ({
+  sortConfig,
+  onDeleteItem,
+  onHeaderCellClick,
+}: Columns) => [
+  {
+    title: <HeaderCell title="ID" />,
+    dataIndex: 'id',
+    key: 'id',
+    width: 80,
+    render: (value: number) => <Text>#{value}</Text>,
+  },
+  {
+    title: <HeaderCell title="Title" />,
+    dataIndex: 'title',
+    key: 'title',
+    width: 300,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  // {
+  //   title: <HeaderCell title="Content" />,
+  //   dataIndex: 'content',
+  //   key: 'content',
+  //   width: 300,
+  //   render: (value: string) => (
+  //     <Text className="truncate text-gray-600" title={value}>
+  //       {value.length > 60 ? value.slice(0, 60) + '...' : value}
+  //     </Text>
+  //   ),
+  // },
+  // {
+  //   title: <HeaderCell title="Cover" />,
+  //   dataIndex: 'coverImage',
+  //   key: 'coverImage',
+  //   width: 120,
+  //   render: (value: string | null) =>
+  //     value ? (
+  //       <Image
+  //         src={value}
+  //         alt="Cover"
+  //         width={60}
+  //         height={40}
+  //         className="rounded"
+  //       />
+  //     ) : (
+  //       <span className="text-gray-400">No Image</span>
+  //     ),
+  // },
+  {
+    title: (
+      <HeaderCell
+        title="Published At"
+        sortable
+        ascending={
+          sortConfig?.direction === 'asc' && sortConfig?.key === 'publishedAt'
+        }
+      />
+    ),
+    onHeaderCell: () => onHeaderCellClick('publishedAt'),
+    dataIndex: 'publishedAt',
+    key: 'publishedAt',
+    width: 180,
+    render: (value: string) => <DateCell date={new Date(value)} />,
+  },
+  {
+    title: <HeaderCell title="Published" />,
+    dataIndex: 'isPublished',
+    key: 'isPublished',
+    width: 120,
+    render: (value: boolean) =>{
+      return (
+        value === true ? (
+        <Badge color="success">Published</Badge>
+      ) : (
+        <Badge color="warning">Draft</Badge>
+      )
+      );
+    }
+  },
+  {
+    title: <HeaderCell title="Actions" className="opacity-0" />,
+    dataIndex: 'action',
+    key: 'action',
+    width: 100,
+    render: (_: string, row: any) => (
+      <div className="flex items-center justify-end gap-3 pe-4">
+        <Tooltip size="sm" content={'Edit Blog'} placement="top" color="invert">
+          <Link href={routes.blog.editOrder(row.id)}>
+            <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
+              <PencilIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+        <Tooltip size="sm" content={'View Blog'} placement="top" color="invert">
+          <Link href={routes.blog.orderDetails(row.id)}>
+            <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
+              <EyeIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+        <DeletePopover
+          title={`Delete the blog`}
+          description={`Are you sure you want to delete this #${row.id} blog?`}
+          onDelete={() => onDeleteItem(row.id)}
+        />
+      </div>
+    ),
+  },
+];
+
+export const getColumns = ({
+  sortConfig,
+  onDeleteItem,
+  onHeaderCellClick,
+}: Columns) => [
+  {
+    title: <HeaderCell title="Order ID" />,
+    dataIndex: 'id',
+    key: 'id',
+    width: 120,
+    render: (value: string) => <Text>#{value}</Text>,
+  },
+  {
+    title: <HeaderCell title="Customer" />,
+    dataIndex: 'customer',
+    key: 'customer',
+    width: 300,
+    hidden: 'customer',
+    render: (_: any, row: any) => (
+      <TableAvatar
+        src={row.avatar}
+        name={row.name}
+        description={row.email.toLowerCase()}
+      />
+    ),
+  },
+  {
+    title: <HeaderCell title="Items" />,
+    dataIndex: 'items',
+    key: 'items',
+    width: 150,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-700">{value}</Text>
+    ),
+  },
+  {
+    title: (
+      <HeaderCell
+        title="Price"
+        sortable
+        ascending={
+          sortConfig?.direction === 'asc' && sortConfig?.key === 'price'
+        }
+      />
+    ),
+    onHeaderCell: () => onHeaderCellClick('price'),
+    dataIndex: 'price',
+    key: 'price',
+    width: 150,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-700">${value}</Text>
+    ),
+  },
+  {
+    title: (
+      <HeaderCell
+        title="Created"
+        sortable
+        ascending={
+          sortConfig?.direction === 'asc' && sortConfig?.key === 'createdAt'
+        }
+      />
+    ),
+    onHeaderCell: () => onHeaderCellClick('createdAt'),
+    dataIndex: 'createdAt',
+    key: 'createdAt',
+    width: 200,
+    render: (value: Date) => <DateCell date={value} />,
+  },
+  {
+    title: (
+      <HeaderCell
+        title="Modified"
+        sortable
+        ascending={
+          sortConfig?.direction === 'asc' && sortConfig?.key === 'updatedAt'
+        }
+      />
+    ),
+    onHeaderCell: () => onHeaderCellClick('updatedAt'),
+    dataIndex: 'updatedAt',
+    key: 'updatedAt',
+    width: 200,
+    render: (value: Date) => <DateCell date={value} />,
+  },
+  {
+    title: <HeaderCell title="Status" />,
+    dataIndex: 'status',
+    key: 'status',
+    width: 140,
+    render: (value: string) => getStatusBadge(value),
+  },
+  {
+    // Need to avoid this issue -> <td> elements in a large <table> do not have table headers.
+    title: <HeaderCell title="Actions" className="opacity-0" />,
+    dataIndex: 'action',
+    key: 'action',
+    width: 130,
+    render: (_: string, row: any) => (
+      <div className="flex items-center justify-end gap-3 pe-4">
+        <Tooltip
+          size="sm"
+          content={'Edit Blog'}
+          placement="top"
+          color="invert"
+        >
+          <Link href={routes.blog.editOrder(row.id)}>
+            <ActionIcon
+              as="span"
+              size="sm"
+              variant="outline"
+              className="hover:text-gray-700"
+            >
+              <PencilIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+        <Tooltip
+          size="sm"
+          content={'View Blog'}
+          placement="top"
+          color="invert"
+        >
+          <Link href={routes.blog.orderDetails(row.id)}>
+            <ActionIcon
+              as="span"
+              size="sm"
+              variant="outline"
+              className="hover:text-gray-700"
+            >
+              <EyeIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+        <DeletePopover
+          title={`Delete the blog`}
+          description={`Are you sure you want to delete this #${row.id} blog?`}
+          onDelete={() => onDeleteItem(row.id)}
+        />
+      </div>
+    ),
+  },
+];
+

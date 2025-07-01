@@ -73,8 +73,8 @@ export const routes = {
   blog:{
     list: "/blogs",
     create: "/blogs/create",
-    details: (blogId: string) => `/blogs/${blogId}`,
-    update: (blogId: string) => `/blogs/${blogId}/update`,
+    orderDetails: (blogId: string) => `/blogs/${blogId}`,
+    editOrder: (blogId: string) => `/blogs/${blogId}/update`,
   },
 
   auth:{

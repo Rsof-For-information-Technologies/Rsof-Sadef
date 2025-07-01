@@ -1,14 +1,7 @@
+import { BlogFormData, CreateBlogResponse, GetBlogs } from '@/types/blog';
+import { PropertyFormData, CreatePropertyResponse } from '@/types/property';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-
-
-export interface BlogFormData {
-    id?: string | number;
-    title: string;
-    content: string;
-    coverImage?: File | null;
-    isPublished: boolean | string;
-}
 
 const apiCall = () => {
     const instance = axios.create({
@@ -45,21 +38,6 @@ const apiCall = () => {
 };
 
 // Blog API functions
-
-type CreateBlogData = {
-    content: string;
-    coverImage: string | null;
-    id: number;
-    isPublished: boolean;
-    publishedAt: string;
-    title: string;
-}
-
- export type CreateBlogResponse = {
-    data: CreateBlogData;
-    message: string;
-    succeeded: boolean;
-}
 
 export const createBlog = async (data: BlogFormData)  => {
     const api = apiCall();
@@ -126,82 +104,18 @@ export const getBlogById = async (id: string | number) => {
     }
 };
 
+export const getAllBlogs = async (pageNumber = 1, pageSize = 10): Promise<GetBlogs> => {
+  const api = apiCall();
+  try {
+    const {data} = await api.get<GetBlogs>(`/api/v1/blog?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+  } catch (error) {
+    console.error('Get all blogs failed:', error);
+    throw error;
+  }
+};
+
 // Property API functions
-export interface PropertyFormData {
-    // Basic Info
-    title: string;
-    propertyType?: number;
-    unitCategory?: number;
-    price: number;
-    city: string;
-    location: string;
-    areaSize: number;
-    bedrooms?: number;
-    bathrooms?: number;
-    totalFloors?: number;
-    unitName?: string;
-    isInvestorOnly?: boolean;
-
-    // Property Details
-    description: string;
-    features?: string[];
-    projectedResaleValue?: number;
-    expectedAnnualRent?: number;
-    warrantyInfo?: string;
-    expectedDeliveryDate?: string;
-    status?: number;
-    expiryDate?: string;
-
-    // Property Media
-    images?: File[];
-    videos?: File[];
-
-    // Location/Map
-    latitude?: number;
-    longitude?: number;
-
-    // Contact & Publishing
-    whatsAppNumber?: string;
-}
-
-type CreatePropertyData = {
-    id: number;
-    title: string;
-    description: string;
-    price: number;
-    propertyType?: number;
-    unitCategory?: number;
-    city: string;
-    location: string;
-    areaSize: number;
-    bedrooms?: number;
-    bathrooms?: number;
-    totalFloors?: number;
-    images?: string[];
-    status?: number;
-    videos?: string[];
-    unitName?: string;
-    projectedResaleValue?: number;
-    expectedAnnualRent?: number;
-    warrantyInfo?: string;
-    latitude?: number;
-    longitude?: number;
-    whatsAppNumber?: string;
-    expectedDeliveryDate?: string;
-    expiryDate?: string;
-    isInvestorOnly?: boolean;
-    features?: number[];
-    createdAt?: string;
-    updatedAt?: string;
-    imageBase64Strings?: string[];
-    videoBase64Strings?: string[];
-}
-
-export type CreatePropertyResponse = {
-    data: CreatePropertyData;
-    message: string;
-    succeeded: boolean;
-}
 
 export const createProperty = async (data: PropertyFormData) => {
     const api = apiCall();
