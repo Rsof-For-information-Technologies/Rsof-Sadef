@@ -27,7 +27,7 @@ export default async function SearchTablePage() {
   const blogs = await getBlogs({ pageNumber: 1, pageSize: 10 });
   return (
     <>
-      <h1 className="mb-4 text-2xl font-semibold">Property List Page</h1>
+      <h1 className="mb-4 text-2xl font-semibold">Blog List Page</h1>
       <p className="mb-6 text-gray-600">
         This page demonstrates a table with search functionality using the
         BasicTableWidget component.

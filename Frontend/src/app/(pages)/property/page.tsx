@@ -1,15 +1,35 @@
-import { getColumns } from "@/app/shared/ecommerce/order/order-list/columns";
+import { getPropertyColumns } from "@/app/shared/ecommerce/order/order-list/columns";
 import BasicTableWidget from "@/components/controlled-table/basic-table-widget";
-import { metaObject } from "@/config/site.config";
+import { GetProperties } from "@/types/property";
+import { getAllProperties } from "@/utils/api";
+import { Metadata } from "next";
 
-export const metadata = {
-  ...metaObject("Table with search"),
+export const metadata: Metadata = {
+  title: "property",
 };
 
-export default function SearchTablePage() {
+type SearchParams = {
+  pageNumber?: number,
+  pageSize?: number
+};
+
+async function getProperties(searchParams: SearchParams) {
+  try {
+    const properties = await getAllProperties(searchParams.pageNumber, searchParams.pageSize )
+    return properties;
+  } catch (error) {
+    console.log("Error fetching properties:", error);
+    return { succeeded: false} as GetProperties;
+  }
+}
+
+export default async function SearchTablePage() {
+  const properties = await getProperties({ pageNumber: 1, pageSize: 10 });
+  const activeProperties = properties.data.items.filter((item) => item.isActive);
+
   return (
     <>
-      <h1 className="mb-4 text-2xl font-semibold">Blog List Page</h1>
+      <h1 className="mb-4 text-2xl font-semibold">Property List Page</h1>
       <p className="mb-6 text-gray-600">
         This page demonstrates a table with search functionality using the
         BasicTableWidget component.
@@ -17,11 +37,11 @@ export default function SearchTablePage() {
       <BasicTableWidget
         title="Search Table"
         variant="minimal"
-        data={[]}
+        data={activeProperties}
         // @ts-ignore
-        getColumns={getColumns}
+        getColumns={getPropertyColumns}
         enablePagination
-        searchPlaceholder="Search blog..."
+        searchPlaceholder="Search order..."
         className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
       />
     </>

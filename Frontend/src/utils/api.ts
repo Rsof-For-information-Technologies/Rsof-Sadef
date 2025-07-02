@@ -1,5 +1,5 @@
 import { BlogFormData, CreateBlogResponse, GetBlogs } from '@/types/blog';
-import { PropertyFormData, CreatePropertyResponse } from '@/types/property';
+import { PropertyFormData, CreatePropertyResponse, GetProperties } from '@/types/property';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
@@ -248,3 +248,14 @@ export const updateProperty = async (id: string | number, data: PropertyFormData
     throw error
   }
 }
+
+export const getAllProperties = async (pageNumber = 1, pageSize = 10): Promise<GetProperties> => {
+  const api = apiCall();
+  try {
+    const {data} = await api.get<GetProperties>(`/api/v1/property/get-all?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+  } catch (error) {
+    console.error('Get all properties failed:', error);
+    throw error;
+  }
+};

@@ -77,6 +77,13 @@ export const routes = {
     editOrder: (blogId: string) => `/blogs/${blogId}/update`,
   },
 
+  property:{
+    list: "/property",
+    create: "/property/create",
+    orderDetails: (propertyId: string) => `/property/${propertyId}`,
+    editOrder: (propertyId: string) => `/property/${propertyId}/update`,
+  },
+
   auth:{
     login: "/auth/login",
     signup: "/auth/signup",

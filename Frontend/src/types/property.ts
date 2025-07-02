@@ -73,3 +73,48 @@ export type CreatePropertyResponse = {
     message: string;
     succeeded: boolean;
 }
+
+export type PropertyItem = {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    propertyType: number;
+    unitCategory: number;
+    city: string;
+    location: string;
+    areaSize: number;
+    bedrooms: number;
+    bathrooms: number;
+    imageBase64Strings: string[];
+    status: number;
+    expiryDate: string | null;
+    isExpired: boolean;
+    videoUrls: string[] | null;
+    unitName: string;
+    projectedResaleValue: number;
+    expectedAnnualRent: number;
+    warrantyInfo: string;
+    latitude: number;
+    longitude: number;
+    whatsAppNumber: string;
+    expectedDeliveryDate: string;
+    isInvestorOnly: boolean;
+    features: number[];
+    isActive: boolean;
+}
+
+type PropertyData = {
+    items: PropertyItem[];
+};
+
+export type GetProperties = {
+    succeeded: boolean,
+    message: string | null,
+    validationResultModel: string | null,
+    data: PropertyData,
+    totalCount: number,
+    pageNumber: number,
+    pageSize: number,
+    extra: string | null,
+}
