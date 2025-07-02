@@ -259,3 +259,14 @@ export const getAllProperties = async (pageNumber = 1, pageSize = 10): Promise<G
     throw error;
   }
 };
+
+export const deleteProperty = async (id : string | number) => {
+  const api = apiCall();
+  try {
+    const response = await api.delete(`/api/v1/property/delete?id=${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Delete property failed:', error);
+    throw error;
+  }
+}

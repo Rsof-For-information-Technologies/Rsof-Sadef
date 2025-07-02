@@ -8,17 +8,47 @@ import PencilIcon from '@/components/icons/pencil';
 import DateCell from '@/components/ui/date-cell';
 import DeletePopover from '@/app/shared/delete-popover';
 import { HeaderCell } from '@/components/ui/table';
+import { deleteBlog, deleteProperty } from '@/utils/api';
 
 type Columns = {
   sortConfig?: any;
   onDeleteItem: (id: string) => void;
+  onDeleteProperty: (id: string) => void;
   onHeaderCellClick: (value: string) => void;
   onChecked?: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;
 };
 
+const onDeleteItem = async (id: string | number) => {
+    try {
+      const response = await deleteBlog(id);
+      if (response.succeeded) {
+        window.location.reload();
+        console.log('Blog deleted successfully:', response);
+      }else {
+        console.error('Failed to delete blog:', response);
+      }
+    } catch (error) {
+      console.error('Error deleting blog:', error);
+    }
+};
+
+const onDeleteProperty = async (id: string | number) => {
+  try {
+    const response= await deleteProperty(id)
+    if (response.succeeded) {
+      window.location.reload();
+      console.log('Property deleted successfully:', response);
+    } else {
+      console.error('Failed to delete property:', response);
+    }
+  } catch (error) {
+    console.error('Error deleting property:', error);
+  }
+
+}
+
 export const getBlogColumns = ({
   sortConfig,
-  onDeleteItem,
   onHeaderCellClick,
 }: Columns) => [
   {
@@ -130,7 +160,6 @@ export const getBlogColumns = ({
 
 export const getPropertyColumns = ({
   sortConfig,
-  onDeleteItem,
 }: Columns) => [
   {
     title: <HeaderCell title="ID" />,
@@ -240,7 +269,7 @@ export const getPropertyColumns = ({
         <DeletePopover
           title={`Delete the property`}
           description={`Are you sure you want to delete this #${row.id} property?`}
-          onDelete={() => onDeleteItem(row.id)}
+          onDelete={() => onDeleteProperty(row.id)}
         />
       </div>
     ),
