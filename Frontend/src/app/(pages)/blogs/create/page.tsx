@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Checkbox, FileInput, Input } from "rizzui";
-import { createBlog, BlogFormData } from "@/utils/api";
+import { createBlog } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { BlogForm, blogSchema } from "@/validators/createBlog";
 import RichTextEditor from "@/components/textEditor/rich-text-editor";
 import BlogPreview from "../blogPreview";
+import { BlogFormData } from "@/types/blog";
+
 
 const initialValues = {
   title: "",

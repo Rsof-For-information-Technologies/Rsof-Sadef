@@ -6,7 +6,7 @@ import { UserRole } from '@/types/userRoles';
 export const findFirstAuthorizedUrl = () => {
     const userInfo = getLocalStorage('user-info') as User | null;
     if (!userInfo || !userInfo.role) {
-        return routes.login;
+        return routes.auth.login;
     }
 
     switch (userInfo.role) {

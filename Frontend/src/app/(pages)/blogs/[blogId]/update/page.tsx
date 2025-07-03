@@ -5,9 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Checkbox, FileInput, Input } from "rizzui";
 import { useRouter, useParams } from "next/navigation";
 import { BlogForm, blogSchema } from "@/validators/createBlog";
-import { getBlogById, updateBlog, BlogFormData } from "@/utils/api";
+import { getBlogById, updateBlog } from "@/utils/api";
 import RichTextEditor from "@/components/textEditor/rich-text-editor";
 import BlogPreview from "../../blogPreview";
+import { BlogFormData } from "@/types/blog";
 
 const initialValues = {
   title: "",

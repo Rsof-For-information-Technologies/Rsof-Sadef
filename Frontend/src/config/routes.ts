@@ -84,6 +84,10 @@ export const routes = {
     editOrder: (propertyId: string) => `/property/${propertyId}/update`,
   },
 
+  lead:{
+    orderDetails: (leadId: string) => `/lead/${leadId}`,
+  },
+
   auth:{
     login: "/auth/login",
     signup: "/auth/signup",

@@ -1,4 +1,5 @@
 import { BlogFormData, CreateBlogResponse, GetBlogs } from '@/types/blog';
+import { CreateLeadResponse, GetLeads } from '@/types/lead';
 import { PropertyFormData, CreatePropertyResponse, GetProperties } from '@/types/property';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -270,3 +271,50 @@ export const deleteProperty = async (id : string | number) => {
     throw error;
   }
 }
+
+export const PropertyUpdateStatus = async (id: number, status: number) => {
+  const api = apiCall();
+  try {
+    const response = await api.patch('/api/v1/property/update-status', { id, status, });
+    return response.data;
+  } catch (error) {
+    console.error('Update property status failed:', error);
+    throw error;
+  }
+};
+
+// lead API functions
+
+export const getAllLeads = async (pageNumber = 1, pageSize = 10): Promise<GetLeads> => {
+  const api = apiCall();
+  try {
+    const {data} = await api.get<GetLeads>(`/api/v1/lead?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+  } catch (error) {
+    console.error('Get all leads failed:', error);
+    throw error;
+  }
+};
+
+export const getLeadById = async (id: string | number) => {
+  const api = apiCall();
+  try {
+    const response = await api.get<CreateLeadResponse>(`/api/v1/lead/${id}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Get lead by ID failed:", error);
+    throw error;
+  }
+}
+
+export const LeadUpdateStatus = async (id: number, status: number) => {
+  const api = apiCall();
+  try {
+    const response = await api.patch('/api/v1/lead/update-status', { id, status, });
+    return response.data;
+  } catch (error) {
+    console.error('Update lead status failed:', error);
+    throw error;
+  }
+};
