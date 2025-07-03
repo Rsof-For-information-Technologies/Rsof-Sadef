@@ -3,8 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Sadef.Common.EFCore.Middleware;
 using Sadef.Common.Infrastructure.EfCore.Db;
 using Sadef.Domain.BlogsEntity;
-using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
+using Sadef.Domain.NotificationEntity;
+using Sadef.Domain.PropertyEntity;
 namespace Sadef.Infrastructure.DBContext
 {
     public class SadefDbContext : AppDbContextIdentity
@@ -40,6 +41,7 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<Property> Properties { get; set; }
         public DbSet<FavoriteProperty> FavoriteProperties { get; set; }
         public DbSet<Lead> Lead { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
     }
 }

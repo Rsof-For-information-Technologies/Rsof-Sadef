@@ -440,5 +440,22 @@ namespace Sadef.Application.Services.User
             return new Response<UserLoginResultDTO>(resultDTO, "Token refreshed successfully.");
         }
 
+        public async Task<List<string>> GetAllAdminAndSuperAdminUserIds()
+        {
+            var allUsers = _userManager.Users.ToList();
+            var result = new List<string>();
+
+            foreach (var user in allUsers)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                if (roles.Contains("Admin", StringComparer.OrdinalIgnoreCase) ||
+                    roles.Contains("SuperAdmin", StringComparer.OrdinalIgnoreCase))
+                {
+                    result.Add(user.Id);
+                }
+            }
+
+            return result;
+        }
     }
 }

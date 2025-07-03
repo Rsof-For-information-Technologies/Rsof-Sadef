@@ -21,9 +21,19 @@ namespace Sadef.Application.Services.Lead
         private readonly IValidator<CreateLeadDto> _createLeadValidator;
         private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
+        private readonly INotificationService _notificationService;
+        private readonly IUserManagementService _userService;
         private readonly IDistributedCache _cache;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache)
+        public LeadService(
+            IUnitOfWorkAsync uow,
+            IMapper mapper,
+            IValidator<CreateLeadDto> createLeadValidator,
+            IQueryRepositoryFactory queryRepositoryFactory,
+            IValidator<UpdateLeadDto> updateLeadValidator,
+            IDistributedCache cache,
+            INotificationService notificationService,
+            IUserManagementService userService)
         {
             _uow = uow;
             _mapper = mapper;
@@ -31,6 +41,8 @@ namespace Sadef.Application.Services.Lead
             _queryRepositoryFactory = queryRepositoryFactory;
             _updateLeadValidator = updateLeadValidator;
             _cache = cache;
+            _notificationService = notificationService;
+            _userService = userService;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -59,6 +71,20 @@ namespace Sadef.Application.Services.Lead
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await IncrementLeadVersionAsync();
+
+            var adminUserIds = await _userService.GetAllAdminAndSuperAdminUserIds();
+            var adminUserGuids = adminUserIds
+                .Where(id => Guid.TryParse(id, out _))
+                .Select(id => Guid.Parse(id))
+                .ToList();
+
+            Console.WriteLine($"Sending notification to userIds: {string.Join(", ", adminUserGuids)}");
+
+            await _notificationService.CreateAndDispatchAsync(
+                "New Lead Submitted",
+                $"Lead inquiry submitted by {dto.FullName} email {dto.Email}.",
+                adminUserGuids
+            );
 
             var responseDto = _mapper.Map<LeadDto>(lead);
             return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");
