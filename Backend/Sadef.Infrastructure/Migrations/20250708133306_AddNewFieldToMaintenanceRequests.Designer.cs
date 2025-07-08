@@ -12,8 +12,8 @@ using Sadef.Infrastructure.DBContext;
 namespace Sadef.Infrastructure.Migrations
 {
     [DbContext(typeof(SadefDbContext))]
-    [Migration("20250626103214_AddIsActiveToMaintenanceRequests")]
-    partial class AddIsActiveToMaintenanceRequests
+    [Migration("20250708133306_AddNewFieldToMaintenanceRequests")]
+    partial class AddNewFieldToMaintenanceRequests
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -382,6 +382,9 @@ namespace Sadef.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LeadId")
                         .HasColumnType("int");
