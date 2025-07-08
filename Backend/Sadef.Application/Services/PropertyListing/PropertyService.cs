@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Application.DTOs.SeoMetaDtos;
 using Sadef.Application.Utils;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Wrappers;
@@ -21,18 +22,22 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IValidator<CreatePropertyDto> _createPropertyValidator;
         private readonly IValidator<UpdatePropertyDto> _updatePropertyValidator;
-        private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator;
+        private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator; 
+        private readonly IValidator<CreateSeoMetaDetailsDto> _seoValidator;
+        private readonly ISeoMetaDataService _seoMetaDataService;
         private readonly IDistributedCache _cache;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IValidator<CreateSeoMetaDetailsDto> seoValidator, ISeoMetaDataService seoMetaDataService)
         {
             _uow = uow;
             _mapper = mapper;
             _queryRepositoryFactory = queryRepositoryFactory;
             _updatePropertyValidator = updatePropertyValidator;
             _createPropertyValidator = createPropertyDto;
-            _cache = cache;
+            _seoMetaDataService = seoMetaDataService;
             _expireValidator = expireValidator;
+            _seoValidator = seoValidator;
+            _cache = cache;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -42,6 +47,15 @@ namespace Sadef.Application.Services.PropertyListing
             {
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<PropertyDto>(errorMessage);
+            }
+            if (dto.SeoMeta != null)
+            {
+                var seoValidation = await _seoValidator.ValidateAsync(dto.SeoMeta);
+                if (!seoValidation.IsValid)
+                {
+                    var errorMessage = seoValidation.Errors.First().ErrorMessage;
+                    return new Response<PropertyDto>(errorMessage);
+                }
             }
             var property = _mapper.Map<Property>(dto);
             property.Images = new List<PropertyImage>();
@@ -77,6 +91,17 @@ namespace Sadef.Application.Services.PropertyListing
             }
             await _uow.RepositoryAsync<Property>().AddAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+
+            // Seo Meta Details
+            SeoMetaDataDto? seoDto = null;
+            if (dto.SeoMeta != null)
+            {
+                var seoResponse = await _seoMetaDataService.CreateSeoMetaAsync<Property>(property.Id, dto.SeoMeta);
+                if (!seoResponse.Succeeded)
+                    return new Response<PropertyDto>(seoResponse.Message);
+                seoDto = seoResponse.Data;
+            }
+
             await _cache.RemoveAsync("property:page=1&size=10");
             var createdDto = _mapper.Map<PropertyDto>(property);
             createdDto.ImageBase64Strings = property.Images?
@@ -85,6 +110,8 @@ namespace Sadef.Application.Services.PropertyListing
             createdDto.VideoUrls = property.Videos?
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
+            createdDto.SeoMeta = seoDto;
+
             return new Response<PropertyDto>(createdDto, "Property created successfully");
         }
 
@@ -148,6 +175,12 @@ namespace Sadef.Application.Services.PropertyListing
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
 
+            var seoResponse = await _seoMetaDataService.GetByEntityAsync(id, nameof(Property));
+            if (seoResponse.Succeeded && seoResponse.Data != null)
+            {
+                dto.SeoMeta = seoResponse.Data;
+            }
+
             return new Response<PropertyDto>(dto, "Property found successfully");
         }
 
@@ -177,6 +210,15 @@ namespace Sadef.Application.Services.PropertyListing
             {
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<PropertyDto>(errorMessage);
+            }
+            if (dto.SeoMeta != null)
+            {
+                var seoValidation = await _seoValidator.ValidateAsync(dto.SeoMeta);
+                if (!seoValidation.IsValid)
+                {
+                    var errorMessage = seoValidation.Errors.First().ErrorMessage;
+                    return new Response<PropertyDto>(errorMessage);
+                }
             }
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
             var existing = await queryRepo
@@ -222,12 +264,24 @@ namespace Sadef.Application.Services.PropertyListing
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(existing);
             await _uow.SaveChangesAsync(CancellationToken.None);
+
+            // Seo Meta Details
+            SeoMetaDataDto? seoDto = null;
+            if (dto.SeoMeta != null)
+            {
+                var seoResponse = await _seoMetaDataService.UpdateSeoMetaAsync<Property>(existing.Id, dto.SeoMeta);
+                if (!seoResponse.Succeeded)
+                    return new Response<PropertyDto>(seoResponse.Message);
+                seoDto = seoResponse.Data;
+            }
+
             await _cache.RemoveAsync("property:page=1&size=10");
             var updatedDto = _mapper.Map<PropertyDto>(existing);
             updatedDto.ImageBase64Strings = existing.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
             updatedDto.VideoUrls = existing.Videos?
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
+            updatedDto.SeoMeta = seoDto;
 
             return new Response<PropertyDto>(updatedDto, "Property updated successfully");
         }

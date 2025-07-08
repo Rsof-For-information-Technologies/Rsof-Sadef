@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Sadef.Domain.Constants;
+using Sadef.Application.DTOs.SeoMetaDtos;
 
 namespace Sadef.Application.DTOs.PropertyDtos
 {
@@ -35,6 +36,7 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public bool IsInvestorOnly { get; set; } = false;
         public List<FeatureList>? Features { get; set; }
         public int? TotalFloors { get; set; }
+        public CreateSeoMetaDetailsDto? SeoMeta { get; set; }
 
     }
 }
