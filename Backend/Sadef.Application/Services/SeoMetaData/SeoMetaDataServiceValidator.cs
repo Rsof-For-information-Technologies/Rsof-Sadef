@@ -20,7 +20,7 @@ namespace Sadef.Application.Services.SeoMetaData
                 .WithMessage("Slug must be URL-friendly (lowercase letters, numbers, and dashes only).");
 
             RuleFor(x => x.MetaTitle)
-                .MaximumLength(60).WithMessage("MetaTitle should be under 60 characters.");
+                .MaximumLength(100).WithMessage("MetaTitle should be under 60 characters.");
 
             RuleFor(x => x.MetaDescription)
                 .MaximumLength(160).WithMessage("MetaDescription should be under 160 characters.");

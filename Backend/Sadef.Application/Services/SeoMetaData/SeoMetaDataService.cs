@@ -95,29 +95,24 @@ namespace Sadef.Application.Services.SeoMetaData
             var entityType = typeof(T).Name;
 
             var repo = _uow.RepositoryAsync<Domain.SeoMetaEntity.SeoMetaData>();
-            var existing = await _queryRepositoryFactory
+            var data = await _queryRepositoryFactory
                 .QueryRepository<Domain.SeoMetaEntity.SeoMetaData>()
                 .Queryable()
                 .FirstOrDefaultAsync(m => m.EntityId == entityId && m.EntityType == entityType);
 
-            if (existing == null)
+            if (data == null)
             {
-                // If not found, treat it as create
-                return await CreateSeoMetaAsync<T>(entityId, meta);
+                var createDto = _mapper.Map<CreateSeoMetaDetailsDto>(meta);
+                return await CreateSeoMetaAsync<T>(entityId, createDto);
             }
 
-            // Update fields
-            existing.Slug = meta.Slug;
-            existing.MetaTitle = meta.MetaTitle;
-            existing.MetaDescription = meta.MetaDescription;
-            existing.MetaKeywords = meta.MetaKeywords;
-            existing.CanonicalUrl = meta.CanonicalUrl;
-            existing.UpdatedAt = DateTime.UtcNow;
+            _mapper.Map(meta, data);
+            data.UpdatedAt = DateTime.UtcNow;
 
-            await repo.UpdateAsync(existing);
+            await repo.UpdateAsync(data);
             await _uow.SaveChangesAsync(CancellationToken.None);
 
-            var updatedDto = _mapper.Map<SeoMetaDataDto>(existing);
+            var updatedDto = _mapper.Map<SeoMetaDataDto>(data);
             return new Response<SeoMetaDataDto>(updatedDto, "SEO metadata updated successfully.");
         }
 
