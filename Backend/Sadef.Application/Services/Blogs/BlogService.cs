@@ -19,8 +19,9 @@ namespace Sadef.Application.Services.Blogs
         private readonly IValidator<CreateBlogDto> _createBlogValidator;
         private readonly IValidator<UpdateBlogDto> _updateBlogValidator;
         private readonly ISeoMetaDataService _seoMetaDataService;
+        private readonly IValidator<CreateSeoMetaDetailsDto> _seoValidator;
 
-        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, ISeoMetaDataService seoMetaDataService)
+        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, ISeoMetaDataService seoMetaDataService, IValidator<CreateSeoMetaDetailsDto> seoValidator)
         {
             _uow = uow;
             _queryFactory = queryFactory;
@@ -28,6 +29,7 @@ namespace Sadef.Application.Services.Blogs
             _createBlogValidator = createBlogValidator;
             _updateBlogValidator = updateBlogValidator;
             _seoMetaDataService = seoMetaDataService;
+            _seoValidator = seoValidator;
         }
         public async Task<Response<PaginatedResponse<BlogDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
         {
@@ -73,6 +75,15 @@ namespace Sadef.Application.Services.Blogs
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<BlogDto>(errorMessage);
             }
+            if (dto.SeoMeta != null)
+            {
+                var seoValidation = await _seoValidator.ValidateAsync(dto.SeoMeta);
+                if (!seoValidation.IsValid)
+                {
+                    var errorMessage = seoValidation.Errors.First().ErrorMessage;
+                    return new Response<BlogDto>(errorMessage);
+                }
+            }
             var blog = _mapper.Map<Blog>(dto);
             if (dto.CoverImage != null)
             {
@@ -109,6 +120,15 @@ namespace Sadef.Application.Services.Blogs
             {
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<BlogDto>(errorMessage);
+            }
+            if (dto.SeoMeta != null)
+            {
+                var seoValidation = await _seoValidator.ValidateAsync(dto.SeoMeta);
+                if (!seoValidation.IsValid)
+                {
+                    var errorMessage = seoValidation.Errors.First().ErrorMessage;
+                    return new Response<BlogDto>(errorMessage);
+                }
             }
             var repo = _uow.RepositoryAsync<Blog>();
             var blog = await _queryFactory

@@ -13,14 +13,20 @@ namespace Sadef.Application.Services.SeoMetaData
             RuleFor(x => x.EntityType)
                 .NotEmpty().WithMessage("EntityType is required.")
                 .MaximumLength(100).WithMessage("EntityType must not exceed 100 characters.");
+        }
+    }
 
+    public class CreateSeoMetaDetailsValidator : AbstractValidator<CreateSeoMetaDetailsDto>
+    {
+        public CreateSeoMetaDetailsValidator()
+        {
             RuleFor(x => x.Slug)
                 .MaximumLength(200).WithMessage("Slug must not exceed 200 characters.")
                 .Matches(@"^[a-z0-9]+(?:-[a-z0-9]+)*$").When(x => !string.IsNullOrWhiteSpace(x.Slug))
                 .WithMessage("Slug must be URL-friendly (lowercase letters, numbers, and dashes only).");
 
             RuleFor(x => x.MetaTitle)
-                .MaximumLength(100).WithMessage("MetaTitle should be under 60 characters.");
+                .MaximumLength(80).WithMessage("MetaTitle should be under 80 characters.");
 
             RuleFor(x => x.MetaDescription)
                 .MaximumLength(160).WithMessage("MetaDescription should be under 160 characters.");
@@ -36,8 +42,7 @@ namespace Sadef.Application.Services.SeoMetaData
 
         private bool BeAValidUrl(string url)
         {
-            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
-                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+            return Uri.TryCreate(url, UriKind.Absolute, out _);
         }
     }
 }
