@@ -1,15 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { Badge, Text, Tooltip, ActionIcon } from 'rizzui';
+import { Badge, Text, Tooltip, ActionIcon, Button, Input } from 'rizzui';
 import { routes } from '@/config/routes';
 import EyeIcon from '@/components/icons/eye';
 import PencilIcon from '@/components/icons/pencil';
 import DateCell from '@/components/ui/date-cell';
 import DeletePopover from '@/app/shared/delete-popover';
 import { HeaderCell } from '@/components/ui/table';
-import { deleteBlog, deleteProperty, LeadUpdateStatus, PropertyUpdateStatus } from '@/utils/api';
+import { deleteBlog, deleteProperty, LeadUpdateStatus, PropertyExpireDuration, PropertyUpdateStatus } from '@/utils/api';
 import { toast } from 'sonner';
+import React from 'react';
+import dayjs from 'dayjs';
+import { PropertyItem } from '@/types/property';
 
 type Columns = {
   sortConfig?: any;
@@ -46,6 +49,54 @@ const onDeleteProperty = async (id: string | number) => {
     console.error('Error deleting property:', error);
   }
 
+}
+
+function ExpiryDateDuration({ row }: { row: PropertyItem }) {
+  const initialValue = row.expiryDate
+    ? dayjs(row.expiryDate).format('YYYY-MM-DDTHH:mm')
+    : "";
+  const [inputValue, setInputValue] = React.useState(initialValue);
+  const [loading, setLoading] = React.useState(false);
+  console.log("1", inputValue);
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const localDate = dayjs(inputValue, 'YYYY-MM-DDTHH:mm');
+      const isoDate = localDate.toISOString();
+      console.log('2:', isoDate);
+      const res = await PropertyExpireDuration(row.id, isoDate);
+      if(res.succeeded) {
+        console.log("3", res);
+        toast.success("Expiry date updated successfully");
+      } else {
+        toast.error("Failed to update expiry date");
+      }
+    } catch (err) {
+      alert("Failed to update expiry date");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <Input
+        size='sm'
+        type="datetime-local"
+        value={inputValue}
+        min={dayjs().format('YYYY-MM-DDTHH:mm')}
+        onChange={e => setInputValue(e.target.value)}
+      />
+      <Button
+        size='sm'
+        variant="solid"
+        disabled={loading || !inputValue}
+        onClick={handleSave}
+      >
+        {loading ? "Saving..." : "Save"}
+      </Button>
+    </div>
+  );
 }
 
 // blogs columns
@@ -168,7 +219,7 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('id'),
     dataIndex: 'id',
     key: 'id',
-    width: 60,
+    width: 80,
     render: (value: number) => <Text>#{value}</Text>,
   },
   {
@@ -177,7 +228,7 @@ export const getPropertyColumns = ({
     dataIndex: 'title',
     key: 'title',
     width: 200,
-    render: (value: string) => <Text className="font-medium text-gray-800">{value}</Text>,
+    render: (value: string) => <Text>{value}</Text>,
   },
   // {
   //   title: <HeaderCell title="Description" />,
@@ -210,14 +261,14 @@ export const getPropertyColumns = ({
     width: 180,
     render: (value: string) => <Text>{value}</Text>,
   },
-  {
-    title: <HeaderCell title="Area Size" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'areaSize'} />,
-    onHeaderCell: () => onHeaderCellClick('areaSize'),
-    dataIndex: 'areaSize',
-    key: 'areaSize',
-    width: 100,
-    render: (value: number) => <Text>{value}</Text>,
-  },
+  // {
+  //   title: <HeaderCell title="Area Size" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'areaSize'} />,
+  //   onHeaderCell: () => onHeaderCellClick('areaSize'),
+  //   dataIndex: 'areaSize',
+  //   key: 'areaSize',
+  //   width: 100,
+  //   render: (value: number) => <Text>{value}</Text>,
+  // },
   {
     title: <HeaderCell title="Bedrooms" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bedrooms'} />,
     onHeaderCell: () => onHeaderCellClick('bedrooms'),
@@ -238,7 +289,7 @@ export const getPropertyColumns = ({
     title: ( <HeaderCell title="Status" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} /> ),
     dataIndex: 'status',
     key: 'status',
-    width: 100,
+    width: 120,
     render: (value: number) => {
       const status = leadStatuses.find((s) => s.value === value);
       let color: "warning" | "success" | "info" | "danger" | "secondary" = "secondary";
@@ -258,18 +309,27 @@ export const getPropertyColumns = ({
     },
   },
   // {
-  //   title: <HeaderCell title="Expiry Date" />,
+  //   title: <HeaderCell title="Expiry Date" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'}/>,
+  //   onHeaderCell: () => onHeaderCellClick('expiryDate'),
   //   dataIndex: 'expiryDate',
   //   key: 'expiryDate',
   //   width: 140,
   //   render: (value: string | null) => value ? <DateCell date={new Date(value)} /> : <Text>{value}</Text>,
   // },
   {
+    title: <HeaderCell title="Expiry Date" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'}/>,
+    onHeaderCell: () => onHeaderCellClick('expiryDate'),
+    dataIndex: 'expiryDate',
+    key: 'expiryDate',
+    width: 180,
+    render: (_: string | null, row: any) => <ExpiryDateDuration row={row} />,
+  },
+  {
     title: <HeaderCell title="Investor Only" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isInvestorOnly'} />,
     onHeaderCell: () => onHeaderCellClick('isInvestorOnly'),
     dataIndex: 'isInvestorOnly',
     key: 'isInvestorOnly',
-    width: 120,
+    width: 140,
     render: (value: boolean) => value ? <Badge color="info">Yes</Badge> : <Badge color="secondary">No</Badge>,
   },
   {

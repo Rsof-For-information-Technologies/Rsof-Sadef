@@ -283,7 +283,16 @@ export const PropertyUpdateStatus = async (id: number, status: number) => {
   }
 };
 
-// lead API functions
+export const PropertyExpireDuration = async (id: number, expiryDate: string) => {
+  const api = apiCall();
+  try {
+    const response = await api.patch('/api/v1/property/expire-duration', { id, expiryDate });
+    return response.data;
+  } catch (error) {
+    console.error('Update property expiry duration failed:', error);
+    throw error;
+  }
+};
 
 export const getAllLeads = async (pageNumber = 1, pageSize = 10): Promise<GetLeads> => {
   const api = apiCall();

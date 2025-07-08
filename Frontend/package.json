@@ -6,7 +6,7 @@
     "clean": "rimraf -g \"{node_modules,.next,.cache}\"",
     "dev": "next dev -p 3010",
     "build": "next build",
-    "start": "next start -p 3020",
+    "start": "next start -p 3010",
     "lint": "next lint"
   },
   "dependencies": {
