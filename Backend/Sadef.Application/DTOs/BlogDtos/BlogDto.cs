@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sadef.Application.DTOs.SeoMetaDtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,6 @@ namespace Sadef.Application.DTOs.BlogDtos
         public string? CoverImage { get; set; }
         public DateTime PublishedAt { get; set; }
         public bool IsPublished { get; set; }
+        public SeoMetaDataDto? SeoMeta { get; set; }
     }
 }
