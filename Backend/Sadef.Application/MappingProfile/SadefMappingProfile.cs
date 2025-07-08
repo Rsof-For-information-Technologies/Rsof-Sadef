@@ -65,6 +65,9 @@ namespace Sadef.Application.MappingProfile
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<CreateSeoMetaDetailsDto, SeoMetaData>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<CreateSeoMetaDetailsDto, CreateSeoMetaDataDto>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
 
 
 

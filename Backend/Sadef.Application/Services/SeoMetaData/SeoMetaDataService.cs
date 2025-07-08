@@ -26,17 +26,20 @@ namespace Sadef.Application.Services.SeoMetaData
 
         public async Task<Response<SeoMetaDataDto>> CreateSeoMetaAsync<T>(int entityId, CreateSeoMetaDetailsDto meta)
         {
+            var entityType = typeof(T).Name;
+            var alreadyExists = await _queryRepositoryFactory
+                .QueryRepository<Domain.SeoMetaEntity.SeoMetaData>()
+                .Queryable()
+                .AnyAsync(x => x.EntityType == entityType && x.EntityId == entityId);
 
-            var dto = new CreateSeoMetaDataDto
+            if (alreadyExists)
             {
-                EntityId = entityId,
-                EntityType = typeof(T).Name,
-                Slug = meta.Slug,
-                MetaTitle = meta.MetaTitle,
-                MetaDescription = meta.MetaDescription,
-                MetaKeywords = meta.MetaKeywords,
-                CanonicalUrl = meta.CanonicalUrl
-            };
+                return new Response<SeoMetaDataDto>($"SEO metadata already exists for {entityType} with ID {entityId}.");
+            }
+
+            var dto = _mapper.Map<CreateSeoMetaDataDto>(meta);
+            dto.EntityId = entityId;
+            dto.EntityType = entityType;
 
             var validation = await _createValidator.ValidateAsync(dto);
             if (!validation.IsValid)
