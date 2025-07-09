@@ -457,5 +457,22 @@ namespace Sadef.Application.Services.User
 
             return result;
         }
+
+        public async Task<List<string>> GetAllPublicUserIds()
+        {
+            var allUsers = _userManager.Users.ToList();
+            var result = new List<string>();
+
+            foreach (var user in allUsers)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                if (roles.Contains("PublicUser", StringComparer.OrdinalIgnoreCase))
+                {
+                    result.Add(user.Id);
+                }
+            }
+
+            return result;
+        }
     }
 }

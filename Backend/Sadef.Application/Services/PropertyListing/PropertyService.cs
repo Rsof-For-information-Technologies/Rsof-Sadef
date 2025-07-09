@@ -23,8 +23,19 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IValidator<UpdatePropertyDto> _updatePropertyValidator;
         private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator;
         private readonly IDistributedCache _cache;
+        private readonly IUserManagementService _userManagementService;
+        private readonly INotificationService _notificationService;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator)
+        public PropertyService(
+            IUnitOfWorkAsync uow,
+            IMapper mapper,
+            IQueryRepositoryFactory queryRepositoryFactory,
+            IValidator<UpdatePropertyDto> updatePropertyValidator,
+            IValidator<CreatePropertyDto> createPropertyDto,
+            IDistributedCache cache,
+            IValidator<PropertyExpiryUpdateDto> expireValidator,
+            IUserManagementService userManagementService,
+            INotificationService notificationService)
         {
             _uow = uow;
             _mapper = mapper;
@@ -33,6 +44,8 @@ namespace Sadef.Application.Services.PropertyListing
             _createPropertyValidator = createPropertyDto;
             _cache = cache;
             _expireValidator = expireValidator;
+            _userManagementService = userManagementService;
+            _notificationService = notificationService;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -78,6 +91,33 @@ namespace Sadef.Application.Services.PropertyListing
             await _uow.RepositoryAsync<Property>().AddAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("property:page=1&size=10");
+
+            var adminUserIds = await _userManagementService.GetAllAdminAndSuperAdminUserIds();
+            var publicUserIds = await _userManagementService.GetAllPublicUserIds();
+            var allUserIds = adminUserIds.Concat(publicUserIds).Distinct().ToList();
+            string? creatorId = null;
+            if (dto is Sadef.Application.DTOs.PropertyDtos.CreatePropertyDto createDto && createDto is not null)
+            {
+                //creatorId = createDto.CreatedBy;
+            }
+            if (string.IsNullOrEmpty(creatorId) && property is not null)
+            {
+                creatorId = property.CreatedBy;
+            }
+            if (!string.IsNullOrEmpty(creatorId))
+            {
+                allUserIds = allUserIds.Where(id => id != creatorId).ToList();
+            }
+            var notificationTitle = "New Property Created";
+            var notificationMessage = $"A new property '{property.Title}' has been created in {property.City}.";
+            var userGuids = allUserIds
+                .Where(id => Guid.TryParse(id, out _))
+                .Select(id => Guid.Parse(id))
+                .ToList();
+            if (userGuids.Any())
+            {
+                await _notificationService.CreateAndDispatchAsync(notificationTitle, notificationMessage, userGuids);
+            }
             var createdDto = _mapper.Map<PropertyDto>(property);
             createdDto.ImageBase64Strings = property.Images?
                 .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")

@@ -17,5 +17,6 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<UserLoginResultDTO>> RefreshTokenAsync(RefreshTokenDto dto);
         Task<Response<string>> VerifyEmailAsync(VerifyEmailRequestDto request);
         Task<List<string>> GetAllAdminAndSuperAdminUserIds();
+        Task<List<string>> GetAllPublicUserIds();
     }
 }
