@@ -1,6 +1,8 @@
 import { BlogFormData, CreateBlogResponse, GetBlogs } from '@/types/blog';
 import { CreateLeadResponse, GetLeads } from '@/types/lead';
+import { CreateMaintenanceResponse, GetMaintenanceRequests, MaintenanceRequestFormFormData, MaintenanceRequestItem } from '@/types/maintenanceRequest';
 import { PropertyFormData, CreatePropertyResponse, GetProperties } from '@/types/property';
+import { MaintenanceRequestForm } from '@/validators/maintenanceRequest';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
@@ -115,6 +117,88 @@ export const getAllBlogs = async (pageNumber = 1, pageSize = 10): Promise<GetBlo
     throw error;
   }
 };
+
+// Maintenance Request API functions
+
+export const createMaintenanceRequest = async (formData: FormData) => {
+  const api = apiCall();
+  try {
+    const response = await api.post('/api/v1/maintenancerequest/create', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Create maintenance request failed:', error);
+    throw error;
+  }
+};
+
+export const updateMaintenanceRequest = async (data: any) => {
+    const api = apiCall();
+    const formData = new FormData();
+    if (data.id !== undefined && data.id !== null) {
+        formData.append('Id', String(data.id));
+    }
+    formData.append('LeadId', data.leadId);
+    formData.append('Description', data.description);
+    if (data.images && data.images.length > 0) {
+        formData.append('Images', data.images[0]);
+    }
+    if (data.videos && data.videos.length > 0) {
+        formData.append('Videos', data.videos[0]);
+    }
+    try {
+        const response = await api.put('/api/v1/maintenancerequest/update', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Update maintenance request failed:', error);
+        throw error;
+    }
+};
+
+export const getAllMaintenanceRequests = async (pageNumber = 1, pageSize = 10): Promise<GetMaintenanceRequests> => {
+  const api = apiCall();
+  try {
+    const {data} = await api.get<GetMaintenanceRequests>(`/api/v1/maintenanceRequest?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+  } catch (error) {
+    console.error('Get all maintenance requests failed:', error);
+    throw error;
+  }
+};
+
+export const getMaintenanceRequestById = async (id: string | number) => {
+    const api = apiCall();
+    try {
+        const response = await api.get<{ data: MaintenanceRequestItem }>(`/api/v1/maintenancerequest/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Get maintenance request by ID failed:', error);
+        throw error;
+    }
+};
+
+export const MaintenanceRequestUpdateStatus = async (id: number, status: number) => {
+  const api = apiCall();
+  try {
+    const response = await api.patch('/api/v1/maintenancerequest/update-status', { id, status, });
+    return response.data;
+  } catch (error) {
+    console.error('Update property status failed:', error);
+    throw error;
+  }
+};
+
+export const deleteMaintenanceRequest = async (id : string | number) => {
+  const api = apiCall();
+  try {
+    const response = await api.delete(`/api/v1/maintenancerequest/delete?id=${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Delete Maintenance Request failed:', error);
+    throw error;
+  }
+}
 
 // Property API functions
 
