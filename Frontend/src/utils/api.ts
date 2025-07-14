@@ -1,8 +1,7 @@
 import { BlogFormData, CreateBlogResponse, GetBlogs } from '@/types/blog';
 import { CreateLeadResponse, GetLeads } from '@/types/lead';
-import { CreateMaintenanceResponse, GetMaintenanceRequests, MaintenanceRequestFormFormData, MaintenanceRequestItem } from '@/types/maintenanceRequest';
+import { GetMaintenanceRequests, MaintenanceRequestItem } from '@/types/maintenanceRequest';
 import { PropertyFormData, CreatePropertyResponse, GetProperties } from '@/types/property';
-import { MaintenanceRequestForm } from '@/validators/maintenanceRequest';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
@@ -408,6 +407,69 @@ export const LeadUpdateStatus = async (id: number, status: number) => {
     return response.data;
   } catch (error) {
     console.error('Update lead status failed:', error);
+    throw error;
+  }
+};
+
+// Auth API functions
+
+export const UserLoginForm = async (state: {
+  email: string;
+  password: string
+}) => {
+  const api = apiCall();
+  try {
+    const response = await api.post('/api/v1/user/login', state);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const UserRegisterForm = async (state: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+}) => {
+  const api = apiCall();
+
+  try {
+    const response = await api.post('/api/v1/user/register', state);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const UserForgotPasswordForm = async (state: {
+  email: string;
+  clientUrl: string;
+}) => {
+  const api = apiCall();
+
+  try {
+    const response = await api.post('/api/v1/user/forgot-password', state);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const UserResetPasswordForm = async (state: {
+    email: string;
+    resetToken: string;
+    newPassword: string;
+    confirmNewPassword: string;
+}) => {
+  const api = apiCall();
+
+  try {
+    const response = await api.post('/api/v1/user/reset-password', state);
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };

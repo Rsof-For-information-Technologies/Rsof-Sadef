@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { PiArrowRightBold } from 'react-icons/pi'
 import { Checkbox, Input, Password } from 'rizzui'
@@ -7,11 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useMedia from 'react-use/lib/useMedia'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { routes } from '@/config/routes'
-import { clientAxiosInstance } from '@/utils/axios.instance'
 import { DeleteLocalStorage, setLocalStorage } from '@/utils/localStorage'
 import { FormStatusButton } from '@/components/formStatusButton'
 import { Login, login } from '@/validators/login.validator'
 import Link from 'next/link'
+import { UserLoginForm } from '@/utils/api'
 
 const initialValues = {
     email: "",
@@ -22,46 +22,43 @@ const initialValues = {
 function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams()
+    const [serverError, setServerError] = useState<string | null>(null);
     const isMedium = useMedia('(max-width: 1200px)', false);
+
     const { register, handleSubmit, formState: { errors }, setError, } = useForm<Login>({
         resolver: zodResolver(login),
         defaultValues: { ...initialValues }
     })
 
     const onSubmit = async (state: Login) => {
-
         try {
-            const { data } = await clientAxiosInstance.post('/api/v1/user/login', state);
+            const data = await UserLoginForm(state);
+            console.log({ data });
 
-            console.log({ data })
-            
-            setLocalStorage("user-info", data);
-
-            if (searchParams.get("navigate_to"))
-                router.push(`${searchParams.get("navigate_to")}`)
-
-            else {
-                router.push(`/`)
+            if (data.succeeded) {
+                setLocalStorage("user-info", data);
+                router.push(`/`);
+            } else {
+                setServerError(data.message);
             }
 
         } catch (error) {
-            console.log(error)
+            console.log(error);
             if ((error as any).response?.data && Object.entries((error as any).response?.data).length) {
                 for (let [key, value] of Object.entries((error as any).response?.data)) {
-                    setError(key as any, { type: 'custom', message: value as string })
+                    setError(key as any, { type: 'custom', message: value as string });
                 }
             }
         }
     };
+
     const logout = searchParams.get("logout")
     useEffect(() => {
 
         if (logout === "true") {
             const urlSearchParams = new URLSearchParams(searchParams.toString());
-
             DeleteLocalStorage("user-info");
             // setUserInfo()
-
             urlSearchParams.delete("logout");
             router.push(`/${routes.auth.login}?${urlSearchParams}`)
         }
@@ -105,10 +102,16 @@ function LoginForm() {
                         Forgot Password
                     </Link>
                 </div>
+                {serverError && (
+                    <div className="border border-red-300 p-3 rounded-md bg-red-50 dark:bg-red-100/10">
+                        <p className="text-red-600 text-sm font-medium">{serverError}</p>
+                    </div>
+                )}
+
                 <FormStatusButton
-                    className="w-full @xl:w-full bg-[#4675db] hover:bg-[#1d58d8] dark:hover:bg-[#1d58d8] dark:text-white"
+                    className="w-full @xl:w-full dark:bg-[#090909] dark:text-white hover:dark:bg-black"
                     type="submit"
-                    size={isMedium ? 'lg' : 'xl'}>
+                    size={isMedium ? 'lg' : 'lg'}>
                     <span>Login</span>
                     <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
                 </FormStatusButton>

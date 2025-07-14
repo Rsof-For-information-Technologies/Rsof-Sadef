@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 export const signup = z.object({
-    firstname: z.string({ required_error: "First name is required." })
+    firstName: z.string({ required_error: "First name is required." })
         .min(1, "First name is required."),
-    lastname: z.string({ required_error: "Last name is required." })
+    lastName: z.string({ required_error: "Last name is required." })
         .min(1, "Last name is required."),
     email: z.string({ required_error: "Email is required." })
         .min(1, "Email is required."),

@@ -2,9 +2,9 @@ import { z } from "zod";
 
 export const resetPasswordValidator = z.object({
 
-    email: z.string({ required_error: "Email is required." })
-        .min(1, { message: "Email is required." })
-        .email("Invalid email address."),
+    // email: z.string({ required_error: "Email is required." })
+    //     .min(1, { message: "Email is required." })
+    //     .email("Invalid email address."),
     newPassword: z.string({ required_error: "New Password is required." })
         .min(1, { message: "New Password is required." })
         .min(6, "Password must be at least 6 characters long.")
@@ -18,5 +18,5 @@ export const resetPasswordValidator = z.object({
     path: ["confirmNewPassword"]
 })
 
-export type T_ResetPasswordBody = z.infer<typeof resetPasswordValidator>
+export type ResetPassword = z.infer<typeof resetPasswordValidator>
 
