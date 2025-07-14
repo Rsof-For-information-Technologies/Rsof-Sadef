@@ -5,6 +5,8 @@ using Sadef.Common.Infrastructure.EfCore.Db;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
+using Sadef.Domain.Users;
+using Sadef.Domain;
 namespace Sadef.Infrastructure.DBContext
 {
     public class SadefDbContext : AppDbContextIdentity
@@ -40,6 +42,8 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<Property> Properties { get; set; }
         public DbSet<FavoriteProperty> FavoriteProperties { get; set; }
         public DbSet<Lead> Lead { get; set; }
+        public DbSet<UserInfo> UsersInfo { get; set; }
+        public DbSet<Timeslot> Timeslots { get; set; }
 
     }
 }
