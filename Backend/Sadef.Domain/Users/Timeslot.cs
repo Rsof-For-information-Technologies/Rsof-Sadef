@@ -14,6 +14,7 @@ namespace Sadef.Domain.Users
         public string? Description { get; set; }
         public int? UserInfoId { get; set; } // null = available
         public UserInfo? UserInfo { get; set; }
+        public string? AppointmentNumber { get; set; } // <-- New field
 
     }
 }
