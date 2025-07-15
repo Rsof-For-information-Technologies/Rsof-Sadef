@@ -7,6 +7,7 @@ using Sadef.Application.Services.Lead;
 using Sadef.Application.Services.MaintenanceRequest;
 using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
+using Sadef.Application.Services.ActivityLog;
 using Sadef.Common.EFCore.Middleware;
 using Sadef.Common.Infrastructure.EfCore.Db;
 using Sadef.Common.Infrastructure.Validator;
@@ -29,7 +30,7 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<IFavoriteService, FavoriteService>();
                    svc.AddScoped<ILeadService, LeadService>();
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
-
+                   svc.AddScoped<IActivityLogService, ActivityLogService>();
                }
            );
 
