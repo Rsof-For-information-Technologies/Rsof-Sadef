@@ -342,22 +342,28 @@ namespace Sadef.API.Controllers
         //}
         [HttpGet("user-details-with-slots")]
         [EnableCors("AllowAllOrigins")]
-        public async Task<IActionResult> GetUserWithSlots([FromQuery] int userId)
+        public async Task<IActionResult> GetUserWithSlotsByPhone([FromQuery] string phoneNumber)
         {
-            var user = await _dbContext.UserInfo.FindAsync(userId);
+            // Find user by phone number
+            var user = await _dbContext.UserInfo
+                .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+
             if (user == null)
                 return NotFound("User not found.");
 
+            // Get booked slots
             var bookedSlots = await _dbContext.Timeslots
-                .Where(t => t.UserInfoId == userId)
+                .Where(t => t.UserInfoId == user.Id)
                 .Select(t => new TimeslotDto
                 {
                     StartTime = t.StartTime,
                     EndTime = t.EndTime,
-                    Description = t.Description
+                    Description = t.Description,
+                    AppointmentNumber = t.AppointmentNumber
                 })
                 .ToListAsync();
 
+            // Prepare response
             var response = new UserWithSlotsResponse
             {
                 UserId = user.Id,
@@ -369,6 +375,7 @@ namespace Sadef.API.Controllers
 
             return Ok(response);
         }
+
 
         [HttpGet("timeslots-status-by-date")]
         [EnableCors("AllowAllOrigins")]
