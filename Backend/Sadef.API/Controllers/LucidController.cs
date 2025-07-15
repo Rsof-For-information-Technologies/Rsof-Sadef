@@ -61,7 +61,7 @@ namespace Sadef.API.Controllers
 
         [HttpPost("name")]
         [EnableCors("AllowAllOrigins")]
-        public async Task<IActionResult> GetUserName([FromBody] UserPayload payload)
+        public async Task<IActionResult> GetUserName([FromBody] UserNamePayload payload)
         {
             try
             {
