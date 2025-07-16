@@ -195,14 +195,14 @@ namespace Sadef.API.Controllers
                     return Ok(new { succeeded = false, message = "Slot is already booked" });
 
                 string appointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
-                user.AppointmentNumber = appointmentNumber;
 
                 var newSlot = new Timeslot
                 {
                     StartTime = startTime,
                     EndTime = endTime,
                     Description = $"{startTime:hh\\:mm tt} - {endTime:hh\\:mm tt}",
-                    UserInfoId = user.Id
+                    UserInfoId = user.Id,
+                    AppointmentNumber = appointmentNumber
                 };
 
                 await _dbContext.Timeslots.AddAsync(newSlot);
@@ -214,7 +214,6 @@ namespace Sadef.API.Controllers
                     Name = user.Name,
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
-                    AppointmentNumber = user.AppointmentNumber,
                     BookedSlots = new List<TimeslotDto>
             {
                 new TimeslotDto
@@ -222,6 +221,7 @@ namespace Sadef.API.Controllers
                     StartTime = newSlot.StartTime,
                     EndTime = newSlot.EndTime,
                     Description = newSlot.Description,
+                    AppointmentNumber = newSlot.AppointmentNumber
                 }
             }
                 };
@@ -435,6 +435,8 @@ namespace Sadef.API.Controllers
                     StartTime = t.StartTime,
                     EndTime = t.EndTime,
                     Description = t.Description,
+                    AppointmentNumber = t.AppointmentNumber,
+
                 })
                 .ToListAsync();
 
@@ -445,7 +447,6 @@ namespace Sadef.API.Controllers
                 Name = user.Name,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                AppointmentNumber = user.AppointmentNumber,
                 BookedSlots = bookedSlots
             };
 
