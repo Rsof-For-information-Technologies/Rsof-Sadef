@@ -7,6 +7,7 @@ using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
 using Sadef.Domain.Users;
 using Sadef.Domain;
+using Sadef.Common.Domain;
 namespace Sadef.Infrastructure.DBContext
 {
     public class SadefDbContext : AppDbContextIdentity
@@ -44,6 +45,6 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<Lead> Lead { get; set; }
         public DbSet<Timeslot> Timeslots { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
-
+        public DbSet<AuditLog> AuditLogs { get; set; }
     }
 }
