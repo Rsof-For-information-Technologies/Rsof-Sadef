@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Cors;
 using Sadef.Application.DTOs.LucidDto;
 using System.Text.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Sadef.Domain.LeadEntity;
+using System.Collections.Generic;
 
 namespace Sadef.API.Controllers
 {
@@ -165,122 +167,198 @@ namespace Sadef.API.Controllers
         {
             try
             {
-                // Clean the string: keep only before the first space
-                string rawTime = request.StartTime;
-                if (rawTime.Contains(' '))
+                // Step 1: Clean up the raw time and date
+                string rawTime = request.Time?.Split(' ')[0]; // Keep only "HH:mm:ss"
+                string rawDate = request.Date?.Split(' ')[0]; // Keep only "yyyy-MM-dd"
+
+                // Step 2: Combine cleaned date and time
+                if (!DateTime.TryParse($"{rawDate} {rawTime}", out DateTime startTime))
                 {
-                    rawTime = rawTime.Split(' ')[0];
+                    return BadRequest(new { succeeded = false, message = "Invalid date or time format." });
                 }
 
-                // If you expect only a time (e.g., "15:00:00"), combine with today's date:
-                if (TimeSpan.TryParse(rawTime, out TimeSpan time))
+                // Step 3: Prevent booking in the past
+                if (startTime < DateTime.UtcNow)
                 {
-                    DateTime today = DateTime.Today;
-                    DateTime startTime = today.Add(time);
-
-                    // Find user by Name (assuming unique)
-                    var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Name == request.Name);
-                    if (user == null)
-                        return NotFound("User not found.");
-
-                    var endTime = startTime.AddMinutes(30); // Auto-calculate EndTime
-
-                    // Check if the slot is already booked
-                    var slotAlreadyBooked = await _dbContext.Timeslots.AnyAsync(t =>
-                        t.StartTime == startTime &&
-                        t.EndTime == endTime &&
-                        t.UserInfoId != null);
-
-                    if (slotAlreadyBooked)
-                        return Conflict("This slot is already booked.");
-
-                    // Generate appointment number
-                    string appointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
-
-                    // Save the booking
-                    var newSlot = new Timeslot
-                    {
-                        StartTime = startTime,
-                        EndTime = endTime,
-                        Description = $"{startTime:hh\\:mm tt} - {endTime:hh\\:mm tt}",
-                        UserInfoId = user.Id,
-                        AppointmentNumber = appointmentNumber
-                    };
-
-                    await _dbContext.Timeslots.AddAsync(newSlot);
-                    await _dbContext.SaveChangesAsync();
-
-                    return Ok(new
-                    {
-                        message = "Slot booked successfully",
-                        slot = new
-                        {
-                            startTime = newSlot.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                            endTime = newSlot.EndTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                            newSlot.Description,
-                            newSlot.UserInfoId,
-                            newSlot.AppointmentNumber
-                        }
-                    });
+                    return BadRequest(new { succeeded = false, message = "You cannot book a time slot in the past." });
                 }
-                else if (DateTime.TryParse(rawTime, out DateTime startTime))
+
+                DateTime endTime = startTime.AddMinutes(30); // 30-minute slot
+
+                // Step 4: Find user by ID (you can also switch to Name if needed)
+                var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == request.UserId);
+                if (user == null)
                 {
-                    // If it's a full date+time string, use as is
-                    // Find user by Name (assuming unique)
-                    var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Name == request.Name);
-                    if (user == null)
-                        return NotFound("User not found.");
-
-                    var endTime = startTime.AddMinutes(30); // Auto-calculate EndTime
-
-                    // Check if the slot is already booked
-                    var slotAlreadyBooked = await _dbContext.Timeslots.AnyAsync(t =>
-                        t.StartTime == startTime &&
-                        t.EndTime == endTime &&
-                        t.UserInfoId != null);
-
-                    if (slotAlreadyBooked)
-                        return Conflict("This slot is already booked.");
-
-                    // Generate appointment number
-                    string appointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
-
-                    // Save the booking
-                    var newSlot = new Timeslot
-                    {
-                        StartTime = startTime,
-                        EndTime = endTime,
-                        Description = $"{startTime:hh\\:mm tt} - {endTime:hh\\:mm tt}",
-                        UserInfoId = user.Id,
-                        AppointmentNumber = appointmentNumber
-                    };
-
-                    await _dbContext.Timeslots.AddAsync(newSlot);
-                    await _dbContext.SaveChangesAsync();
-
-                    return Ok(new
-                    {
-                        message = "Slot booked successfully",
-                        slot = new
-                        {
-                            newSlot.StartTime,
-                            newSlot.EndTime,
-                            newSlot.Description,
-                            newSlot.UserInfoId,
-                            newSlot.AppointmentNumber
-                        }
-                    });
+                    return NotFound(new { succeeded = false, message = "User not found." });
                 }
-                else
+
+                // Step 5: Check if the slot is already booked
+                var slotAlreadyBooked = await _dbContext.Timeslots.AnyAsync(t =>
+                    t.StartTime == startTime &&
+                    t.EndTime == endTime &&
+                    t.UserInfoId != null);
+
+                if (slotAlreadyBooked)
                 {
-                    return BadRequest("Invalid StartTime format.");
+                    return Ok(new { succeeded = false, message = "Slot is already booked" });
                 }
+
+                // Step 6: Generate appointment number
+                string appointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
+
+                // Step 7: Save booking
+                var newSlot = new Timeslot
+                {
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    Description = $"{startTime:hh\\:mm tt} - {endTime:hh\\:mm tt}",
+                    UserInfoId = user.Id,
+                };
+                user.AppointmentNumber = appointmentNumber;
+
+                await _dbContext.Timeslots.AddAsync(newSlot);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    succeeded = true,
+                    message = "Slot booked successfully",
+                    slot = new
+                    {
+                        newSlot.StartTime,
+                        newSlot.EndTime,
+                        newSlot.Description,
+                        newSlot.UserInfoId,
+                    }
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return StatusCode(500, new { succeeded = false, message = $"An error occurred: {ex.Message}" });
             }
         }
+
+
+        //public async Task<IActionResult> BookSlot([FromBody] BookSlotRequest request)
+        //{
+        //    try
+        //    {
+        //        // Clean the string: keep only before the first space
+        //        string rawTime = request.StartTime;
+        //        if (rawTime.Contains(' '))
+        //        {
+        //            rawTime = rawTime.Split(' ')[0];
+        //        }
+
+        //        // If you expect only a time (e.g., "15:00:00"), combine with today's date:
+        //        if (TimeSpan.TryParse(rawTime, out TimeSpan time))
+        //        {
+        //            DateTime today = DateTime.Today;
+        //            DateTime startTime = today.Add(time);
+
+        //            // Find user by Name (assuming unique)
+        //            var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == request.UserId);
+        //            if (user == null)
+        //                return NotFound("User not found.");
+
+        //            var endTime = startTime.AddMinutes(30); // Auto-calculate EndTime
+
+        //            // Check if the slot is already booked
+        //            var slotAlreadyBooked = await _dbContext.Timeslots.AnyAsync(t =>
+        //                t.StartTime == startTime &&
+        //                t.EndTime == endTime &&
+        //                t.UserInfoId != null);
+
+        //            if (slotAlreadyBooked)
+        //                return Ok(new { succeeded = false, message = "Slot is already booked" });
+
+        //            // Generate appointment number
+        //            string appointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
+
+        //            // Save the booking
+        //            var newSlot = new Timeslot
+        //            {
+        //                StartTime = startTime,
+        //                EndTime = endTime,
+        //                Description = $"{startTime:hh\\:mm tt} - {endTime:hh\\:mm tt}",
+        //                UserInfoId = user.Id,
+        //                AppointmentNumber = appointmentNumber
+        //            };
+
+        //            await _dbContext.Timeslots.AddAsync(newSlot);
+        //            await _dbContext.SaveChangesAsync();
+
+        //            return Ok(new
+        //            {
+        //                message = "Slot booked successfully",
+        //                slot = new
+        //                {
+        //                    startTime = newSlot.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
+        //                    endTime = newSlot.EndTime.ToString("yyyy-MM-dd HH:mm:ss"),
+        //                    newSlot.Description,
+        //                    newSlot.UserInfoId,
+        //                    newSlot.AppointmentNumber
+        //                }
+        //            });
+        //        }
+        //        else if (DateTime.TryParse(rawTime, out DateTime startTime))
+        //        {
+        //            // If it's a full date+time string, use as is
+        //            // Find user by Name (assuming unique)
+        //            var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Name == request.Name);
+        //            if (user == null)
+        //                return NotFound("User not found.");
+
+        //            var endTime = startTime.AddMinutes(30); // Auto-calculate EndTime
+
+        //            // Check if the slot is already booked
+        //            var slotAlreadyBooked = await _dbContext.Timeslots.AnyAsync(t =>
+        //                t.StartTime == startTime &&
+        //                t.EndTime == endTime &&
+        //                t.UserInfoId != null);
+
+        //            if (slotAlreadyBooked)
+        //                return Ok(new { succeeded = false, message = "Slot is already booked" });
+
+        //            // Generate appointment number
+        //            string appointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
+
+        //            // Save the booking
+        //            var newSlot = new Timeslot
+        //            {
+        //                StartTime = startTime,
+        //                EndTime = endTime,
+        //                Description = $"{startTime:hh\\:mm tt} - {endTime:hh\\:mm tt}",
+        //                UserInfoId = user.Id,
+        //                AppointmentNumber = appointmentNumber
+        //            };
+
+        //            await _dbContext.Timeslots.AddAsync(newSlot);
+        //            await _dbContext.SaveChangesAsync();
+
+        //            return Ok(new
+        //            {
+        //                message = "Slot booked successfully",
+        //                slot = new
+        //                {
+        //                    newSlot.StartTime,
+        //                    newSlot.EndTime,
+        //                    newSlot.Description,
+        //                    newSlot.UserInfoId,
+        //                    newSlot.AppointmentNumber
+        //                }
+        //            });
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("Invalid StartTime format.");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"An error occurred: {ex.Message}");
+        //    }
+        //}
 
         //public async Task<IActionResult> BookSlot([FromBody] BookSlotRequest request)
         //{
@@ -359,7 +437,6 @@ namespace Sadef.API.Controllers
                     StartTime = t.StartTime,
                     EndTime = t.EndTime,
                     Description = t.Description,
-                    AppointmentNumber = t.AppointmentNumber
                 })
                 .ToListAsync();
 
@@ -370,6 +447,7 @@ namespace Sadef.API.Controllers
                 Name = user.Name,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
+                AppointmentNumber = user.AppointmentNumber, 
                 BookedSlots = bookedSlots
             };
 
