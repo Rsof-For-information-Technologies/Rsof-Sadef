@@ -619,6 +619,56 @@ namespace Sadef.API.Controllers
                 return StatusCode(500, new { succeeded = false, message = $"An error occurred: {ex.Message}" });
             }
         }
+        [HttpPost("cancel-appointment")]
+        [EnableCors("AllowAllOrigins")]
+        public async Task<IActionResult> CancelAppointmentSimple([FromBody] CancelAppointmentRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.AppointmentNumber))
+                return BadRequest(new { succeeded = false, message = "Appointment number is required." });
+
+            var slot = await _dbContext.Timeslots
+                .FirstOrDefaultAsync(t => t.AppointmentNumber == request.AppointmentNumber);
+
+            if (slot == null)
+                return NotFound(new { succeeded = false, message = "Appointment not found." });
+
+            // Cancel logic — remove user assignment
+            slot.UserInfoId = null;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { succeeded = true, message = "Appointment canceled and slot is now available again." });
+        }
+        [HttpGet("user-by-appointment-number")]
+        [EnableCors("AllowAllOrigins")]
+        public async Task<IActionResult> GetUserByAppointmentNumber([FromQuery] string appointmentNumber)
+        {
+            if (string.IsNullOrWhiteSpace(appointmentNumber))
+                return BadRequest(new { succeeded = false, message = "Appointment number is required." });
+
+            var slot = await _dbContext.Timeslots
+                .Include(t => t.UserInfo)
+                .FirstOrDefaultAsync(t => t.AppointmentNumber == appointmentNumber);
+
+            if (slot == null || slot.UserInfo == null)
+                return NotFound(new { succeeded = false, message = "User or appointment not found." });
+
+            var user = slot.UserInfo;
+
+            var response = new
+            {
+                userId = user.Id,
+                name = user.Name,
+                email = user.Email,
+                phoneNumber = user.PhoneNumber,
+                appointmentNumber = appointmentNumber,
+                slotStartTime = slot.StartTime,
+                slotEndTime = slot.EndTime,
+                description = slot.Description
+            };
+
+            return Ok(new { succeeded = true, data = response });
+        }
 
     }
 
