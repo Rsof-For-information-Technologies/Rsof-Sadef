@@ -10,7 +10,7 @@ namespace Sadef.Application.DTOs.LucidDto
     {
         public string Date { get; set; }       // e.g., "2025-07-19"
         public string Time { get; set; }       // e.g., "12:30:00"
-        public int UserId { get; set; }       // or you can use Id
+        public string UserId { get; set; }       // or you can use Id
     }
 
 

@@ -38,7 +38,7 @@ namespace Sadef.API.Controllers
             }
             return slots;
         }
-        
+
 
 
         [HttpGet("dynamic-available-timeslots")]
@@ -184,9 +184,12 @@ namespace Sadef.API.Controllers
                 }
 
                 DateTime endTime = startTime.AddMinutes(30); // 30-minute slot
+                if (!int.TryParse(request.UserId, out int userId))
+                {
+                    return BadRequest(new { succeeded = false, message = "Invalid UserId format." });
+                }
 
-                // Step 4: Find user by ID (you can also switch to Name if needed)
-                var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == request.UserId);
+                var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == userId);
                 if (user == null)
                 {
                     return NotFound(new { succeeded = false, message = "User not found." });
@@ -447,7 +450,7 @@ namespace Sadef.API.Controllers
                 Name = user.Name,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                AppointmentNumber = user.AppointmentNumber, 
+                AppointmentNumber = user.AppointmentNumber,
                 BookedSlots = bookedSlots
             };
 
@@ -485,7 +488,7 @@ namespace Sadef.API.Controllers
                     bookedBy = match?.UserInfoId != null && userMap.ContainsKey(match.UserInfoId.Value)
                                ? userMap[match.UserInfoId.Value]
                                : null,
-                   phoneNumber = match?.UserInfo?.PhoneNumber, // Include phone number if available
+                    phoneNumber = match?.UserInfo?.PhoneNumber, // Include phone number if available
                 };
             });
 
