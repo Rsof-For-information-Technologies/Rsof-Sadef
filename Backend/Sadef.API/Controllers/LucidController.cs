@@ -11,6 +11,10 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Sadef.Domain.LeadEntity;
 using System.Collections.Generic;
 using Azure.Core;
+using Sadef.Application.Services.Whatsapp;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 
 namespace Sadef.API.Controllers
 {
@@ -18,12 +22,16 @@ namespace Sadef.API.Controllers
     {
         private readonly SadefDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public LucidController(SadefDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        private readonly IWhatsappService _whatsappService;
+        private readonly IScheduler _scheduler;
+        public LucidController(SadefDbContext dbContext, IHttpContextAccessor httpContextAccessor, IWhatsappService whatsappService , IScheduler scheduler)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
+            _whatsappService = whatsappService;
+            _scheduler = scheduler;
         }
+
 
         // Helper to generate all 30-min slots for a date
         private List<(DateTime Start, DateTime End)> GenerateTimeSlots(DateTime date)
@@ -207,6 +215,26 @@ namespace Sadef.API.Controllers
 
                 await _dbContext.Timeslots.AddAsync(newSlot);
                 await _dbContext.SaveChangesAsync();
+                var jobKey = new JobKey($"whatsapp-job-{newSlot.AppointmentNumber}");
+
+                var jobData = new JobDataMap
+                    {
+                        { "user", JsonSerializer.Serialize(user) },
+                        { "phone", user.PhoneNumber },
+                        { "time" , newSlot.Description}
+                    };
+
+                var jobDetail = JobBuilder.Create<WhatsappJob>()
+                    .WithIdentity(jobKey)
+                    .UsingJobData(jobData)
+                    .Build();
+
+                var trigger = TriggerBuilder.Create()
+                    .StartAt(DateTimeOffset.UtcNow.AddSeconds(30)) // 30 seconds later
+                    .WithSimpleSchedule(x => x.WithRepeatCount(0)) // Run only once
+                    .Build();
+
+                await _scheduler.ScheduleJob(jobDetail, trigger);
 
                 var response = new UserWithSlotsResponse
                 {
@@ -221,9 +249,10 @@ namespace Sadef.API.Controllers
                     StartTime = newSlot.StartTime,
                     EndTime = newSlot.EndTime,
                     Description = newSlot.Description,
-                    AppointmentNumber = newSlot.AppointmentNumber
+                    AppointmentNumber = newSlot.AppointmentNumber,
+                    SlotDate = startTime.ToString("yyyy-MM-dd")                 }
+
                 }
-            }
                 };
 
                 return Ok(new { succeeded = true, message = "Slot booked successfully", data = response });
@@ -641,7 +670,7 @@ namespace Sadef.API.Controllers
         }
         [HttpPost("user-by-appointment-number")]
         [EnableCors("AllowAllOrigins")]
-        public async Task<IActionResult> GetUserByAppointmentNumber([FromBody]  GetUserInfoByAppointmentNumber request)
+        public async Task<IActionResult> GetUserByAppointmentNumber([FromBody] GetUserInfoByAppointmentNumber request)
         {
             if (string.IsNullOrWhiteSpace(request.AppointmentNumber))
                 return BadRequest(new { succeeded = false, message = "Appointment number is required." });
@@ -669,7 +698,23 @@ namespace Sadef.API.Controllers
 
             return Ok(new { succeeded = true, data = response });
         }
+        //[HttpGet("whatsapp/message")]
 
+        //public async Task<IActionResult> NotifyUser()
+        //{
+        //    var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == 3); // Example user ID
+        //    if (user == null)
+        //        return NotFound(new { succeeded = false, message = "User not found." });
+        //    try
+        //    {
+        //        await _whatsappService.RequestLocationAsync(user.PhoneNumber, user);
+        //        return Ok(new { succeeded = true, message = "WhatsApp notification sent successfully." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { succeeded = false, message = $"Failed to send WhatsApp notification: {ex.Message}" });
+        //    }
+
+        //}
     }
-
 }

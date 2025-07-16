@@ -22,6 +22,8 @@ namespace Sadef.Application.DTOs.LucidDto
         public DateTime EndTime { get; set; }
         public string? Description { get; set; }
         public string? AppointmentNumber { get; set; }
+        public string SlotDate { get; set; }
+
 
     }
 
