@@ -10,6 +10,7 @@ using System.Text.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Sadef.Domain.LeadEntity;
 using System.Collections.Generic;
+using Azure.Core;
 
 namespace Sadef.API.Controllers
 {
@@ -167,73 +168,65 @@ namespace Sadef.API.Controllers
         {
             try
             {
-                // Step 1: Clean up the raw time and date
-                string rawTime = request.Time?.Split(' ')[0]; // Keep only "HH:mm:ss"
-                string rawDate = request.Date?.Split(' ')[0]; // Keep only "yyyy-MM-dd"
+                string rawTime = request.Time?.Split(' ')[0];
+                string rawDate = request.Date?.Split(' ')[0];
 
-                // Step 2: Combine cleaned date and time
                 if (!DateTime.TryParse($"{rawDate} {rawTime}", out DateTime startTime))
-                {
                     return BadRequest(new { succeeded = false, message = "Invalid date or time format." });
-                }
 
-                // Step 3: Prevent booking in the past
-                if (startTime < DateTime.UtcNow)
-                {
-                    return BadRequest(new { succeeded = false, message = "You cannot book a time slot in the past." });
-                }
+                //if (startTime < DateTime.UtcNow)
+                //    return BadRequest(new { succeeded = false, message = "You cannot book a time slot in the past." });
 
-                DateTime endTime = startTime.AddMinutes(30); // 30-minute slot
+                DateTime endTime = startTime.AddMinutes(30);
+
                 if (!int.TryParse(request.UserId, out int userId))
-                {
                     return BadRequest(new { succeeded = false, message = "Invalid UserId format." });
-                }
 
                 var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == userId);
                 if (user == null)
-                {
                     return NotFound(new { succeeded = false, message = "User not found." });
-                }
 
-                // Step 5: Check if the slot is already booked
                 var slotAlreadyBooked = await _dbContext.Timeslots.AnyAsync(t =>
                     t.StartTime == startTime &&
                     t.EndTime == endTime &&
                     t.UserInfoId != null);
 
                 if (slotAlreadyBooked)
-                {
                     return Ok(new { succeeded = false, message = "Slot is already booked" });
-                }
 
-                // Step 6: Generate appointment number
                 string appointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
+                user.AppointmentNumber = appointmentNumber;
 
-                // Step 7: Save booking
                 var newSlot = new Timeslot
                 {
                     StartTime = startTime,
                     EndTime = endTime,
                     Description = $"{startTime:hh\\:mm tt} - {endTime:hh\\:mm tt}",
-                    UserInfoId = user.Id,
+                    UserInfoId = user.Id
                 };
-                user.AppointmentNumber = appointmentNumber;
 
                 await _dbContext.Timeslots.AddAsync(newSlot);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(new
+                var response = new UserWithSlotsResponse
                 {
-                    succeeded = true,
-                    message = "Slot booked successfully",
-                    slot = new
-                    {
-                        newSlot.StartTime,
-                        newSlot.EndTime,
-                        newSlot.Description,
-                        newSlot.UserInfoId,
-                    }
-                });
+                    UserId = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    AppointmentNumber = user.AppointmentNumber,
+                    BookedSlots = new List<TimeslotDto>
+            {
+                new TimeslotDto
+                {
+                    StartTime = newSlot.StartTime,
+                    EndTime = newSlot.EndTime,
+                    Description = newSlot.Description,
+                }
+            }
+                };
+
+                return Ok(new { succeeded = true, message = "Slot booked successfully", data = response });
             }
             catch (Exception ex)
             {
@@ -423,11 +416,13 @@ namespace Sadef.API.Controllers
         //}
         [HttpGet("user-details-with-slots")]
         [EnableCors("AllowAllOrigins")]
-        public async Task<IActionResult> GetUserWithSlotsByPhone([FromQuery] string phoneNumber)
+        public async Task<IActionResult> GetUserWithSlotsByPhone([FromQuery] string UserId)
         {
-            // Find user by phone number
-            var user = await _dbContext.UserInfo
-                .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            if (!int.TryParse(UserId, out int userId))
+            {
+                return BadRequest(new { succeeded = false, message = "Invalid UserId format." });
+            }
+            var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
                 return NotFound("User not found.");
