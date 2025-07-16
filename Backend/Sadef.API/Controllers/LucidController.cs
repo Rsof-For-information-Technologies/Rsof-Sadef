@@ -639,16 +639,16 @@ namespace Sadef.API.Controllers
 
             return Ok(new { succeeded = true, message = "Appointment canceled and slot is now available again." });
         }
-        [HttpGet("user-by-appointment-number")]
+        [HttpPost("user-by-appointment-number")]
         [EnableCors("AllowAllOrigins")]
-        public async Task<IActionResult> GetUserByAppointmentNumber([FromQuery] string appointmentNumber)
+        public async Task<IActionResult> GetUserByAppointmentNumber([FromBody]  GetUserInfoByAppointmentNumber request)
         {
-            if (string.IsNullOrWhiteSpace(appointmentNumber))
+            if (string.IsNullOrWhiteSpace(request.AppointmentNumber))
                 return BadRequest(new { succeeded = false, message = "Appointment number is required." });
 
             var slot = await _dbContext.Timeslots
                 .Include(t => t.UserInfo)
-                .FirstOrDefaultAsync(t => t.AppointmentNumber == appointmentNumber);
+                .FirstOrDefaultAsync(t => t.AppointmentNumber == request.AppointmentNumber);
 
             if (slot == null || slot.UserInfo == null)
                 return NotFound(new { succeeded = false, message = "User or appointment not found." });
@@ -661,7 +661,7 @@ namespace Sadef.API.Controllers
                 name = user.Name,
                 email = user.Email,
                 phoneNumber = user.PhoneNumber,
-                appointmentNumber = appointmentNumber,
+                appointmentNumber = request.AppointmentNumber,
                 slotStartTime = slot.StartTime,
                 slotEndTime = slot.EndTime,
                 description = slot.Description
