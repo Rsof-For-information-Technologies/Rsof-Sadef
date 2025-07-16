@@ -11,6 +11,7 @@ import useMedia from "react-use/lib/useMedia";
 import { Password } from 'rizzui';
 import { toast } from 'sonner';
 import { UserResetPasswordForm } from '@/utils/api';
+import { routes } from '@/config/routes';
 
 const initialValues = {
     newPassword: "",
@@ -55,7 +56,7 @@ function ResetPasswordForm({ email }: { email: string }) {
         if (data?.succeeded) {
             toast.success(data.message ||"Password reset successfully");
             reset();
-            router.push(`/${params.locale}/login`);
+            router.push(routes.auth.login);
         } else {
             toast.error(data?.message || "Something went wrong!");
         }

@@ -198,14 +198,14 @@ export const getBlogColumns = ({
     render: (_: string, row: any) => (
       <div className="flex items-center justify-end gap-3">
         <Tooltip size="sm" content={'Edit Blog'} placement="top" color="invert">
-          <Link href={routes.blog.editOrder(row.id)}>
+          <Link href={routes.blog.editBlog(row.id)}>
             <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
               <PencilIcon className="h-4 w-4" />
             </ActionIcon>
           </Link>
         </Tooltip>
         <Tooltip size="sm" content={'View Blog'} placement="top" color="invert">
-          <Link href={routes.blog.orderDetails(row.id)}>
+          <Link href={routes.blog.blogDetails(row.id)}>
             <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
               <EyeIcon className="h-4 w-4" />
             </ActionIcon>
@@ -408,14 +408,14 @@ export const getPropertyColumns = ({
             </span>
           </div>
           <Tooltip size="sm" content={'Edit Property'} placement="top" color="invert">
-            <Link href={routes.property.editOrder(row.id)}>
+            <Link href={routes.property.editProperty(row.id)}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <PencilIcon className="h-4 w-4" />
               </ActionIcon>
             </Link>
           </Tooltip>
           <Tooltip size="sm" content={'View Property'} placement="top" color="invert">
-            <Link href={routes.property.orderDetails(row.id)}>
+            <Link href={routes.property.propertyDetails(row.id)}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <EyeIcon className="h-4 w-4" />
               </ActionIcon>
@@ -580,7 +580,7 @@ export const getLeadColumns = ({
             </span>
           </div>
           <Tooltip size="sm" content={'View Lead'} placement="top" color="invert">
-            <Link href={routes.lead.orderDetails(row.id)}>
+            <Link href={routes.lead.leadDetails(row.id)}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <EyeIcon className="h-4 w-4" />
               </ActionIcon>
@@ -731,15 +731,15 @@ export const getMaintenanceRequestColumns = ({
               <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </span>
           </div>
-          <Tooltip size="sm" content={'Edit Property'} placement="top" color="invert">
-            <Link href={routes.property.editOrder(row.id)}>
+          <Tooltip size="sm" content={'Edit Maintenance Request'} placement="top" color="invert">
+            <Link href={routes.maintenanceRequest.editMaintenance(row.id)}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <PencilIcon className="h-4 w-4" />
               </ActionIcon>
             </Link>
           </Tooltip>
-          <Tooltip size="sm" content={'View Property'} placement="top" color="invert">
-            <Link href={routes.property.orderDetails(row.id)}>
+          <Tooltip size="sm" content={'View Maintenance Request'} placement="top" color="invert">
+            <Link href={routes.maintenanceRequest.maintenanceDetails(row.id)}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <EyeIcon className="h-4 w-4" />
               </ActionIcon>

@@ -1,20 +1,14 @@
-export type LoginItem = {
+export type LoginResponse = {
+  succeeded: boolean;
+  message: string;
+  validationResultModel: string | null;
+  data: {
     token: string;
     id: string;
     firstName: string;
-    lasttName: string;
+    lastName: string;
     email: string;
     role: string;
-    refreshToken: string
-}
-
-type LoginData = {
-    items: LoginItem[];
+    refreshToken: string;
+  };
 };
-
-export type login = {
-    succeeded: boolean,
-    message: string | null,
-    validationResultModel: string | null,
-    data: LoginData,
-}

@@ -73,19 +73,26 @@ export const routes = {
   blog:{
     list: "/blogs",
     create: "/blogs/create",
-    orderDetails: (blogId: string) => `/blogs/${blogId}`,
-    editOrder: (blogId: string) => `/blogs/${blogId}/update`,
+    blogDetails: (blogId: string) => `/blogs/${blogId}`,
+    editBlog: (blogId: string) => `/blogs/${blogId}/update`,
   },
 
   property:{
     list: "/property",
     create: "/property/create",
-    orderDetails: (propertyId: string) => `/property/${propertyId}`,
-    editOrder: (propertyId: string) => `/property/${propertyId}/update`,
+    propertyDetails: (propertyId: string) => `/property/${propertyId}`,
+    editProperty: (propertyId: string) => `/property/${propertyId}/update`,
+  },
+
+  maintenanceRequest:{
+    list: "/maintenance-requests",
+    create: "/maintenance-requests/create",
+    maintenanceDetails: (maintenanceRequestId: string) => `/maintenance-requests/${maintenanceRequestId}`,
+    editMaintenance: (maintenanceRequestId: string) => `/maintenance-requests/${maintenanceRequestId}/update`,
   },
 
   lead:{
-    orderDetails: (leadId: string) => `/lead/${leadId}`,
+    leadDetails: (leadId: string) => `/lead/${leadId}`,
   },
 
   auth:{

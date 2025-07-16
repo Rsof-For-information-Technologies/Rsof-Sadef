@@ -7,11 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useMedia from 'react-use/lib/useMedia'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { routes } from '@/config/routes'
-import { DeleteLocalStorage, setLocalStorage } from '@/utils/localStorage'
+import { removeLocalStorage, setLocalStorage } from '@/utils/localStorage'
 import { FormStatusButton } from '@/components/formStatusButton'
 import { Login, login } from '@/validators/login.validator'
 import Link from 'next/link'
 import { UserLoginForm } from '@/utils/api'
+import { setCookie } from '@/utils/cookieStorage'
 
 const initialValues = {
     email: "",
@@ -32,14 +33,22 @@ function LoginForm() {
 
     const onSubmit = async (state: Login) => {
         try {
-            const data = await UserLoginForm(state);
-            console.log({ data });
+            const response = await UserLoginForm(state);
+            console.log({ response });
 
-            if (data.succeeded) {
-                setLocalStorage("user-info", data);
+            if (response.succeeded) {
+                setLocalStorage("user-info",{
+                    id: response.data.id,
+                    firstName: response.data.firstName,
+                    lastName: response.data.lastName,
+                    email: response.data.email,
+                    role: response.data.role,
+                });
+                setCookie("access_token",response.data.token)
+                setCookie("refresh_token",response.data.refreshToken)
                 router.push(`/`);
             } else {
-                setServerError(data.message);
+                setServerError(response.message);
             }
 
         } catch (error) {
@@ -57,7 +66,7 @@ function LoginForm() {
 
         if (logout === "true") {
             const urlSearchParams = new URLSearchParams(searchParams.toString());
-            DeleteLocalStorage("user-info");
+            removeLocalStorage("user-info");
             // setUserInfo()
             urlSearchParams.delete("logout");
             router.push(`/${routes.auth.login}?${urlSearchParams}`)

@@ -1,17 +1,4 @@
-export interface MaintenanceRequestFormFormData {
-    leadId: string;
-    description: string;
-    images?: File;
-    videos?: File;
-}
-
-export type CreateMaintenanceResponse = {
-    data: MaintenanceRequestItem;
-    message: string;
-    succeeded: boolean;
-}
-
-export type MaintenanceRequestItem = {
+export type DataItem = {
     id: number;
     leadId: number;
     description: string;
@@ -23,17 +10,23 @@ export type MaintenanceRequestItem = {
     isActive: boolean;
 }
 
-type MaintenanceRequestData = {
-    items: MaintenanceRequestItem[];
+export type MaintenenceRequestResponse = {
+    data: {
+        items: DataItem[];
+        totalCount: number;
+        pageNumber: number;
+        pageSize: number;
+        extra: string | null;
+    };
+    succeeded: boolean;
+    message: string;
+    validationResultModel: string | null;
 };
 
-export type GetMaintenanceRequests = {
-    succeeded: boolean,
-    message: string | null,
-    validationResultModel: string | null,
-    data: MaintenanceRequestData,
-    totalCount: number,
-    pageNumber: number,
-    pageSize: number,
-    extra: string | null,
-}
+export type MaintenenceRequestDetail = {
+    data: DataItem | null;
+    succeeded: boolean;
+    message: string;
+    validationResultModel: string | null;
+};
+

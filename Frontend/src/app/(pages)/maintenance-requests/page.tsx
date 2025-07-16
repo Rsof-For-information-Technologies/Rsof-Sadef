@@ -1,8 +1,8 @@
 import { getMaintenanceRequestColumns } from "@/app/shared/ecommerce/order/order-list/columns";
 import BasicTableWidget from "@/components/controlled-table/basic-table-widget";
-import { GetMaintenanceRequests } from "@/types/maintenanceRequest";
 import { getAllMaintenanceRequests } from "@/utils/api";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Maintenance Request",
@@ -15,17 +15,17 @@ type SearchParams = {
 
 async function getMaintenanceRequests(searchParams: SearchParams) {
   try {
-    const maintenanceRequest = await getAllMaintenanceRequests(searchParams.pageNumber, searchParams.pageSize )
+    const maintenanceRequest = await getAllMaintenanceRequests(searchParams.pageNumber, searchParams.pageSize );
+    if (!maintenanceRequest?.data) return notFound();
     return maintenanceRequest;
   } catch (error) {
-    console.log("Error fetching lots:", error);
-    return { succeeded: false} as GetMaintenanceRequests;
+    return notFound();
   }
 }
 
 export default async function SearchTablePage() {
   const maintenanceRequest = await getMaintenanceRequests({ pageNumber: 1, pageSize: 10 });
-  const activemaintenanceRequest = maintenanceRequest.data.items.filter((item) => item.isActive);
+  const activemaintenanceRequest = maintenanceRequest.data.items.filter((item) => item.isActive) || [];
 
   return (
     <>

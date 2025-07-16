@@ -88,7 +88,7 @@ function CreateMaintenanceRequest() {
 
   return (
     <>
-      <div className="mt-2 mb-6">
+      <div className="mt-2 mb-6 text-center">
         <h2>Create Maintenance Request</h2>
       </div>
       {error && (
@@ -103,8 +103,8 @@ function CreateMaintenanceRequest() {
         </div>
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6 flex flex-col m-auto max-w-[800px]">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 w-full">
             <div className="flex flex-col gap-3">
               <Input
                 type="text"

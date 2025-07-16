@@ -51,11 +51,11 @@ export default function Header({ className }: { className?: string }) {
             className="me-4 w-9 shrink-0 text-gray-800 hover:text-gray-900 lg:me-5 xl:hidden"
           >
             <Logo iconOnly={true} />
-          </Link>
+          </Link> */}
           <SearchWidget
             icon={<PiMagnifyingGlass className="me-3 h-[20px] w-[20px]" />}
             className="xl:w-[500px]"
-          /> */}
+          />
         </div>
 
         <div className="flex items-center justify-between flex-1">

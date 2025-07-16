@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { routes } from '@/config/routes';
-import { DeleteLocalStorage, getLocalStorage } from '@/utils/localStorage'
+import { getLocalStorage, removeLocalStorage } from '@/utils/localStorage'
 import { User } from '@/types/user'
 
 type T_UnAuthenticate = {
@@ -26,7 +26,7 @@ function UnAuthenticated({ children, navigate = false }: T_UnAuthenticate) {
             if (logout === "true") {
                 const urlSearchParams = new URLSearchParams(searchParams.toString());
 
-                DeleteLocalStorage("user-info");
+                removeLocalStorage("user-info");
                 setUserInfo()
                 urlSearchParams.delete("logout");
                 router.push(`${routes.auth.login}?${urlSearchParams}`)

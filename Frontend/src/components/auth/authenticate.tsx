@@ -1,6 +1,6 @@
 "use client"
 import { useUserStore } from '@/store/user.store'
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { routes } from '@/config/routes'

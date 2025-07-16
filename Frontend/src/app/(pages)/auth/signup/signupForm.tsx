@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useMedia from "react-use/lib/useMedia";
 import { useRouter, useSearchParams } from "next/navigation";
 import { routes } from "@/config/routes";
-import { DeleteLocalStorage, setLocalStorage } from "@/utils/localStorage";
+import { removeLocalStorage, setLocalStorage } from "@/utils/localStorage";
 import { FormStatusButton } from "@/components/formStatusButton";
 import { Signup, signup } from "@/validators/signup.validator";
 import { UserRegisterForm } from "@/utils/api";
@@ -63,7 +63,7 @@ function SignupForm() {
     useEffect(() => {
         if (logout === "true") {
             const urlSearchParams = new URLSearchParams(searchParams.toString());
-            DeleteLocalStorage("user-info");
+            removeLocalStorage("user-info");
             urlSearchParams.delete("logout");
             router.push(`/${routes.auth.signup}?${urlSearchParams}`);
         }

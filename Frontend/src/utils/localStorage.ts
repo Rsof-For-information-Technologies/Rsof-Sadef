@@ -8,34 +8,31 @@ export const setLocalStorage = (name: string, value: any) => {
   localStorage.setItem(name, JSON.stringify(value));
 };
 
+export const getLocalStorage = <T>(name: string): T | null => {
+  console.log(`getLocalStorage: ${name}`);
+  const local = localStorage?.getItem(name);
+  console.log("local",local)
+  if (!local) return null;
 
-export const getLocalStorage = (name: string) => {
-
-  const local = localStorage?.getItem(name) as string;
-
-  if (!local) {
-    return null
-  }
-  let data = JSON.parse(local);
-  if (data) {
-    let decrypted = CryptoJS.AES.decrypt(
-      data,
+  try {
+    const encrypted = JSON.parse(local);
+    console.log("encrypted", encrypted)
+    const decrypted = CryptoJS.AES.decrypt(
+      encrypted,
       process.env.NEXT_PUBLIC_ENCRYPTION_KEY as string
     );
-
-
-    try {
-      return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
-    } catch (error) {
-      return null;
-    }
-  } else return null;
-
-
+    console.log("decrypted", decrypted)
+    const parsed = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+    console.log("parsed", parsed)
+    return parsed as T;
+  } catch (error) {
+    console.error("getLocalStorage error:", error);
+    return null;
+  }
 };
 
 
-export const DeleteLocalStorage = (name: string) => {
+export const removeLocalStorage = (name: string) => {
   localStorage.removeItem(name);
 };
 

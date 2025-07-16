@@ -1,8 +1,10 @@
 import { BlogFormData, CreateBlogResponse, GetBlogs } from '@/types/blog';
 import { CreateLeadResponse, GetLeads } from '@/types/lead';
-import { GetMaintenanceRequests, MaintenanceRequestItem } from '@/types/maintenanceRequest';
+import { LoginResponse } from '@/types/login';
+import { MaintenenceRequestDetail, MaintenenceRequestResponse } from '@/types/maintenanceRequest';
 import { PropertyFormData, CreatePropertyResponse, GetProperties } from '@/types/property';
 import axios from 'axios';
+import { ClockFading } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const apiCall = () => {
@@ -119,10 +121,10 @@ export const getAllBlogs = async (pageNumber = 1, pageSize = 10): Promise<GetBlo
 
 // Maintenance Request API functions
 
-export const createMaintenanceRequest = async (formData: FormData) => {
+export const createMaintenanceRequest = async (data: FormData) => {
   const api = apiCall();
   try {
-    const response = await api.post('/api/v1/maintenancerequest/create', formData);
+    const response = await api.post<MaintenenceRequestResponse>('/api/v1/maintenancerequest/create', data);
     return response.data;
   } catch (error) {
     console.error('Create maintenance request failed:', error);
@@ -130,35 +132,24 @@ export const createMaintenanceRequest = async (formData: FormData) => {
   }
 };
 
-export const updateMaintenanceRequest = async (data: any) => {
-    const api = apiCall();
-    const formData = new FormData();
-    if (data.id !== undefined && data.id !== null) {
-        formData.append('Id', String(data.id));
-    }
-    formData.append('LeadId', data.leadId);
-    formData.append('Description', data.description);
-    if (data.images && data.images.length > 0) {
-        formData.append('Images', data.images[0]);
-    }
-    if (data.videos && data.videos.length > 0) {
-        formData.append('Videos', data.videos[0]);
-    }
-    try {
-        const response = await api.put('/api/v1/maintenancerequest/update', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Update maintenance request failed:', error);
-        throw error;
-    }
-};
-
-export const getAllMaintenanceRequests = async (pageNumber = 1, pageSize = 10): Promise<GetMaintenanceRequests> => {
+export const updateMaintenanceRequest = async (id: string | number, data: FormData) => {
   const api = apiCall();
   try {
-    const {data} = await api.get<GetMaintenanceRequests>(`/api/v1/maintenanceRequest?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    data.append("Id", String(id));
+    const response = await api.put<MaintenenceRequestResponse>('/api/v1/maintenancerequest/update', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Update maintenance request failed:', error);
+    throw error;
+  }
+};
+
+export const getAllMaintenanceRequests = async (pageNumber = 1, pageSize = 10): Promise<MaintenenceRequestResponse> => {
+  const api = apiCall();
+  try {
+    const {data} = await api.get<MaintenenceRequestResponse>(`/api/v1/maintenanceRequest?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     return data;
   } catch (error) {
     console.error('Get all maintenance requests failed:', error);
@@ -166,21 +157,22 @@ export const getAllMaintenanceRequests = async (pageNumber = 1, pageSize = 10): 
   }
 };
 
-export const getMaintenanceRequestById = async (id: string | number) => {
-    const api = apiCall();
-    try {
-        const response = await api.get<{ data: MaintenanceRequestItem }>(`/api/v1/maintenancerequest/${id}`);
-        return response.data;
-    } catch (error) {
-        console.error('Get maintenance request by ID failed:', error);
-        throw error;
-    }
+export const getMaintenanceRequestById = async (id: string) => {
+  const api = apiCall();
+  try {
+    const response = await api.get<MaintenenceRequestDetail>(`/api/v1/maintenancerequest/${id}`);
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.error('Get maintenance request failed:', error);
+    throw error;
+  }
 };
 
 export const MaintenanceRequestUpdateStatus = async (id: number, status: number) => {
   const api = apiCall();
   try {
-    const response = await api.patch('/api/v1/maintenancerequest/update-status', { id, status, });
+    const response = await api.patch<MaintenenceRequestResponse>('/api/v1/maintenancerequest/update-status', { id, status, });
     return response.data;
   } catch (error) {
     console.error('Update property status failed:', error);
@@ -263,7 +255,6 @@ export const getPropertyById = async (id: string | number) => {
   const api = apiCall()
   try {
     const response = await api.get<CreatePropertyResponse>(`/api/v1/property/get-by-id?id=${id}`)
-    console.log(response.data)
     return response.data
   } catch (error) {
     console.error("Get property by ID failed:", error)
@@ -419,7 +410,7 @@ export const UserLoginForm = async (state: {
 }) => {
   const api = apiCall();
   try {
-    const response = await api.post('/api/v1/user/login', state);
+    const response = await api.post<LoginResponse>('/api/v1/user/login', state);
     return response.data;
   } catch (error) {
     throw error;

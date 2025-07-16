@@ -15,11 +15,11 @@ async function Signup() {
             title="Join us today! Get special benefits and stay up-to-date."
             isSocialLoginActive={false}
         >
-            <UnAuthenticated navigate={true}>
+            {/* <UnAuthenticated navigate={true}> */}
                 <div className="mx-auto w-full max-w-md py-12 md:max-w-lg lg:max-w-xl 2xl:pb-8 2xl:pt-2">
                     <SignupForm/>
                 </div>
-            </UnAuthenticated>
+            {/* </UnAuthenticated> */}
         </AuthWrapper>
     )
 }

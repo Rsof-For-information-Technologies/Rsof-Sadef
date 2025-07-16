@@ -20,11 +20,11 @@ async function Login() {
             isSignIn
             isSocialLoginActive={false}
         >
-        <UnAuthenticated navigate={true}>
+        {/* <UnAuthenticated navigate={true}> */}
                 <div className="mx-auto w-full max-w-md py-12 md:max-w-lg lg:max-w-xl 2xl:pb-8 2xl:pt-2">
                     <LoginForm />
                 </div>
-        </UnAuthenticated>
+        {/* </UnAuthenticated> */}
         </AuthWrapper>
     )
 }
