@@ -484,7 +484,9 @@ namespace Sadef.API.Controllers
                     bookedBy = match?.UserInfoId != null && userMap.ContainsKey(match.UserInfoId.Value)
                                ? userMap[match.UserInfoId.Value]
                                : null,
-                    phoneNumber = match?.UserInfo?.PhoneNumber, // Include phone number if available
+                    phoneNumber = match?.UserInfo?.PhoneNumber,
+                    email = match?.UserInfo?.Email,
+                    appointmentNumber = match?.AppointmentNumber
                 };
             });
 
@@ -536,6 +538,86 @@ namespace Sadef.API.Controllers
             });
 
             return Ok(result);
+        }
+        [HttpPost("reschedule-slot")]
+        [EnableCors("AllowAllOrigins")]
+        public async Task<IActionResult> RescheduleSlot([FromBody] RescheduleSlotRequest request)
+        {
+            try
+            {
+                if (!int.TryParse(request.UserId, out int userId))
+                    return BadRequest(new { succeeded = false, message = "Invalid UserId format." });
+
+                string rawTime = request.NewTime?.Split(' ')[0];
+                string rawDate = request.NewDate?.Split(' ')[0];
+
+                if (!DateTime.TryParse($"{rawDate} {rawTime}", out DateTime newStartTime))
+                    return BadRequest(new { succeeded = false, message = "Invalid new date or time format." });
+
+                DateTime newEndTime = newStartTime.AddMinutes(30);
+
+                var user = await _dbContext.UserInfo.FirstOrDefaultAsync(u => u.Id == userId);
+                if (user == null)
+                    return NotFound(new { succeeded = false, message = "User not found." });
+
+                // Check if new slot is already booked
+                var newSlotBooked = await _dbContext.Timeslots.AnyAsync(t =>
+                    t.StartTime == newStartTime &&
+                    t.EndTime == newEndTime &&
+                    t.UserInfoId != null);
+
+                if (newSlotBooked)
+                    return Ok(new { succeeded = false, message = "The new slot is already booked." });
+
+                // Find existing booking of the user
+                var currentSlot = await _dbContext.Timeslots
+                    .FirstOrDefaultAsync(t => t.UserInfoId == user.Id);
+
+                if (currentSlot != null)
+                {
+                    // Free previous slot (optional: delete or nullify UserInfoId)
+                    _dbContext.Timeslots.Remove(currentSlot);
+                }
+
+                // Create new slot
+                string newAppointmentNumber = $"APT-{DateTime.UtcNow:yyyyMMddHHmmssfff}";
+
+                var newSlot = new Timeslot
+                {
+                    StartTime = newStartTime,
+                    EndTime = newEndTime,
+                    Description = $"{newStartTime:hh\\:mm tt} - {newEndTime:hh\\:mm tt}",
+                    UserInfoId = user.Id,
+                    AppointmentNumber = newAppointmentNumber
+                };
+
+                await _dbContext.Timeslots.AddAsync(newSlot);
+                await _dbContext.SaveChangesAsync();
+
+                var response = new UserWithSlotsResponse
+                {
+                    UserId = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    BookedSlots = new List<TimeslotDto>
+            {
+                new TimeslotDto
+                {
+                    StartTime = newSlot.StartTime,
+                    EndTime = newSlot.EndTime,
+                    Description = newSlot.Description,
+                    AppointmentNumber = newSlot.AppointmentNumber
+                }
+            }
+                };
+
+                return Ok(new { succeeded = true, message = "Slot rescheduled successfully", data = response });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { succeeded = false, message = $"An error occurred: {ex.Message}" });
+            }
         }
 
     }
