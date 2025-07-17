@@ -531,7 +531,7 @@ export const getLeadColumns = ({
     title: <HeaderCell title="Actions" className='flex justify-end'/>,
     dataIndex: 'action',
     key: 'action',
-    width: 160,
+    width: 180,
     render: (_: string, row: any) => {
       const status = leadStatuses.find((s) => s.value === row.status);
 

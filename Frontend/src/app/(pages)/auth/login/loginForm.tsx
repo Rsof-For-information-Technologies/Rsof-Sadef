@@ -34,8 +34,6 @@ function LoginForm() {
     const onSubmit = async (state: Login) => {
         try {
             const response = await UserLoginForm(state);
-            console.log({ response });
-
             if (response.succeeded) {
                 setLocalStorage("user-info",{
                     id: response.data.id,

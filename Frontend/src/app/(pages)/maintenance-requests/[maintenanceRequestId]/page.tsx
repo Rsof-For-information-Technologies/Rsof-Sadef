@@ -1,9 +1,9 @@
 
 import { getMaintenanceRequestById } from "@/utils/api";
-import { CollapsibleSection } from "./collapsibleSection";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { DataItem } from "@/types/maintenanceRequest";
+import CollapsibleSection from "../../(components)/CollapsibleSection";
 
 const maintenenceStatuses = [
   { label: 'Pending', value: 0 },

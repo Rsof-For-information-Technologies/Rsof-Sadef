@@ -6,6 +6,7 @@ import { create } from 'zustand';
 type T_UserStore = {
     userInfo: User | undefined;
     setUserInfo: (UserInfo?: User) => void;
+    getUserInfo: () => void;
     logOutUser: (request?: boolean) => void;
 }
 

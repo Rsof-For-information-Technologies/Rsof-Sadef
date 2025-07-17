@@ -12,7 +12,6 @@ export default function HeaderMenuRight() {
   const { userInfo } = useUserStore();
   useEffect(() => {
     if (!userInfo) {
-      // Perform any necessary actions when userInfo is available
       console.log("User info loaded:", userInfo);
     }
   }, [userInfo]);

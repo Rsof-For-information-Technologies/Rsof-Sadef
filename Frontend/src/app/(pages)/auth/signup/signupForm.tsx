@@ -35,11 +35,9 @@ function SignupForm() {
     const onSubmit = async (state: Signup) => {
         try {
             const data = await UserRegisterForm(state);
-            console.log({ data });
-
             if (data.succeeded) {
                 setLocalStorage("user-info", data);
-                router.push(`/`);
+                router.push(routes.auth.login);
             } else {
                 setServerError(data.message);
             }
