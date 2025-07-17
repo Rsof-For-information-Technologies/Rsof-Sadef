@@ -8,6 +8,7 @@ using Sadef.Domain.LeadEntity;
 using Sadef.Domain.Users;
 using Sadef.Domain;
 using Sadef.Common.Domain;
+
 namespace Sadef.Infrastructure.DBContext
 {
     public class SadefDbContext : AppDbContextIdentity
