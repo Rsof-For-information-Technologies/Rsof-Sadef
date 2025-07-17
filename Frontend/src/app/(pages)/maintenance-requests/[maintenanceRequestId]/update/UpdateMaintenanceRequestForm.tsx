@@ -11,6 +11,7 @@ import { Upload, X, ImageIcon, Video as VideoIcon } from "lucide-react";
 import { Label } from "@/components/shadCn/ui/label";
 import { updateMaintenanceRequest } from "@/utils/api";
 import Image from "next/image";
+import { routes } from "@/config/routes";
 
 interface UpdateMaintenanceRequestFormProps {
   initialData: any;
@@ -92,7 +93,7 @@ export default function UpdateMaintenanceRequestForm({ initialData }: UpdateMain
       if (responseData.succeeded === false && responseData.message) {
         setError(responseData.message);
       } else {
-        router.push("/maintenanceRequest");
+        router.push(routes.maintenanceRequest.list);
       }
     } catch (error) {
       setError("Failed to update maintenance request.");
