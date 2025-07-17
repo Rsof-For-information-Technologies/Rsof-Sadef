@@ -5,12 +5,14 @@ using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
 using Sadef.Application.DTOs.AuditLogDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
+using Sadef.Application.DTOs.SeoMetaDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
 using Sadef.Common.Domain;
 using Sadef.Domain.MaintenanceRequestEntity;
+using Sadef.Domain.SeoMetaEntity;
 
 namespace Sadef.Application.MappingProfile
 {
@@ -60,6 +62,19 @@ namespace Sadef.Application.MappingProfile
 
             // Audit Log
             CreateMap<AuditLog, AuditLogDto>();
+
+            // SeoMetaData
+            CreateMap<CreateSeoMetaDataDto, SeoMetaData>();
+            CreateMap<SeoMetaData, SeoMetaDataDto>();
+            CreateMap<UpdateSeoMetaDataDto, SeoMetaData>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<CreateSeoMetaDetailsDto, SeoMetaData>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<CreateSeoMetaDetailsDto, CreateSeoMetaDataDto>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+
+
 
         }
     }

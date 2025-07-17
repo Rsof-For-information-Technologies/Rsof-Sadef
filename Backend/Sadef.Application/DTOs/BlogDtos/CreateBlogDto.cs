@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Sadef.Application.DTOs.SeoMetaDtos;
 
 namespace Sadef.Application.DTOs.BlogDtos
 {
@@ -8,6 +9,7 @@ namespace Sadef.Application.DTOs.BlogDtos
         public required string Content { get; set; }
         public IFormFile? CoverImage { get; set; }
         public required bool IsPublished { get; set; }
+        public CreateSeoMetaDetailsDto? SeoMeta { get; set; }
     }
 
 }

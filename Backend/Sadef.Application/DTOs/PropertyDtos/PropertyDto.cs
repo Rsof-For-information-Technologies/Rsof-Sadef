@@ -1,4 +1,5 @@
-﻿using Sadef.Domain.Constants;
+﻿using Sadef.Application.DTOs.SeoMetaDtos;
+using Sadef.Domain.Constants;
 
 namespace Sadef.Application.DTOs.PropertyDtos
 {
@@ -31,5 +32,6 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public bool IsInvestorOnly { get; set; } = false;
         public List<FeatureList>? Features { get; set; }
         public bool? IsActive { get; set; } = true;
+        public SeoMetaDataDto? SeoMeta { get; set; }
     }
 }
