@@ -3,12 +3,14 @@ using Sadef.Application.DTOs.BlogDtos;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
+using Sadef.Application.DTOs.AuditLogDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.SeoMetaDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
+using Sadef.Common.Domain;
 using Sadef.Domain.MaintenanceRequestEntity;
 using Sadef.Domain.SeoMetaEntity;
 
@@ -57,6 +59,9 @@ namespace Sadef.Application.MappingProfile
             CreateMap<UpdateMaintenanceRequestDto, MaintenanceRequest>()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Audit Log
+            CreateMap<AuditLog, AuditLogDto>();
 
             // SeoMetaData
             CreateMap<CreateSeoMetaDataDto, SeoMetaData>();

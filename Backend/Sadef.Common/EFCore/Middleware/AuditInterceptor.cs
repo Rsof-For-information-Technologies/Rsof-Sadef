@@ -3,6 +3,7 @@ using Sadef.Common.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Sadef.Common.Utils.Helpers;
 
 namespace Sadef.Common.EFCore.Middleware
 {
@@ -35,6 +36,7 @@ namespace Sadef.Common.EFCore.Middleware
             if (context == null) return;
 
             var user = _httpContextAccessor.HttpContext?.User;
+            var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var userName = user?.FindFirst(ClaimTypes.Name)?.Value
                            ?? user?.Identity?.Name
                            ?? "System";
@@ -52,6 +54,12 @@ namespace Sadef.Common.EFCore.Middleware
                     entry.Entity.UpdatedBy = userName;
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                 }
+            }
+
+            var auditEntries = AuditLogWriterHelper.CreateAuditLogs(context, userId);
+            if (auditEntries.Count > 0)
+            {
+                context.Set<Sadef.Common.Domain.AuditLog>().AddRange(auditEntries);
             }
         }
     }
