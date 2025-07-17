@@ -5,7 +5,7 @@
 namespace Sadef.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIsActiveToMaintenanceRequests : Migration
+    public partial class AddNewFieldToMaintenanceRequests : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,16 +14,15 @@ namespace Sadef.Infrastructure.Migrations
                 name: "IsActive",
                 table: "MaintenanceRequests",
                 type: "bit",
-                nullable: false,
-                defaultValue: true);
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-               name: "IsActive",
-               table: "MaintenanceRequests");
+                name: "IsActive",
+                table: "MaintenanceRequests");
         }
     }
 }

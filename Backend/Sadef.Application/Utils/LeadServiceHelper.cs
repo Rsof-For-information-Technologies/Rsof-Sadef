@@ -72,13 +72,12 @@ namespace Sadef.Application.Utils
                 worksheet.Cells[i + 2, 7].Value = lead.status?.ToString();
             }
 
-            if (worksheet.Dimension != null)
+            if (OperatingSystem.IsWindows() && worksheet.Dimension != null)
             {
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
             }
 
             return package.GetAsByteArray();
         }
-
     }
 }

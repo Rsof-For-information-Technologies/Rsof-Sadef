@@ -12,7 +12,7 @@ namespace Sadef.Domain.MaintenanceRequestEntity
         public ICollection<MaintenanceVideo>? Videos { get; set; }
         public MaintenanceRequestStatus? Status { get; set; }
         public string? AdminResponse { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? IsActive { get; set; } = true;
     }
 }
 
