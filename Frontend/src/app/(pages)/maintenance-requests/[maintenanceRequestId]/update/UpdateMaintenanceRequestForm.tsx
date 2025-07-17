@@ -102,9 +102,6 @@ export default function UpdateMaintenanceRequestForm({ initialData }: UpdateMain
 
   return (
     <>
-        <div className="mt-2 mb-6 text-center">
-            <h2>Update Maintenance Request</h2>
-        </div>
         {error && (
             <div className="flex justify-center w-full">
             <div

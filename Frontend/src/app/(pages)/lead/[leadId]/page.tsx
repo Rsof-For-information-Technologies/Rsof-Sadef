@@ -28,13 +28,9 @@ async function DetailsLead({ params }: DetailsLeadProps) {
 
   return (
     <div className="max-w-[900px] w-full mx-auto py-8 px-4">
-      <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-primary mb-2 tracking-tight">
-          Lead Details
-        </h2>
-        <p className="text-gray-500">
-          All information about this lead is organized below.
-        </p>
+      <div className="py-4 text-center">
+        <h1 className="mb-4 text-2xl font-semibold">Lead List Page</h1>
+        <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
       </div>
       <CollapsibleSection title="Lead Information" defaultOpen>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

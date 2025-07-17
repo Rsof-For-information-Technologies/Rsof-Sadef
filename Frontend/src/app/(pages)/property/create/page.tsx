@@ -99,10 +99,10 @@ export default function CreatePropertyPage() {
   const CurrentStepComponent = STEPS[currentStep - 1].component
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Property</h1>
-        <p className="text-gray-600">Fill in the details to list your property</p>
+    <div className="container">
+      <div className="py-4 text-center">
+        <h1 className="mb-4 text-2xl font-semibold">Create New Property</h1>
+        <p className="mb-6 text-gray-600"> This page allows you to create the new property. </p>
       </div>
 
       <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} stepTitles={STEPS.map((step) => step.title)} />

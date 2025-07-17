@@ -23,8 +23,9 @@ async function DetailsBlog({ params }: { params: { blogId: string } }) {
 
     return (
       <>
-        <div className="mt-2 mb-6 text-center">
-          <h2 className="my-5">Details Blog</h2>
+        <div className="py-4 text-center">
+          <h1 className="mb-4 text-2xl font-semibold">Blog Details</h1>
+          <p className="mb-6 text-gray-600"> This page displays the details of a specific blog post. </p>
         </div>
         <div className="space-y-6">
           <div className="flex max-w-[800px] mx-auto">

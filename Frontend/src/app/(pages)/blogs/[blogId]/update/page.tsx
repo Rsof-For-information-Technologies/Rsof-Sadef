@@ -26,8 +26,9 @@ export default async function UpdateBlogPage({
 
     return (
       <>
-        <div className="mt-2 mb-6">
-          <h2>Update Blog</h2>
+        <div className="py-4">
+          <h1 className="mb-4 text-2xl font-semibold">Update Blog</h1>
+          <p className="mb-6 text-gray-600"> This page allows you to update the blog post details. </p>
         </div>
         <UpdateBlogForm blogId={params.blogId} initialData={initialData} />
       </>

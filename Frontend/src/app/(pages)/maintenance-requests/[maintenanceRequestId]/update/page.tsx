@@ -18,6 +18,12 @@ export default async function UpdateMaintenanceRequest({ params }: UpdateMainten
   }
 
   return (
-    <UpdateMaintenanceRequestForm initialData={data} />
+    <>
+      <div className="py-4 text-center">
+        <h1 className="mb-4 text-2xl font-semibold">Update Maintenance Request</h1>
+        <p className="mb-6 text-gray-600"> This page allows you to update the maintenance request details. </p>
+      </div>
+      <UpdateMaintenanceRequestForm initialData={data} />
+    </>
   );
 }

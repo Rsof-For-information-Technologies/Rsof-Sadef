@@ -27,11 +27,10 @@ export default async function SearchTablePage() {
   const leads = await getLeads({ pageNumber: 1, pageSize: 10 });
   return (
     <>
-      <h1 className="mb-4 text-2xl font-semibold">Lead List Page</h1>
-      <p className="mb-6 text-gray-600">
-        This page demonstrates a table with search functionality using the
-        BasicTableWidget component.
-      </p>
+      <div className="py-4">
+        <h1 className="mb-4 text-2xl font-semibold">Lead List Page</h1>
+        <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+      </div>
       <BasicTableWidget
         title="Search Table"
         variant="minimal"

@@ -1,3 +1,19 @@
+
+import { BasicInfoStep } from "@/app/(pages)/property/(components)/basic-info-step";
+import { ContactPublishingStep } from "@/app/(pages)/property/(components)/contact-publishing-step";
+import { LocationStep } from "@/app/(pages)/property/(components)/location-step";
+import { PropertyDetailsStep } from "@/app/(pages)/property/(components)/property-details-step";
+import { PropertyMediaStep } from "@/app/(pages)/property/(components)/property-media-step";
+import { propertyDetailsSchema, propertyMediaSchema, locationSchema, contactPublishingSchema, basicInfoSchema, } from "@/validators/createProperty";
+
+export const STEPS = [
+  { title: "Basic Info", component: BasicInfoStep, schema: basicInfoSchema },
+  { title: "Property Details", component: PropertyDetailsStep, schema: propertyDetailsSchema },
+  { title: "Property Media", component: PropertyMediaStep, schema: propertyMediaSchema },
+  { title: "Location / Map", component: LocationStep, schema: locationSchema },
+  { title: "Contact & Publishing", component: ContactPublishingStep, schema: contactPublishingSchema },
+] as const;
+
 export const propertyOptions = [
   { label: "Apartment", value: 0 },
   { label: "Villa", value: 1 },

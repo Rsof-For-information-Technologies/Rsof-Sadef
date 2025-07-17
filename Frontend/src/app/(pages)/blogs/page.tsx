@@ -3,6 +3,7 @@ import BasicTableWidget from "@/components/controlled-table/basic-table-widget";
 import { GetBlogs } from "@/types/blog";
 import { getAllBlogs } from "@/utils/api";
 import { Metadata } from "next";
+import NavigateCreateBlog from "./(components)/navigateCreateBlog";
 
 export const metadata: Metadata = {
   title: "blogs",
@@ -27,11 +28,15 @@ export default async function SearchTablePage() {
   const blogs = await getBlogs({ pageNumber: 1, pageSize: 10 });
   return (
     <>
-      <h1 className="mb-4 text-2xl font-semibold">Blog List Page</h1>
-      <p className="mb-6 text-gray-600">
-        This page demonstrates a table with search functionality using the
-        BasicTableWidget component.
-      </p>
+      <div className="flex justify-between items-center py-6">
+        <div>
+          <h1 className="mb-4 text-2xl font-semibold">Blog List Page</h1>
+          <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+        </div>
+        <div>
+          <NavigateCreateBlog/>
+        </div>
+      </div>
       <BasicTableWidget
         title="Search Table"
         variant="minimal"

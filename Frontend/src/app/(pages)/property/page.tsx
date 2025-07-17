@@ -3,6 +3,7 @@ import BasicTableWidget from "@/components/controlled-table/basic-table-widget";
 import { GetProperties } from "@/types/property";
 import { getAllProperties } from "@/utils/api";
 import { Metadata } from "next";
+import NavigateCreateProperty from "./(components)/navigateCreateProperty";
 
 export const metadata: Metadata = {
   title: "property",
@@ -29,11 +30,15 @@ export default async function SearchTablePage() {
 
   return (
     <>
-      <h1 className="mb-4 text-2xl font-semibold">Property List Page</h1>
-      <p className="mb-6 text-gray-600">
-        This page demonstrates a table with search functionality using the
-        BasicTableWidget component.
-      </p>
+      <div className="flex justify-between items-center py-6">
+        <div>
+          <h1 className="mb-4 text-2xl font-semibold">Property List Page</h1>
+          <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+        </div>
+        <div>
+          <NavigateCreateProperty/>
+        </div>
+      </div>
       <BasicTableWidget
         title="Search Table"
         variant="minimal"

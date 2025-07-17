@@ -29,11 +29,10 @@ export default async function DetailsMaintenanceRequest({ params }: DetailsMaint
 
   return (
     <div className="max-w-[900px] w-full mx-auto py-8 px-4">
-      <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-primary mb-2 tracking-tight">Maintenance Request Details</h2>
-        <p className="text-gray-500">All information about this maintenance request is organized below.</p>
+      <div className="py-4 text-center">
+        <h1 className="mb-4 text-2xl font-semibold">Details Maintenance Request</h1>
+        <p className="mb-6 text-gray-600"> This page allows you to view the maintenance request details. </p>
       </div>
-
       <CollapsibleSection title="Basic Information" defaultOpen>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">

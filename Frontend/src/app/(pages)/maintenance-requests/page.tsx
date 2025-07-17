@@ -3,6 +3,7 @@ import BasicTableWidget from "@/components/controlled-table/basic-table-widget";
 import { getAllMaintenanceRequests } from "@/utils/api";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import NavigateCreateRequest from "./(components)/navigateCreateRequest.tsx";
 
 export const metadata: Metadata = {
   title: "Maintenance Request",
@@ -29,11 +30,15 @@ export default async function SearchTablePage() {
 
   return (
     <>
-      <h1 className="mb-4 text-2xl font-semibold">Maintenance Request List Page</h1>
-      <p className="mb-6 text-gray-600">
-        This page demonstrates a table with search functionality using the
-        BasicTableWidget component.
-      </p>
+      <div className="flex justify-between items-center py-6">
+        <div>
+          <h1 className="mb-4 text-2xl font-semibold">Maintenance Request List Page</h1>
+          <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+        </div>
+        <div>
+          <NavigateCreateRequest/>
+        </div>
+      </div>
       <BasicTableWidget
         title="Search Table"
         variant="minimal"
