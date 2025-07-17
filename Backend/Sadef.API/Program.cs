@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sadef.Application.Abstractions.Interfaces;
+using Sadef.Application.Services.AuditLog;
 using Sadef.Application.Services.Blogs;
 using Sadef.Application.Services.Email;
 using Sadef.Application.Services.Favorites;
@@ -29,6 +30,7 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<IFavoriteService, FavoriteService>();
                    svc.AddScoped<ILeadService, LeadService>();
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
+                   svc.AddScoped<IAuditLogService, AuditLogService>();
                    svc.AddCors(options =>
                    {
                        options.AddPolicy("AllowFrontend", policy =>

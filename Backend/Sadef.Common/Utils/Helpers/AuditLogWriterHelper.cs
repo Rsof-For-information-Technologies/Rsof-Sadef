@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Sadef.Common.Domain;
 using System.Text.Json;
 
-namespace Sadef.Common.EFCore.Middleware
+namespace Sadef.Common.Utils.Helpers
 {
-    public static class AuditLogHelper
+    public static class AuditLogWriterHelper
     {
         public static List<AuditLog> CreateAuditLogs(DbContext context, string? userId)
         {
@@ -64,4 +64,4 @@ namespace Sadef.Common.EFCore.Middleware
             return dict;
         }
     }
-} 
+}

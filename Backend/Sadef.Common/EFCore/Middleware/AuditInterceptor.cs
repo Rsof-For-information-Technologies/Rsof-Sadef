@@ -3,6 +3,7 @@ using Sadef.Common.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Sadef.Common.Utils.Helpers;
 
 namespace Sadef.Common.EFCore.Middleware
 {
@@ -55,7 +56,7 @@ namespace Sadef.Common.EFCore.Middleware
                 }
             }
 
-            var auditEntries = AuditLogHelper.CreateAuditLogs(context, userId);
+            var auditEntries = AuditLogWriterHelper.CreateAuditLogs(context, userId);
             if (auditEntries.Count > 0)
             {
                 context.Set<Sadef.Common.Domain.AuditLog>().AddRange(auditEntries);
