@@ -6,9 +6,8 @@ using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
 using Sadef.Domain.Users;
-using Sadef.Domain;
 using Sadef.Common.Domain;
-
+using Sadef.Domain;
 namespace Sadef.Infrastructure.DBContext
 {
     public class SadefDbContext : AppDbContextIdentity
