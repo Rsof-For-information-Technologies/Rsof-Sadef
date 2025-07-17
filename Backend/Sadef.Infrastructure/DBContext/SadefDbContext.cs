@@ -6,6 +6,7 @@ using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
 using Sadef.Domain.Users;
+using Sadef.Common.Domain;
 using Sadef.Domain;
 namespace Sadef.Infrastructure.DBContext
 {
@@ -44,6 +45,6 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<Lead> Lead { get; set; }
         public DbSet<Timeslot> Timeslots { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
-
+        public DbSet<AuditLog> AuditLogs { get; set; }
     }
 }
