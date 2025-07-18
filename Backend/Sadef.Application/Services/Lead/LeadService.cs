@@ -58,7 +58,8 @@ namespace Sadef.Application.Services.Lead
 
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await IncrementLeadVersionAsync();
+            await LeadServiceHelper.InvalidateAsync(_cache);
+            await _cache.RemoveAsync("lead:dashboard:stats");
 
             var responseDto = _mapper.Map<LeadDto>(lead);
             return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");
@@ -66,43 +67,40 @@ namespace Sadef.Application.Services.Lead
 
         public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize, LeadFilterDto filters, bool isExport)
         {
-            string versionKey = "leads:version";
-            string? version = await _cache.GetStringAsync(versionKey);
-            if (string.IsNullOrEmpty(version))
+            if (isExport)
             {
-                version = "1";
-                await _cache.SetStringAsync(versionKey, version);
+                return await GetFreshPaginatedLeadsAsync(pageNumber, pageSize, filters, true);
             }
 
-            string cacheKey = LeadServiceHelper.BuildCacheKey(version, pageNumber, pageSize, filters);
+            var cacheKey = await LeadServiceHelper.GenerateFilteredLeadCacheKey(_cache, pageNumber, pageSize, filters);
             var cached = await _cache.GetStringAsync(cacheKey);
-            if (!string.IsNullOrEmpty(cached) && !isExport)
+            if (cached != null)
             {
                 var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<LeadDto>>(cached);
-                if (cachedResult != null)
-                {
-                    return new Response<PaginatedResponse<LeadDto>>(cachedResult, "Leads retrieved successfully");
-                }
+                return new Response<PaginatedResponse<LeadDto>>(cachedResult!, "Leads retrieved from cache");
             }
 
-            var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
-            var query = repo.Queryable();
-            query = LeadServiceHelper.ApplyFilters(query, filters);
-            query = query.OrderByDescending(b => b.CreatedAt);
+            var result = await GetFreshPaginatedLeadsAsync(pageNumber, pageSize, filters, false);
+            var serialized = JsonConvert.SerializeObject(result.Data);
 
-            // Paginated data
+            await _cache.SetStringAsync(cacheKey, serialized, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
+
+            return result;
+        }
+
+        private async Task<Response<PaginatedResponse<LeadDto>>> GetFreshPaginatedLeadsAsync(int pageNumber, int pageSize, LeadFilterDto filters, bool isExport)
+        {
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
+            var query = LeadServiceHelper.ApplyFilters(repo.Queryable(), filters);
+
             var total = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var dtoList = _mapper.Map<List<LeadDto>>(items);
             var paged = new PaginatedResponse<LeadDto>(dtoList, total, pageNumber, pageSize);
 
-            var cacheOptions = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            };
-            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
-
-            // Export logic
             if (isExport)
             {
                 var allItems = await query.ToListAsync();
@@ -149,22 +147,10 @@ namespace Sadef.Application.Services.Lead
             _mapper.Map(dto, lead);
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().UpdateAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await IncrementLeadVersionAsync();
+            await LeadServiceHelper.InvalidateAsync(_cache);
+            await _cache.RemoveAsync("lead:dashboard:stats");
 
             return new Response<LeadDto>(_mapper.Map<LeadDto>(lead), "Lead updated successfully.");
-        }
-
-
-        private async Task IncrementLeadVersionAsync()
-        {
-            string versionKey = "leads:version";
-            string? currentVersion = await _cache.GetStringAsync(versionKey);
-            int newVersion = 1;
-            if (!string.IsNullOrEmpty(currentVersion) && int.TryParse(currentVersion, out int parsedVersion))
-            {
-                newVersion = parsedVersion + 1;
-            }
-            await _cache.SetStringAsync(versionKey, newVersion.ToString());
         }
 
         public async Task<Response<LeadDashboardStatsDto>> GetLeadDashboardStatsAsync()
@@ -256,7 +242,8 @@ namespace Sadef.Application.Services.Lead
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var updatedDto = _mapper.Map<LeadDto>(lead);
-            await IncrementLeadVersionAsync();
+            await LeadServiceHelper.InvalidateAsync(_cache);
+            await _cache.RemoveAsync("lead:dashboard:stats");
 
             return new Response<LeadDto>(updatedDto, $"Status updated successfully from {currentStatus} to {dto.status.Value}");
         }
