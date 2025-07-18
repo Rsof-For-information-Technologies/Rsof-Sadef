@@ -31,6 +31,11 @@ namespace Sadef.Domain.PropertyEntity
         public List<string>? Features { get; set; }
         public int? TotalFloors { get; set; }
         public bool? IsActive { get; set; } = true;
+        public string? MetaTitle { get; set; }
+        public string? MetaDescription { get; set; }
+        public string? MetaKeywords { get; set; }
+        public string? Slug { get; set; }
+        public string? CanonicalUrl { get; set; }
 
     }
 

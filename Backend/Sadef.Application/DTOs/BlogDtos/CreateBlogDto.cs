@@ -8,6 +8,11 @@ namespace Sadef.Application.DTOs.BlogDtos
         public required string Content { get; set; }
         public IFormFile? CoverImage { get; set; }
         public required bool IsPublished { get; set; }
+        public string? MetaTitle { get; set; }
+        public string? MetaDescription { get; set; }
+        public string? MetaKeywords { get; set; }
+        public string? Slug { get; set; }
+        public string? CanonicalUrl { get; set; }
     }
 
 }
