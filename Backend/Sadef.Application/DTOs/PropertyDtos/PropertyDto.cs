@@ -29,7 +29,12 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public string? WhatsAppNumber { get; set; }
         public DateTime? ExpectedDeliveryDate { get; set; }
         public bool IsInvestorOnly { get; set; } = false;
-        public List<FeatureList>? Features { get; set; }
+        public List<string>? Features { get; set; }
         public bool? IsActive { get; set; } = true;
+        public string? MetaTitle { get; set; }
+        public string? MetaDescription { get; set; }
+        public string? MetaKeywords { get; set; }
+        public string? Slug { get; set; }
+        public string? CanonicalUrl { get; set; }
     }
 }
