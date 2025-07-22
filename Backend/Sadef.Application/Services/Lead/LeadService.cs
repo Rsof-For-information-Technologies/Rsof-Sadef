@@ -22,8 +22,17 @@ namespace Sadef.Application.Services.Lead
         private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IDistributedCache _cache;
+        private readonly IFirebaseNotificationService _firebaseNotificationService;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache)
+        public LeadService(
+            IUnitOfWorkAsync uow,
+            IMapper mapper,
+            IValidator<CreateLeadDto> createLeadValidator,
+            IQueryRepositoryFactory queryRepositoryFactory,
+            IValidator<UpdateLeadDto> updateLeadValidator,
+            IDistributedCache cache,
+            IFirebaseNotificationService firebaseNotificationService
+        )
         {
             _uow = uow;
             _mapper = mapper;
@@ -31,6 +40,7 @@ namespace Sadef.Application.Services.Lead
             _queryRepositoryFactory = queryRepositoryFactory;
             _updateLeadValidator = updateLeadValidator;
             _cache = cache;
+            _firebaseNotificationService = firebaseNotificationService;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -59,6 +69,11 @@ namespace Sadef.Application.Services.Lead
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await IncrementLeadVersionAsync();
+
+            // Send notification to all admins and super admins
+            await _firebaseNotificationService.SendLeadCreatedNotificationToAdminsAsync(
+                 "New Lead Created",
+                 "A new lead has been generated.");
 
             var responseDto = _mapper.Map<LeadDto>(lead);
             return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");

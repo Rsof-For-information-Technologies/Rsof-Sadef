@@ -6,6 +6,8 @@ using Sadef.Application.DTOs.UserDtos;
 using Sadef.Application.DTOs.AuditLogDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
+using Sadef.Application.DTOs.NotificationDtos;
+using Sadef.Domain.Users;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
@@ -60,6 +62,10 @@ namespace Sadef.Application.MappingProfile
 
             // Audit Log
             CreateMap<AuditLog, AuditLogDto>();
+
+            // Notifications
+            CreateMap<RegisterDeviceTokenDto, UserDeviceToken>();
+            CreateMap<UserDeviceToken, DeviceTokenDto>();
 
         }
     }

@@ -46,5 +46,6 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<Timeslot> Timeslots { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<UserDeviceToken> UserDeviceTokens { get; set; }
     }
 }
