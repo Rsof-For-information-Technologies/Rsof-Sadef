@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="Required" xml:space="preserve">
+    <value>حقل {0} مطلوب.</value>
+  </data>
+  <data name="Email_Invalid" xml:space="preserve">
+    <value>يرجى إدخال بريد إلكتروني صالح.</value>
+  </data>
+  <data name="Title_MaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز العنوان {0} حرفًا.</value>
+  </data>
+  <data name="Content_MinLength" xml:space="preserve">
+    <value>يجب أن يكون المحتوى على الأقل {0} حرفًا.</value>
+  </data>
+  <data name="Invalid_BlogId" xml:space="preserve">
+    <value>معرف المدونة غير صالح.</value>
+  </data>
+  <data name="Property_TitleRequired" xml:space="preserve">
+    <value>عنوان العقار مطلوب.</value>
+  </data>
+  <data name="Property_TitleMaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز العنوان {0} حرفًا.</value>
+  </data>
+  <data name="Property_DescriptionRequired" xml:space="preserve">
+    <value>وصف العقار مطلوب.</value>
+  </data>
+  <data name="Property_DescriptionMaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز الوصف {0} حرفًا.</value>
+  </data>
+  <data name="Property_PriceGreaterThanZero" xml:space="preserve">
+    <value>يجب أن يكون السعر أكبر من الصفر.</value>
+  </data>
+  <data name="Property_CityRequired" xml:space="preserve">
+    <value>المدينة مطلوبة.</value>
+  </data>
+  <data name="Property_LocationRequired" xml:space="preserve">
+    <value>الموقع مطلوب.</value>
+  </data>
+  <data name="Property_AreaSizeGreaterThanZero" xml:space="preserve">
+    <value>يجب أن تكون المساحة أكبر من الصفر.</value>
+  </data>
+  <data name="Property_BedroomsZeroOrMore" xml:space="preserve">
+    <value>يجب أن يكون عدد غرف النوم صفر أو أكثر.</value>
+  </data>
+  <data name="Property_BathroomsZeroOrMore" xml:space="preserve">
+    <value>يجب أن يكون عدد الحمامات صفر أو أكثر.</value>
+  </data>
+  <data name="Property_MaxVideos" xml:space="preserve">
+    <value>يمكنك رفع حتى {0} فيديو فقط.</value>
+  </data>
+  <data name="Property_VideoMaxSizeMB" xml:space="preserve">
+    <value>يجب ألا يزيد حجم كل فيديو عن {0} ميجابايت.</value>
+  </data>
+  <data name="Property_InvalidId" xml:space="preserve">
+    <value>معرف العقار غير صالح.</value>
+  </data>
+  <data name="Lead_FullNameRequired" xml:space="preserve">
+    <value>الاسم الكامل مطلوب.</value>
+  </data>
+  <data name="Lead_FullNameMaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز الاسم الكامل {0} حرفًا.</value>
+  </data>
+  <data name="Lead_EmailRequired" xml:space="preserve">
+    <value>البريد الإلكتروني مطلوب.</value>
+  </data>
+  <data name="Lead_EmailInvalid" xml:space="preserve">
+    <value>تنسيق البريد الإلكتروني غير صالح.</value>
+  </data>
+  <data name="Lead_PhoneMaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز رقم الهاتف {0} حرفًا.</value>
+  </data>
+  <data name="Lead_MessageMaxLength" xml:space="preserve">
+    <value>يجب ألا تتجاوز الرسالة {0} حرفًا.</value>
+  </data>
+  <data name="Lead_StatusInvalid" xml:space="preserve">
+    <value>قيمة حالة العميل المحتمل غير صالحة.</value>
+  </data>
+</root> 

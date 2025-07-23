@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="Success_OperationCompleted" xml:space="preserve">
+    <value>Operation completed successfully.</value>
+  </data>
+  <data name="Error_Unexpected" xml:space="preserve">
+    <value>An unexpected error occurred.</value>
+  </data>
+  <data name="Notification_Welcome" xml:space="preserve">
+    <value>Welcome to Sadef!</value>
+  </data>
+  <data name="Property_Created" xml:space="preserve">
+    <value>Property created successfully.</value>
+  </data>
+  <data name="Property_Listed" xml:space="preserve">
+    <value>Properties retrieved successfully.</value>
+  </data>
+  <data name="Property_NotFound" xml:space="preserve">
+    <value>Property not found.</value>
+  </data>
+  <data name="Property_Found" xml:space="preserve">
+    <value>Property found successfully.</value>
+  </data>
+  <data name="Property_Deleted" xml:space="preserve">
+    <value>Property deleted successfully.</value>
+  </data>
+  <data name="Property_Updated" xml:space="preserve">
+    <value>Property updated successfully.</value>
+  </data>
+  <data name="Property_StatusUpdated" xml:space="preserve">
+    <value>Status updated successfully from {0} to {1}.</value>
+  </data>
+  <data name="Property_Filtered" xml:space="preserve">
+    <value>Fetched with filters.</value>
+  </data>
+  <data name="Property_ExpirySet" xml:space="preserve">
+    <value>Expiry set to {0}.</value>
+  </data>
+  <data name="Property_DashboardLoaded" xml:space="preserve">
+    <value>Dashboard stats loaded.</value>
+  </data>
+  <data name="Lead_Created" xml:space="preserve">
+    <value>Inquiry submitted successfully.</value>
+  </data>
+  <data name="Lead_InvalidPropertyReference" xml:space="preserve">
+    <value>Invalid property reference. The specified property does not exist.</value>
+  </data>
+  <data name="Lead_Listed" xml:space="preserve">
+    <value>Leads retrieved successfully.</value>
+  </data>
+  <data name="Lead_NotFound" xml:space="preserve">
+    <value>Lead not found.</value>
+  </data>
+  <data name="Lead_Updated" xml:space="preserve">
+    <value>Lead updated successfully.</value>
+  </data>
+  <data name="Lead_DashboardLoaded" xml:space="preserve">
+    <value>Lead dashboard stats loaded.</value>
+  </data>
+  <data name="Lead_StatusRequired" xml:space="preserve">
+    <value>Status cannot be null.</value>
+  </data>
+  <data name="Lead_InvalidStatusTransition" xml:space="preserve">
+    <value>Invalid status transition from {0} to {1}.</value>
+  </data>
+  <data name="Lead_StatusUpdated" xml:space="preserve">
+    <value>Status updated successfully from {0} to {1}.</value>
+  </data>
+  <data name="Blog_Created" xml:space="preserve">
+    <value>Blog created successfully.</value>
+  </data>
+  <data name="Blog_Updated" xml:space="preserve">
+    <value>Blog updated successfully.</value>
+  </data>
+  <data name="Blog_Deleted" xml:space="preserve">
+    <value>Blog deleted successfully.</value>
+  </data>
+  <data name="Blog_NotFound" xml:space="preserve">
+    <value>Blog not found.</value>
+  </data>
+</root> 

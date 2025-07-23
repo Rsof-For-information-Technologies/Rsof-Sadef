@@ -1,98 +1,97 @@
 ﻿using FluentValidation;
 using Sadef.Application.DTOs.PropertyDtos;
+using Microsoft.Extensions.Localization;
 
 namespace Sadef.Application.Services.PropertyListing
 {
     public class CreatePropertyValidator : AbstractValidator<CreatePropertyDto>
     {
-        public CreatePropertyValidator()
+        public CreatePropertyValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Title)
-                .NotEmpty().WithMessage("Property title is required.")
-                .MaximumLength(100).WithMessage("Title cannot exceed 100 characters.");
+                .NotEmpty().WithMessage(localizer["Property_TitleRequired"])
+                .MaximumLength(100).WithMessage(localizer["Property_TitleMaxLength", 100]);
 
             RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("Property description is required.")
-                .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
+                .NotEmpty().WithMessage(localizer["Property_DescriptionRequired"])
+                .MaximumLength(1000).WithMessage(localizer["Property_DescriptionMaxLength", 1000]);
 
             RuleFor(x => x.Price)
-                .GreaterThan(0).WithMessage("Price must be greater than zero.");
+                .GreaterThan(0).WithMessage(localizer["Property_PriceGreaterThanZero"]);
 
             RuleFor(x => x.City)
-                .NotEmpty().WithMessage("City is required.");
+                .NotEmpty().WithMessage(localizer["Property_CityRequired"]);
 
             RuleFor(x => x.Location)
-                .NotEmpty().WithMessage("Location is required.");
+                .NotEmpty().WithMessage(localizer["Property_LocationRequired"]);
 
             RuleFor(x => x.AreaSize)
-                .GreaterThan(0).WithMessage("Area size must be greater than zero.");
+                .GreaterThan(0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"]);
 
             RuleFor(x => x.Bedrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bedrooms.HasValue)
-                .WithMessage("Bedrooms must be zero or more.");
+                .WithMessage(localizer["Property_BedroomsZeroOrMore"]);
 
             RuleFor(x => x.Bathrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bathrooms.HasValue)
-                .WithMessage("Bathrooms must be zero or more.");
+                .WithMessage(localizer["Property_BathroomsZeroOrMore"]);
 
             RuleFor(x => x.Videos)
                 .Must(v => v == null || v.Count <= 3)
                 .When(x => x.Videos != null && x.Videos.Any())
-                .WithMessage("You can upload up to 3 videos only.");
+                .WithMessage(localizer["Property_MaxVideos", 3]);
 
             RuleForEach(x => x.Videos)
                 .Must(v => v.Length <= 50 * 1024 * 1024) // 50MB
                 .When(x => x.Videos != null && x.Videos.Any())
-                .WithMessage("Each video must be 50MB or smaller.");
-
+                .WithMessage(localizer["Property_VideoMaxSizeMB", 50]);
         }
     }
 
     public class UpdatePropertyValidator : AbstractValidator<UpdatePropertyDto>
     {
-        public UpdatePropertyValidator()
+        public UpdatePropertyValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Id)
-                .GreaterThan(0).WithMessage("Invalid property ID.");
+                .GreaterThan(0).WithMessage(localizer["Property_InvalidId"]);
 
             RuleFor(x => x.Title)
-                .NotEmpty().WithMessage("Property title is required.")
-                .MaximumLength(100).WithMessage("Title cannot exceed 100 characters.");
+                .NotEmpty().WithMessage(localizer["Property_TitleRequired"])
+                .MaximumLength(100).WithMessage(localizer["Property_TitleMaxLength", 100]);
 
             RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("Property description is required.")
-                .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
+                .NotEmpty().WithMessage(localizer["Property_DescriptionRequired"])
+                .MaximumLength(1000).WithMessage(localizer["Property_DescriptionMaxLength", 1000]);
 
             RuleFor(x => x.Price)
-                .GreaterThan(0).WithMessage("Price must be greater than zero.");
+                .GreaterThan(0).WithMessage(localizer["Property_PriceGreaterThanZero"]);
 
             RuleFor(x => x.City)
-                .NotEmpty().WithMessage("City is required.");
+                .NotEmpty().WithMessage(localizer["Property_CityRequired"]);
 
             RuleFor(x => x.Location)
-                .NotEmpty().WithMessage("Location is required.");
+                .NotEmpty().WithMessage(localizer["Property_LocationRequired"]);
 
             RuleFor(x => x.AreaSize)
-                .GreaterThan(0).WithMessage("Area size must be greater than zero.");
+                .GreaterThan(0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"]);
 
             RuleFor(x => x.Bedrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bedrooms.HasValue)
-                .WithMessage("Bedrooms must be zero or more.");
+                .WithMessage(localizer["Property_BedroomsZeroOrMore"]);
 
             RuleFor(x => x.Bathrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bathrooms.HasValue)
-                .WithMessage("Bathrooms must be zero or more.");
+                .WithMessage(localizer["Property_BathroomsZeroOrMore"]);
 
             RuleFor(x => x.Videos)
                  .Must(v => v == null || v.Count <= 3)
                  .When(x => x.Videos != null && x.Videos.Any())
-                 .WithMessage("You can upload up to 3 videos only.");
+                 .WithMessage(localizer["Property_MaxVideos", 3]);
 
             RuleForEach(x => x.Videos)
                 .Must(v => v.Length <= 50 * 1024 * 1024) // 50MB
                 .When(x => x.Videos != null && x.Videos.Any())
-                .WithMessage("Each video must be 50MB or smaller.");
-
+                .WithMessage(localizer["Property_VideoMaxSizeMB", 50]);
         }
     }
     public class PropertyExpiryUpdateValidator : AbstractValidator<PropertyExpiryUpdateDto>

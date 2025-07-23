@@ -1,31 +1,32 @@
 ﻿using FluentValidation;
 using Sadef.Application.DTOs.BlogDtos;
+using Microsoft.Extensions.Localization;
 
 namespace Sadef.Application.Services.Blogs
 {
 
     public class CreateBlogValidator : AbstractValidator<CreateBlogDto>
     {
-        public CreateBlogValidator()
+        public CreateBlogValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Title)
-                .NotEmpty().WithMessage("Title is required.")
-                .MaximumLength(150).WithMessage("Title cannot exceed 150 characters.");
+                .NotEmpty().WithMessage(localizer["Required", "Title"])
+                .MaximumLength(150).WithMessage(localizer["Title_MaxLength", 150]);
 
             RuleFor(x => x.Content)
-                .NotEmpty().WithMessage("Content is required.")
-                .MinimumLength(20).WithMessage("Content must be at least 20 characters.");
+                .NotEmpty().WithMessage(localizer["Required", "Content"])
+                .MinimumLength(20).WithMessage(localizer["Content_MinLength", 20]);
         }
     }
 
     public class UpdateBlogValidator : AbstractValidator<UpdateBlogDto>
     {
-        public UpdateBlogValidator()
+        public UpdateBlogValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Id)
-                .GreaterThan(0).WithMessage("Invalid blog ID.");
+                .GreaterThan(0).WithMessage(localizer["Invalid_BlogId"]);
 
-            Include(new CreateBlogValidator());
+            Include(new CreateBlogValidator(localizer));
         }
     }
 
