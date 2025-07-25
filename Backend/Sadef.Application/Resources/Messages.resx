@@ -90,4 +90,58 @@
   <data name="Blog_NotFound" xml:space="preserve">
     <value>Blog not found.</value>
   </data>
+  <data name="MaintenanceRequest_LeadNotFound" xml:space="preserve">
+    <value>No lead found with the provided LeadId: {0}. Please enter a valid LeadId.</value>
+  </data>
+  <data name="MaintenanceRequest_LeadNotConverted" xml:space="preserve">
+    <value>Only converted leads can submit maintenance requests.</value>
+  </data>
+  <data name="MaintenanceRequest_Created" xml:space="preserve">
+    <value>Maintenance request submitted successfully.</value>
+  </data>
+  <data name="MaintenanceRequest_Listed" xml:space="preserve">
+    <value>Maintenance requests retrieved successfully.</value>
+  </data>
+  <data name="MaintenanceRequest_NotFound" xml:space="preserve">
+    <value>Maintenance request not found.</value>
+  </data>
+  <data name="MaintenanceRequest_Found" xml:space="preserve">
+    <value>Maintenance request found successfully.</value>
+  </data>
+  <data name="MaintenanceRequest_DashboardLoaded" xml:space="preserve">
+    <value>Maintenance dashboard stats loaded.</value>
+  </data>
+  <data name="MaintenanceRequest_Updated" xml:space="preserve">
+    <value>Maintenance request updated successfully.</value>
+  </data>
+  <data name="MaintenanceRequest_Deleted" xml:space="preserve">
+    <value>Request deleted successfully.</value>
+  </data>
+  <data name="MaintenanceRequest_StatusNotSet" xml:space="preserve">
+    <value>Current status is not set for this request.</value>
+  </data>
+  <data name="MaintenanceRequest_StatusRequired" xml:space="preserve">
+    <value>New status cannot be null.</value>
+  </data>
+  <data name="MaintenanceRequest_StatusUpdated" xml:space="preserve">
+    <value>Status updated from {0} to {1}.</value>
+  </data>
+  <data name="MaintenanceRequest_AdminResponseUpdated" xml:space="preserve">
+    <value>Admin response updated successfully.</value>
+  </data>
+  <data name="MaintenanceRequest_LeadIdRequired" xml:space="preserve">
+    <value>Lead ID is required. Please enter a valid ID.</value>
+  </data>
+  <data name="MaintenanceRequest_DescriptionRequired" xml:space="preserve">
+    <value>Description is required and must be less than 1000 characters.</value>
+  </data>
+  <data name="MaintenanceRequest_MaxVideos" xml:space="preserve">
+    <value>You can upload up to {0} videos only.</value>
+  </data>
+  <data name="MaintenanceRequest_VideoMaxSizeMB" xml:space="preserve">
+    <value>Each video must be {0}MB or smaller.</value>
+  </data>
+  <data name="MaintenanceRequest_IdPositive" xml:space="preserve">
+    <value>Maintenance request ID must be a positive number.</value>
+  </data>
 </root> 

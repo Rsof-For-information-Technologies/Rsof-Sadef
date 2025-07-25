@@ -65,10 +65,10 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .FirstOrDefaultAsync(l => l.Id == dto.LeadId);
 
             if (lead == null)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotFound", dto.LeadId]);
+                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotFound", dto.LeadId].ToString());
 
             if (lead.Status != LeadStatus.Converted)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotConverted"]);
+                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotConverted"].ToString());
 
             var request = _mapper.Map<Domain.MaintenanceRequestEntity.MaintenanceRequest>(dto);
             request.Images = new List<MaintenanceImage>();

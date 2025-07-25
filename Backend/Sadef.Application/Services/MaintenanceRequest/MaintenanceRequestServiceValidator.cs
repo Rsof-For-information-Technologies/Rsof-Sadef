@@ -6,7 +6,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
 {
     public class CreateMaintenanceRequestValidator : AbstractValidator<CreateMaintenanceRequestDto>
     {
-        public CreateMaintenanceRequestValidator(IStringLocalizer localizer)
+        public CreateMaintenanceRequestValidator(IStringLocalizer<CreateMaintenanceRequestValidator> localizer)
         {
             RuleFor(x => x.LeadId)
                 .GreaterThan(0)
@@ -30,7 +30,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
     }
     public class UpdateMaintenanceRequestStatusValidator : AbstractValidator<UpdateMaintenanceRequestDto>
     {
-        public UpdateMaintenanceRequestStatusValidator(IStringLocalizer localizer)
+        public UpdateMaintenanceRequestStatusValidator(IStringLocalizer<UpdateMaintenanceRequestStatusValidator> localizer)
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
