@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
@@ -22,8 +24,9 @@ namespace Sadef.Application.Services.Lead
         private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IDistributedCache _cache;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache)
+        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IHttpContextAccessor httpContextAccessor)
         {
             _uow = uow;
             _mapper = mapper;
@@ -31,6 +34,7 @@ namespace Sadef.Application.Services.Lead
             _queryRepositoryFactory = queryRepositoryFactory;
             _updateLeadValidator = updateLeadValidator;
             _cache = cache;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -55,6 +59,7 @@ namespace Sadef.Application.Services.Lead
             var lead = _mapper.Map<Domain.LeadEntity.Lead>(dto);
             lead.Status = LeadStatus.New;
             lead.CreatedAt = DateTime.UtcNow;
+            //lead.CreatedBy = GetCurrentUserId();
 
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
@@ -247,5 +252,21 @@ namespace Sadef.Application.Services.Lead
 
             return new Response<LeadDto>(updatedDto, $"Status updated successfully from {currentStatus} to {dto.status.Value}");
         }
+        public async Task<Response<List<LeadDto>>> GetLeadsCreatedByUserAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new Response<List<LeadDto>>("Invalid user email");
+
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
+            var leads = await repo.Queryable()
+                                  .Where(l => l.CreatedBy == email)
+                                  .OrderByDescending(l => l.CreatedAt)
+                                  .ToListAsync();
+
+            var dtoList = _mapper.Map<List<LeadDto>>(leads);
+
+            return new Response<List<LeadDto>>(dtoList, "Leads created by current user retrieved successfully.");
+        }
+
     }
 }
