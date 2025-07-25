@@ -120,7 +120,7 @@ namespace Sadef.Application.Services.Lead
                 };
             }
 
-            return new Response<PaginatedResponse<LeadDto>>(paged, "Leads retrieved successfully");
+            return new Response<PaginatedResponse<LeadDto>>(paged, _localizer["Lead_Listed"]);
         }
 
         public async Task<Response<LeadDto>> GetByIdAsync(int id)
@@ -217,7 +217,7 @@ namespace Sadef.Application.Services.Lead
             };
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
 
-            return new Response<LeadDashboardStatsDto>(dto, "Lead dashboard stats loaded");
+            return new Response<LeadDashboardStatsDto>(dto, _localizer["Lead_DashboardLoaded"]);
         }
 
         public async Task<Response<LeadDto>> ChangeStatusAsync(UpdateLeadStatusDto dto)
