@@ -258,15 +258,19 @@ namespace Sadef.Application.Services.Lead
                 return new Response<List<LeadDto>>("Invalid user email");
 
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
+            //var leads = await repo.Queryable()
+            //                      .Where(l => l.CreatedBy == email)
+            //                      .OrderByDescending(l => l.CreatedAt)
+            //                      .ToListAsync();
             var leads = await repo.Queryable()
-                                  .Where(l => l.CreatedBy == email)
-                                  .OrderByDescending(l => l.CreatedAt)
-                                  .ToListAsync();
+            .Include(l => l.Property)
+            .Where(l => l.CreatedBy == email)
+            .OrderByDescending(l => l.CreatedAt)
+            .ToListAsync();
 
             var dtoList = _mapper.Map<List<LeadDto>>(leads);
 
             return new Response<List<LeadDto>>(dtoList, "Leads created by current user retrieved successfully.");
         }
-
     }
 }
