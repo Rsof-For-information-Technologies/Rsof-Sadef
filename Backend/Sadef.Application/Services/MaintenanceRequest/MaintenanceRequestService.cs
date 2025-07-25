@@ -383,6 +383,22 @@ namespace Sadef.Application.Services.MaintenanceRequest
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
             return new Response<MaintenanceRequestDto>(responseDto, "Updated successfully.");
         }
+        public async Task<Response<List<MaintenanceRequestDto>>> GetMyMaintenanceRequestsAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new Response<List<MaintenanceRequestDto>>("Invalid user email");
+
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
+
+            var requests = await repo.Queryable()
+                .Where(m => m.CreatedBy == email)
+                .OrderByDescending(m => m.CreatedAt)
+                .ToListAsync();
+
+            var dtoList = _mapper.Map<List<MaintenanceRequestDto>>(requests);
+
+            return new Response<List<MaintenanceRequestDto>>(dtoList, "Maintenance requests created by user retrieved successfully.");
+        }
 
     }
 }
