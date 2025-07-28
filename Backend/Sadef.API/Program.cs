@@ -1,6 +1,7 @@
 using System.Globalization;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -146,7 +147,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var updateValidator = provider.GetRequiredService<IValidator<UpdateLeadDto>>();
                        var cache = provider.GetRequiredService<IDistributedCache>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory);
+                       var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory , contextAccessor);
                    });
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
