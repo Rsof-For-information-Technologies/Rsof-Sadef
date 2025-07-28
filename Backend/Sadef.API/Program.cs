@@ -9,6 +9,8 @@ using Sadef.Application.Services.Lead;
 using Sadef.Application.Services.MaintenanceRequest;
 using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
+using Sadef.Common.Services.CurrentUser;
+using Sadef.Application.Services.PropertyTimeLine;
 using Sadef.Application.Services.Whatsapp;
 using Sadef.Common.EFCore.Middleware;
 using Sadef.Common.Infrastructure.EfCore.Db;
@@ -36,6 +38,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<ILeadService, LeadService>();
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
+                   svc.AddScoped<IPropertyTimeLineService, PropertyTimeLineService>();
+                   svc.AddScoped<ICurrentUserService, CurrentUserService>();
                    svc.AddCors(options =>
                    {
                        options.AddPolicy("AllowFrontend", policy =>
