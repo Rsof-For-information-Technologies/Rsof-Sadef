@@ -18,24 +18,24 @@ namespace Sadef.Application.Services.Blogs
                 .MinimumLength(20).WithMessage(localizer["Content_MinLength", 20]);
 
             RuleFor(x => x.MetaTitle)
-            .MaximumLength(255).WithMessage("Meta title cannot exceed 255 characters.");
+                .MaximumLength(255).WithMessage(localizer["Blog_MetaTitleMaxLength", 255]);
 
             RuleFor(x => x.MetaDescription)
-                .MaximumLength(500).WithMessage("Meta description cannot exceed 500 characters.");
+                .MaximumLength(500).WithMessage(localizer["Blog_MetaDescriptionMaxLength", 500]);
 
             RuleFor(x => x.MetaKeywords)
-                .MaximumLength(255).WithMessage("Meta keywords cannot exceed 255 characters.");
+                .MaximumLength(255).WithMessage(localizer["Blog_MetaKeywordsMaxLength", 255]);
 
             RuleFor(x => x.CanonicalUrl)
-                .MaximumLength(2083).WithMessage("Canonical URL cannot exceed 2083 characters.")
+                .MaximumLength(2083).WithMessage(localizer["Blog_CanonicalUrlMaxLength", 2083])
                 .Matches(@"^(https?://)?([a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,})(/.*)?$")
                 .When(x => !string.IsNullOrWhiteSpace(x.CanonicalUrl))
-                .WithMessage("Canonical URL format is invalid.");
+                .WithMessage(localizer["Blog_CanonicalUrlInvalid"]);
 
             RuleFor(x => x.Slug)
-                .MaximumLength(200).WithMessage("Slug must not exceed 200 characters.")
+                .MaximumLength(200).WithMessage(localizer["Blog_SlugMaxLength", 200])
                 .Matches(@"^[a-z0-9]+(?:-[a-z0-9]+)*$").When(x => !string.IsNullOrWhiteSpace(x.Slug))
-                .WithMessage("Slug must be URL-friendly (lowercase letters, numbers, and dashes only).");
+                .WithMessage(localizer["Blog_SlugInvalid"]);
         }
     }
 

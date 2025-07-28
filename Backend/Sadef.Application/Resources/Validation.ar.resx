@@ -174,4 +174,25 @@
   <data name="User_RefreshTokenRequired" xml:space="preserve">
     <value>رمز التحديث مطلوب.</value>
   </data>
+  <data name="Blog_MetaTitleMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز العنوان الوصفي {0} حرفًا.</value>
+  </data>
+  <data name="Blog_MetaDescriptionMaxLength" xml:space="preserve">
+    <value>لا يمكن أن تتجاوز الوصف الوصفي {0} حرفًا.</value>
+  </data>
+  <data name="Blog_MetaKeywordsMaxLength" xml:space="preserve">
+    <value>لا يمكن أن تتجاوز الكلمات المفتاحية {0} حرفًا.</value>
+  </data>
+  <data name="Blog_CanonicalUrlMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز الرابط القانوني {0} حرفًا.</value>
+  </data>
+  <data name="Blog_CanonicalUrlInvalid" xml:space="preserve">
+    <value>تنسيق الرابط القانوني غير صالح.</value>
+  </data>
+  <data name="Blog_SlugMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز السلاق {0} حرفًا.</value>
+  </data>
+  <data name="Blog_SlugInvalid" xml:space="preserve">
+    <value>يجب أن يكون السلاق مناسبًا للرابط (أحرف صغيرة، أرقام، وشرطات فقط).</value>
+  </data>
 </root> 
