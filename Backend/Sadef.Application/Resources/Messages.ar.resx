@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="Success_OperationCompleted" xml:space="preserve">
+    <value>تمت العملية بنجاح.</value>
+  </data>
+  <data name="Error_Unexpected" xml:space="preserve">
+    <value>حدث خطأ غير متوقع.</value>
+  </data>
+  <data name="Notification_Welcome" xml:space="preserve">
+    <value>مرحبًا بك في سدف!</value>
+  </data>
+  <data name="Property_Created" xml:space="preserve">
+    <value>تم إنشاء العقار بنجاح.</value>
+  </data>
+  <data name="Property_Listed" xml:space="preserve">
+    <value>تم استرجاع العقارات بنجاح.</value>
+  </data>
+  <data name="Property_NotFound" xml:space="preserve">
+    <value>لم يتم العثور على العقار.</value>
+  </data>
+  <data name="Property_Found" xml:space="preserve">
+    <value>تم العثور على العقار بنجاح.</value>
+  </data>
+  <data name="Property_Deleted" xml:space="preserve">
+    <value>تم حذف العقار بنجاح.</value>
+  </data>
+  <data name="Property_Updated" xml:space="preserve">
+    <value>تم تحديث العقار بنجاح.</value>
+  </data>
+  <data name="Property_StatusUpdated" xml:space="preserve">
+    <value>تم تحديث الحالة بنجاح من {0} إلى {1}.</value>
+  </data>
+  <data name="Property_Filtered" xml:space="preserve">
+    <value>تم الجلب مع الفلاتر.</value>
+  </data>
+  <data name="Property_ExpirySet" xml:space="preserve">
+    <value>تم تعيين تاريخ الانتهاء إلى {0}.</value>
+  </data>
+  <data name="Property_DashboardLoaded" xml:space="preserve">
+    <value>تم تحميل إحصائيات لوحة المعلومات.</value>
+  </data>
+  <data name="Lead_Created" xml:space="preserve">
+    <value>تم إرسال الاستفسار بنجاح.</value>
+  </data>
+  <data name="Lead_InvalidPropertyReference" xml:space="preserve">
+    <value>مرجع العقار غير صالح. العقار المحدد غير موجود.</value>
+  </data>
+  <data name="Lead_Listed" xml:space="preserve">
+    <value>تم استرجاع العملاء المحتملين بنجاح.</value>
+  </data>
+  <data name="Lead_NotFound" xml:space="preserve">
+    <value>لم يتم العثور على العميل المحتمل.</value>
+  </data>
+  <data name="Lead_Updated" xml:space="preserve">
+    <value>تم تحديث العميل المحتمل بنجاح.</value>
+  </data>
+  <data name="Lead_DashboardLoaded" xml:space="preserve">
+    <value>تم تحميل إحصائيات لوحة معلومات العملاء المحتملين.</value>
+  </data>
+  <data name="Lead_StatusRequired" xml:space="preserve">
+    <value>الحالة لا يمكن أن تكون فارغة.</value>
+  </data>
+  <data name="Lead_InvalidStatusTransition" xml:space="preserve">
+    <value>انتقال حالة غير صالح من {0} إلى {1}.</value>
+  </data>
+  <data name="Lead_StatusUpdated" xml:space="preserve">
+    <value>تم تحديث الحالة بنجاح من {0} إلى {1}.</value>
+  </data>
+  <data name="Blog_Created" xml:space="preserve">
+    <value>تم إنشاء المدونة بنجاح.</value>
+  </data>
+  <data name="Blog_Updated" xml:space="preserve">
+    <value>تم تحديث المدونة بنجاح.</value>
+  </data>
+  <data name="Blog_Deleted" xml:space="preserve">
+    <value>تم حذف المدونة بنجاح.</value>
+  </data>
+  <data name="Blog_NotFound" xml:space="preserve">
+    <value>لم يتم العثور على المدونة.</value>
+  </data>
+  <data name="MaintenanceRequest_LeadNotFound" xml:space="preserve">
+    <value>لم يتم العثور على عميل بالمعرف المدخل: {0}. يرجى إدخال معرف صحيح.</value>
+  </data>
+  <data name="MaintenanceRequest_LeadNotConverted" xml:space="preserve">
+    <value>فقط العملاء المحولون يمكنهم تقديم طلبات الصيانة.</value>
+  </data>
+  <data name="MaintenanceRequest_Created" xml:space="preserve">
+    <value>تم إرسال طلب الصيانة بنجاح.</value>
+  </data>
+  <data name="MaintenanceRequest_Listed" xml:space="preserve">
+    <value>تم استرجاع طلبات الصيانة بنجاح.</value>
+  </data>
+  <data name="MaintenanceRequest_NotFound" xml:space="preserve">
+    <value>لم يتم العثور على طلب الصيانة.</value>
+  </data>
+  <data name="MaintenanceRequest_Found" xml:space="preserve">
+    <value>تم العثور على طلب الصيانة بنجاح.</value>
+  </data>
+  <data name="MaintenanceRequest_DashboardLoaded" xml:space="preserve">
+    <value>تم تحميل إحصائيات لوحة معلومات الصيانة.</value>
+  </data>
+  <data name="MaintenanceRequest_Updated" xml:space="preserve">
+    <value>تم تحديث طلب الصيانة بنجاح.</value>
+  </data>
+  <data name="MaintenanceRequest_Deleted" xml:space="preserve">
+    <value>تم حذف الطلب بنجاح.</value>
+  </data>
+  <data name="MaintenanceRequest_StatusNotSet" xml:space="preserve">
+    <value>لم يتم تعيين الحالة الحالية لهذا الطلب.</value>
+  </data>
+  <data name="MaintenanceRequest_StatusRequired" xml:space="preserve">
+    <value>لا يمكن أن تكون الحالة الجديدة فارغة.</value>
+  </data>
+  <data name="MaintenanceRequest_StatusUpdated" xml:space="preserve">
+    <value>تم تحديث الحالة من {0} إلى {1}.</value>
+  </data>
+  <data name="MaintenanceRequest_AdminResponseUpdated" xml:space="preserve">
+    <value>تم تحديث رد المسؤول بنجاح.</value>
+  </data>
+  <data name="MaintenanceRequest_LeadIdRequired" xml:space="preserve">
+    <value>معرف العميل مطلوب. يرجى إدخال معرف صحيح.</value>
+  </data>
+  <data name="MaintenanceRequest_DescriptionRequired" xml:space="preserve">
+    <value>الوصف مطلوب ويجب ألا يزيد عن 1000 حرف.</value>
+  </data>
+  <data name="MaintenanceRequest_MaxVideos" xml:space="preserve">
+    <value>يمكنك رفع حتى {0} مقاطع فيديو فقط.</value>
+  </data>
+  <data name="MaintenanceRequest_VideoMaxSizeMB" xml:space="preserve">
+    <value>يجب ألا يزيد حجم كل فيديو عن {0} ميجابايت.</value>
+  </data>
+  <data name="MaintenanceRequest_IdPositive" xml:space="preserve">
+    <value>يجب أن يكون معرف طلب الصيانة رقمًا موجبًا.</value>
+  </data>
+</root> 
