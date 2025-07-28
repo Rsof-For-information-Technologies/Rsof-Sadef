@@ -15,6 +15,7 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public double AreaSize { get; set; }
         public int? Bedrooms { get; set; }
         public int? Bathrooms { get; set; }
+        public int? TotalFloors { get; set; }
         public List<string> ImageBase64Strings { get; set; }
         public PropertyStatus Status { get; set; }
         public DateTime? ExpiryDate { get; set; }
@@ -31,5 +32,10 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public bool IsInvestorOnly { get; set; } = false;
         public List<string>? Features { get; set; }
         public bool? IsActive { get; set; } = true;
+        public string? MetaTitle { get; set; }
+        public string? MetaDescription { get; set; }
+        public string? MetaKeywords { get; set; }
+        public string? Slug { get; set; }
+        public string? CanonicalUrl { get; set; }
     }
 }

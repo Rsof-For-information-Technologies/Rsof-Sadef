@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using OfficeOpenXml;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Domain.LeadEntity;
 
@@ -6,6 +7,24 @@ namespace Sadef.Application.Utils
 {
     public static class LeadServiceHelper
     {
+        private const string VersionKey = "leads:version";
+
+        public static async Task<string> GetVersionAsync(IDistributedCache cache)
+        {
+            var version = await cache.GetStringAsync(VersionKey);
+            if (string.IsNullOrEmpty(version))
+            {
+                version = "v1";
+                await cache.SetStringAsync(VersionKey, version);
+            }
+            return version;
+        }
+
+        public static Task InvalidateAsync(IDistributedCache cache)
+        {
+            return cache.SetStringAsync(VersionKey, Guid.NewGuid().ToString());
+        }
+
         public static IQueryable<Lead> ApplyFilters(IQueryable<Lead> query, LeadFilterDto filters)
         {
             if (!string.IsNullOrWhiteSpace(filters.FullName))
@@ -32,16 +51,21 @@ namespace Sadef.Application.Utils
             return query;
         }
 
-        public static string BuildCacheKey(string version, int pageNumber, int pageSize, LeadFilterDto filters)
+        public static async Task<string> GenerateFilteredLeadCacheKey(IDistributedCache cache, int page, int size, LeadFilterDto filters)
         {
-            return $"leads:version={version}:page={pageNumber}&size={pageSize}" +
-                   $"&name={filters.FullName}" +
-                   $"&email={filters.Email}" +
-                   $"&phone={filters.Phone}" +
-                   $"&prop={filters.PropertyId}" +
-                   $"&status={filters.Status}" +
-                   $"&from={filters.CreatedAtFrom?.ToString("yyyyMMdd")}" +
-                   $"&to={filters.CreatedAtTo?.ToString("yyyyMMdd")}";
+            var version = await GetVersionAsync(cache);
+
+            var key = $"filteredLeads:{version}:page={page}&size={size}";
+
+            if (!string.IsNullOrWhiteSpace(filters.FullName)) key += $"&name={filters.FullName}";
+            if (!string.IsNullOrWhiteSpace(filters.Email)) key += $"&email={filters.Email}";
+            if (!string.IsNullOrWhiteSpace(filters.Phone)) key += $"&phone={filters.Phone}";
+            if (filters.PropertyId.HasValue) key += $"&propId={filters.PropertyId}";
+            if (filters.Status.HasValue) key += $"&status={filters.Status}";
+            if (filters.CreatedAtFrom.HasValue) key += $"&from={filters.CreatedAtFrom.Value:yyyyMMdd}";
+            if (filters.CreatedAtTo.HasValue) key += $"&to={filters.CreatedAtTo.Value:yyyyMMdd}";
+
+            return key;
         }
 
         public static byte[] GenerateExcelReport(List<LeadDto> leads)

@@ -1,6 +1,6 @@
 ﻿using Sadef.Domain.Constants;
 using Sadef.Common.Domain;
-
+using Sadef.Domain.PropertyEntity;
 namespace Sadef.Domain.LeadEntity
 {
     public class Lead : AggregateRootBase
@@ -11,6 +11,8 @@ namespace Sadef.Domain.LeadEntity
         public string? Message { get; set; }
         public int? PropertyId { get; set; }
         public LeadStatus Status { get; set; }
+        public Property? Property { get; set; }
+
     }
 
 }
