@@ -195,7 +195,14 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory);
                    });
-                   svc.AddScoped<IFavoriteService, FavoriteService>();
+                   svc.AddScoped<IFavoriteService>(provider =>
+                   {
+                       var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+                       var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+                       var mapper = provider.GetRequiredService<IMapper>();
+                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       return new FavoriteService(uow, queryFactory, mapper, localizerFactory);
+                   });
                    svc.AddScoped<ILeadService>(provider =>
                    {
                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();

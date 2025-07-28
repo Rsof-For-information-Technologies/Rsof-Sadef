@@ -279,4 +279,20 @@
   <data name="Identity_UnknownError" xml:space="preserve">
     <value>حدث خطأ أثناء إنشاء المستخدم.</value>
   </data>
+
+  <data name="Favorite_AlreadyExists" xml:space="preserve">
+    <value>العقار مضاف للمفضلة بالفعل.</value>
+  </data>
+  <data name="Favorite_Added" xml:space="preserve">
+    <value>تم إضافة العقار للمفضلة.</value>
+  </data>
+  <data name="Favorite_NotFound" xml:space="preserve">
+    <value>المفضلة غير موجودة.</value>
+  </data>
+  <data name="Favorite_Removed" xml:space="preserve">
+    <value>تم إزالة العقار من المفضلة.</value>
+  </data>
+  <data name="Favorite_Loaded" xml:space="preserve">
+    <value>تم تحميل المفضلة.</value>
+  </data>
 </root> 
