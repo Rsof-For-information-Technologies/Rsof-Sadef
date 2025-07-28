@@ -28,6 +28,8 @@ using Sadef.Common.Infrastructure.EfCore.Db;
 using Sadef.Common.RestTemplate;
 using Sadef.Common.RestTemplate.Db;
 using Sadef.Infrastructure.DBContext;
+using Microsoft.AspNetCore.Identity;
+using Sadef.Common.Infrastructure.EFCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add localization services
@@ -61,15 +63,66 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        return new EmailService(config, localizerFactory);
                    });
-                   svc.AddScoped<IUserManagementService, UserManagementService>();
+                   svc.AddScoped<IUserManagementService, UserManagementService>(provider =>
+                   {
+                       var userManager = provider.GetRequiredService<UserManager<Sadef.Common.Infrastructure.EFCore.Identity.ApplicationUser>>();
+                       var roleManager = provider.GetRequiredService<RoleManager<Sadef.Common.Infrastructure.EFCore.Identity.ApplicationRole>>();
+                       var registerValidator = provider.GetRequiredService<IValidator<RegisterUserWithEmailDto>>();
+                       var configuration = provider.GetRequiredService<IConfiguration>();
+                       var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                       var emailService = provider.GetRequiredService<IEmailService>();
+                       var loginValidator = provider.GetRequiredService<IValidator<LoginUserDto>>();
+                       var resetPasswordValidator = provider.GetRequiredService<IValidator<ResetPasswordDto>>();
+                       var forgotPasswordValidator = provider.GetRequiredService<IValidator<ForgotPasswordDto>>();
+                       var updateUserValidator = provider.GetRequiredService<IValidator<UpdateUserDto>>();
+                       var updateUserPasswordValidator = provider.GetRequiredService<IValidator<UpdateUserPasswordDto>>();
+                       var refreshTokenValidator = provider.GetRequiredService<IValidator<RefreshTokenDto>>();
+                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       return new UserManagementService(userManager, roleManager, registerValidator, configuration, httpContextAccessor, emailService, loginValidator, resetPasswordValidator, forgotPasswordValidator, updateUserValidator, updateUserPasswordValidator, refreshTokenValidator, localizerFactory);
+                   });
                    // User validators
-                   svc.AddScoped<IValidator<RegisterUserWithEmailDto>, UserRegisterValidator>();
-                   svc.AddScoped<IValidator<LoginUserDto>, UserLoginValidator>();
-                   svc.AddScoped<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
-                   svc.AddScoped<IValidator<ForgotPasswordDto>, ForgotPasswordValidator>();
-                   svc.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
-                   svc.AddScoped<IValidator<UpdateUserPasswordDto>, UpdateUserPasswordValidator>();
-                   svc.AddScoped<IValidator<RefreshTokenDto>, RefreshTokenValidator>();
+                   svc.AddScoped<IValidator<RegisterUserWithEmailDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new UserRegisterValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<LoginUserDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new UserLoginValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<ResetPasswordDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new ResetPasswordValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<ForgotPasswordDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new ForgotPasswordValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<UpdateUserDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new UpdateUserValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<UpdateUserPasswordDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new UpdateUserPasswordValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<RefreshTokenDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new RefreshTokenValidator(localizer);
+                   });
 
                    // Property validators
                    svc.AddScoped<IValidator<CreatePropertyDto>>(provider =>
@@ -84,7 +137,12 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizer = factory.Create("Validation", "Sadef.Application");
                        return new UpdatePropertyValidator(localizer);
                    });
-                   svc.AddScoped<IValidator<PropertyExpiryUpdateDto>, PropertyExpiryUpdateValidator>();
+                   svc.AddScoped<IValidator<PropertyExpiryUpdateDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new PropertyExpiryUpdateValidator(localizer);
+                   });
 
                    //// Lead validators
                    svc.AddScoped<IValidator<CreateLeadDto>>(provider =>
@@ -137,7 +195,14 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory);
                    });
-                   svc.AddScoped<IFavoriteService, FavoriteService>();
+                   svc.AddScoped<IFavoriteService>(provider =>
+                   {
+                       var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+                       var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+                       var mapper = provider.GetRequiredService<IMapper>();
+                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       return new FavoriteService(uow, queryFactory, mapper, localizerFactory);
+                   });
                    svc.AddScoped<ILeadService>(provider =>
                    {
                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();

@@ -22,4 +22,10 @@ Use the same key naming convention (Category_MessageName) and access them via IS
   <data name="WelcomeBody" xml:space="preserve">
     <value>&lt;p&gt;Hello {0},&lt;br/&gt;Welcome to Sadef!&lt;/p&gt;</value>
   </data>
+  <data name="EmailVerificationSubject" xml:space="preserve">
+    <value>Verify your email</value>
+  </data>
+  <data name="EmailVerificationBody" xml:space="preserve">
+    <value>&lt;p&gt;Click &lt;a href="{0}"&gt;here&lt;/a&gt; to verify your email.&lt;/p&gt;</value>
+  </data>
 </root> 

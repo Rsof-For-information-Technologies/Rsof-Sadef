@@ -99,7 +99,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!string.IsNullOrEmpty(cached))
             {
                 var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
-                return new Response<PaginatedResponse<PropertyDto>>(cachedResult, "Properties retrieved successfully");
+                return new Response<PaginatedResponse<PropertyDto>>(cachedResult, _localizer["Property_ListedFromCache"]);
             }
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
                 var query = queryRepo.Queryable()
@@ -259,7 +259,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
                 !validNextStatuses.Contains(dto.status))
             {
-                return new Response<PropertyDto>($"Invalid status transition from {currentStatus} to {dto.status}");
+                return new Response<PropertyDto>(string.Format(_localizer["Property_InvalidStatusTransition"], currentStatus, dto.status));
             }
 
             property.Status = dto.status;
@@ -279,7 +279,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!string.IsNullOrEmpty(cached))
             {
                 var fromCache = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
-                return new Response<PaginatedResponse<PropertyDto>>(fromCache, "Fetched from cache");
+                return new Response<PaginatedResponse<PropertyDto>>(fromCache, _localizer["Property_FilteredFromCache"]);
             }
 
             var query = _queryRepositoryFactory.QueryRepository<Property>()
@@ -343,7 +343,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!string.IsNullOrEmpty(cached))
             {
                 var dtoData = JsonConvert.DeserializeObject<PropertyDashboardStatsDto>(cached);
-                return new Response<PropertyDashboardStatsDto>(dtoData, "Dashboard stats loaded");
+                return new Response<PropertyDashboardStatsDto>(dtoData, _localizer["Property_DashboardLoadedFromCache"]);
             }
             var query = _queryRepositoryFactory.QueryRepository<Property>().Queryable();
 

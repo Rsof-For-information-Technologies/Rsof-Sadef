@@ -18,4 +18,10 @@
   <data name="WelcomeBody" xml:space="preserve">
     <value>&lt;p dir=&quot;rtl&quot;&gt;مرحبًا {0}،&lt;br/&gt;مرحبًا بك في سدف!&lt;/p&gt;</value>
   </data>
+  <data name="EmailVerificationSubject" xml:space="preserve">
+    <value>تحقق من بريدك الإلكتروني</value>
+  </data>
+  <data name="EmailVerificationBody" xml:space="preserve">
+    <value>&lt;p dir=&quot;rtl&quot;&gt;انقر &lt;a href="{0}"&gt;هنا&lt;/a&gt; للتحقق من بريدك الإلكتروني.&lt;/p&gt;</value>
+  </data>
 </root> 
