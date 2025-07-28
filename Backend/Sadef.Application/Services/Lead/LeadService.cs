@@ -21,9 +21,10 @@ namespace Sadef.Application.Services.Lead
         private readonly IValidator<CreateLeadDto> _createLeadValidator;
         private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
+        private readonly IPropertyTimeLineService _propertyTimeLineService;
         private readonly IDistributedCache _cache;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache)
+        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IPropertyTimeLineService propertyTimeLineService)
         {
             _uow = uow;
             _mapper = mapper;
@@ -31,6 +32,7 @@ namespace Sadef.Application.Services.Lead
             _queryRepositoryFactory = queryRepositoryFactory;
             _updateLeadValidator = updateLeadValidator;
             _cache = cache;
+            _propertyTimeLineService = propertyTimeLineService;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -41,14 +43,16 @@ namespace Sadef.Application.Services.Lead
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<LeadDto>(errorMessage);
             }
+
+            Property? property = null;
             if (dto.PropertyId.HasValue)
             {
-
                 var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
-                var propertyExists = await queryRepo
+                property = await queryRepo
                     .Queryable()
-                    .AnyAsync(p => p.Id == dto.PropertyId.Value);
-                if (!propertyExists)
+                    .FirstOrDefaultAsync(p => p.Id == dto.PropertyId.Value);
+
+                if (property == null)
                     return new Response<LeadDto>("Invalid property reference. The specified property does not exist.");
             }
 
@@ -58,6 +62,12 @@ namespace Sadef.Application.Services.Lead
 
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
+
+            if (property != null)
+            {
+                await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Lead Created for the Property");
+            }
+
             await LeadServiceHelper.InvalidateAsync(_cache);
             await _cache.RemoveAsync("lead:dashboard:stats");
 

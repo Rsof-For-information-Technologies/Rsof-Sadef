@@ -55,7 +55,6 @@ namespace Sadef.Application.Services.PropertyTimeLine
             if (property == null)
                 return new Response<PropertyTimeLineLogDto>($"No property found with the provided PropertyId: {dto.PropertyId}. Please enter a valid PropertyId.");
 
-
             var propertyTimeline = _mapper.Map<Domain.PropertyEntity.PropertyTimeLine>(dto);
             propertyTimeline.CreatedAt = DateTime.UtcNow;
             propertyTimeline.CreatedBy = dto.ActionTakenBy;

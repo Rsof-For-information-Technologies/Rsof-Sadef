@@ -235,6 +235,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(existing);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(existing.Id, existing.Status, "Property Updated");
             await _cache.RemoveAsync("property:page=1&size=10");
             var updatedDto = _mapper.Map<PropertyDto>(existing);
             updatedDto.ImageBase64Strings = existing.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
@@ -275,6 +276,7 @@ namespace Sadef.Application.Services.PropertyListing
             property.Status = dto.status;
             await repo.UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Status Updated");
 
             var updatedDto = _mapper.Map<PropertyDto>(property);
             await _cache.RemoveAsync("property:page=1&size=10");
