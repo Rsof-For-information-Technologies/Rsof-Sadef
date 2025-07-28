@@ -6,6 +6,7 @@ using Sadef.Application.DTOs.PropertyTimeLineDtos;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Validator;
 using Sadef.Common.Infrastructure.Wrappers;
+using Sadef.Common.Services.CurrentUser;
 using Sadef.Domain.Constants;
 
 namespace Sadef.Application.Services.PropertyTimeLine
@@ -14,25 +15,27 @@ namespace Sadef.Application.Services.PropertyTimeLine
     {
         private readonly IUnitOfWorkAsync _uow;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IValidator<CreatePropertyTimeLineLogDto> _createPropertyTimeLineLogValidator;
 
-        public PropertyTimeLineService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<CreatePropertyTimeLineLogDto> createPropertyTimeLineLogValidator)
+        public PropertyTimeLineService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<CreatePropertyTimeLineLogDto> createPropertyTimeLineLogValidator, ICurrentUserService currentUserService)
         {
             _uow = uow;
             _mapper = mapper;
+            _currentUserService = currentUserService;
             _queryRepositoryFactory = queryRepositoryFactory;
             _createPropertyTimeLineLogValidator = createPropertyTimeLineLogValidator;
         }
 
-        public async Task<Response<PropertyTimeLineLogDto>> AddPropertyTimeLineLogAsync(int propertyId, PropertyStatus propertyStatus, string actionTaken, string actionTakenBy)
+        public async Task<Response<PropertyTimeLineLogDto>> AddPropertyTimeLineLogAsync(int propertyId, PropertyStatus propertyStatus, string actionTaken)
         {
             var dto = new CreatePropertyTimeLineLogDto
             {
                 PropertyId = propertyId,
                 Status = propertyStatus,
                 ActionTaken = actionTaken,
-                ActionTakenBy = actionTakenBy
+                ActionTakenBy = await _currentUserService.GetDisplayNameAsync()
             };
             var validation = await _createPropertyTimeLineLogValidator.ValidateAsync(dto);
             if (!validation.IsValid)

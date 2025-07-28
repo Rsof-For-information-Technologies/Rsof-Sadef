@@ -26,13 +26,11 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator;
         private readonly IDistributedCache _cache;
         private readonly IPropertyTimeLineService _propertyTimeLineService;
-        private readonly ICurrentUserService _currentUserService;
 
         public PropertyService(
             IMapper mapper,
             IUnitOfWorkAsync uow,
             IDistributedCache cache,
-            ICurrentUserService currentUserService,
             IQueryRepositoryFactory queryRepositoryFactory,
             IValidator<CreatePropertyDto> createPropertyDto,
             IPropertyTimeLineService propertyTimeLineService,
@@ -46,7 +44,6 @@ namespace Sadef.Application.Services.PropertyListing
             _createPropertyValidator = createPropertyDto;
             _cache = cache;
             _expireValidator = expireValidator;
-            _currentUserService = currentUserService;
             _propertyTimeLineService = propertyTimeLineService;
         }
 
@@ -92,7 +89,7 @@ namespace Sadef.Application.Services.PropertyListing
             }
             await _uow.RepositoryAsync<Property>().AddAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Created", await _currentUserService.GetDisplayNameAsync());
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Created");
             await _cache.RemoveAsync("property:page=1&size=10");
             var createdDto = _mapper.Map<PropertyDto>(property);
             createdDto.ImageBase64Strings = property.Images?

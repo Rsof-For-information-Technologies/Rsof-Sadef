@@ -6,6 +6,6 @@ namespace Sadef.Application.Abstractions.Interfaces
 {
     public interface IPropertyTimeLineService
     {
-        Task<Response<PropertyTimeLineLogDto>> AddPropertyTimeLineLogAsync(int propertyId, PropertyStatus propertyStatus, string actionTaken, string actionTakenBy);
+        Task<Response<PropertyTimeLineLogDto>> AddPropertyTimeLineLogAsync(int propertyId, PropertyStatus propertyStatus, string actionTaken);
     }
 }
