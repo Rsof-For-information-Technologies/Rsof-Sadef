@@ -133,10 +133,12 @@ namespace Sadef.Application.Services.User
             var baseUrl = _configuration["App:BaseUrl"];
             var verificationUrl = $"{baseUrl}/api/user/verify-email?userId={user.Id}&token={encodedToken}";
 
-            var subject = "Verify your email";
-            var body = $"<p>Click <a href=\"{verificationUrl}\">here</a> to verify your email.</p>";
+            // Get current culture from HTTP context
+            var culture = _httpContextAccessor.HttpContext?.Request.Headers["Accept-Language"].FirstOrDefault() ?? "en";
+            var language = culture.StartsWith("ar") ? "ar" : "en";
 
-            await _emailService.SendEmailAsync(user.Email, subject, body);
+            // Use localized email service
+            await _emailService.SendEmailAsync(user.Email, "EmailVerification", verificationUrl, language);
         }
 
         public async Task<Response<string>> VerifyEmailAsync(VerifyEmailRequestDto request)
