@@ -51,6 +51,18 @@
   <data name="Property_DashboardLoaded" xml:space="preserve">
     <value>تم تحميل إحصائيات لوحة المعلومات.</value>
   </data>
+  <data name="Property_ListedFromCache" xml:space="preserve">
+    <value>تم استرجاع العقارات بنجاح (من الكاش).</value>
+  </data>
+  <data name="Property_InvalidStatusTransition" xml:space="preserve">
+    <value>انتقال حالة غير صالح من {0} إلى {1}.</value>
+  </data>
+  <data name="Property_FilteredFromCache" xml:space="preserve">
+    <value>تم الجلب من الكاش.</value>
+  </data>
+  <data name="Property_DashboardLoadedFromCache" xml:space="preserve">
+    <value>تم تحميل إحصائيات لوحة المعلومات (من الكاش).</value>
+  </data>
   <data name="Lead_Created" xml:space="preserve">
     <value>تم إرسال الاستفسار بنجاح.</value>
   </data>
@@ -143,5 +155,128 @@
   </data>
   <data name="MaintenanceRequest_IdPositive" xml:space="preserve">
     <value>يجب أن يكون معرف طلب الصيانة رقمًا موجبًا.</value>
+  </data>
+  <data name="User_FailedAutoVerifyAdminEmail" xml:space="preserve">
+    <value>فشل التحقق التلقائي من بريد المشرف/المشرف الأعلى.</value>
+  </data>
+  <data name="User_Registered" xml:space="preserve">
+    <value>تم تسجيل المستخدم بنجاح.</value>
+  </data>
+  <data name="User_RegisteredAndVerificationSent" xml:space="preserve">
+    <value>تم تسجيل المستخدم بنجاح وتم إرسال بريد التحقق.</value>
+  </data>
+  <data name="User_NotFound" xml:space="preserve">
+    <value>المستخدم غير موجود.</value>
+  </data>
+  <data name="User_EmailVerified" xml:space="preserve">
+    <value>تم التحقق من البريد الإلكتروني بنجاح.</value>
+  </data>
+  <data name="User_EmailVerificationFailed" xml:space="preserve">
+    <value>فشل التحقق من البريد الإلكتروني.</value>
+  </data>
+  <data name="User_InvalidEmailOrPassword" xml:space="preserve">
+    <value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value>
+  </data>
+  <data name="User_EmailNotVerified" xml:space="preserve">
+    <value>لم يتم التحقق من البريد الإلكتروني. يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول.</value>
+  </data>
+  <data name="User_AccountLocked" xml:space="preserve">
+    <value>تم قفل حساب المستخدم بسبب محاولات تسجيل دخول فاشلة متعددة.</value>
+  </data>
+  <data name="User_LoginSuccessful" xml:space="preserve">
+    <value>تم تسجيل الدخول بنجاح.</value>
+  </data>
+  <data name="User_ClientUrlNotConfigured" xml:space="preserve">
+    <value>رابط العميل غير مهيأ.</value>
+  </data>
+  <data name="User_FailedToSendRecoveryEmail" xml:space="preserve">
+    <value>فشل في إرسال بريد الاستعادة.</value>
+  </data>
+  <data name="User_RecoveryEmailSent" xml:space="preserve">
+    <value>تم إرسال بريد الاستعادة بنجاح.</value>
+  </data>
+  <data name="User_FailedToResetPassword" xml:space="preserve">
+    <value>فشل في إعادة تعيين كلمة المرور: {0}</value>
+  </data>
+  <data name="User_PasswordResetButEmailFailed" xml:space="preserve">
+    <value>تمت إعادة تعيين كلمة المرور بنجاح، لكن فشل إرسال بريد التأكيد.</value>
+  </data>
+  <data name="User_PasswordResetAndEmailSent" xml:space="preserve">
+    <value>تمت إعادة تعيين كلمة المرور بنجاح. تم إرسال بريد التأكيد.</value>
+  </data>
+  <data name="User_NoUsersFound" xml:space="preserve">
+    <value>لم يتم العثور على مستخدمين.</value>
+  </data>
+  <data name="User_EmailAlreadyInUse" xml:space="preserve">
+    <value>البريد الإلكتروني مستخدم بالفعل من قبل مستخدم آخر.</value>
+  </data>
+  <data name="User_FailedToUpdate" xml:space="preserve">
+    <value>فشل في تحديث المستخدم.</value>
+  </data>
+  <data name="User_RoleDoesNotExist" xml:space="preserve">
+    <value>الدور '{0}' غير موجود.</value>
+  </data>
+  <data name="User_FailedToUpdateRole" xml:space="preserve">
+    <value>فشل في تحديث الدور.</value>
+  </data>
+  <data name="User_Updated" xml:space="preserve">
+    <value>تم تحديث المستخدم بنجاح.</value>
+  </data>
+  <data name="User_UnauthorizedAccess" xml:space="preserve">
+    <value>دخول غير مصرح به.</value>
+  </data>
+  <data name="User_NotAuthorizedToUpdatePassword" xml:space="preserve">
+    <value>غير مصرح لك بتحديث كلمة مرور هذا المستخدم.</value>
+  </data>
+  <data name="User_OldPasswordIncorrect" xml:space="preserve">
+    <value>كلمة المرور القديمة غير صحيحة.</value>
+  </data>
+  <data name="User_FailedToChangePassword" xml:space="preserve">
+    <value>فشل في تغيير كلمة المرور: {0}</value>
+  </data>
+  <data name="User_PasswordChanged" xml:space="preserve">
+    <value>تم تغيير كلمة المرور بنجاح.</value>
+  </data>
+  <data name="User_InvalidEmail" xml:space="preserve">
+    <value>البريد الإلكتروني غير صالح.</value>
+  </data>
+  <data name="User_InvalidRefreshToken" xml:space="preserve">
+    <value>رمز التحديث غير صالح.</value>
+  </data>
+  <data name="User_RefreshTokenExpired" xml:space="preserve">
+    <value>انتهت صلاحية رمز التحديث، يرجى تسجيل الدخول مرة أخرى.</value>
+  </data>
+  <data name="User_TokenRefreshed" xml:space="preserve">
+    <value>تم تحديث الرمز بنجاح.</value>
+  </data>
+  <data name="Identity_PasswordRequiresNonAlphanumeric" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على حرف واحد غير أبجدي رقمي على الأقل.</value>
+  </data>
+  <data name="Identity_PasswordRequiresDigit" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على رقم واحد على الأقل ('0'-'9').</value>
+  </data>
+  <data name="Identity_PasswordRequiresLower" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل ('a'-'z').</value>
+  </data>
+  <data name="Identity_PasswordRequiresUpper" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل ('A'-'Z').</value>
+  </data>
+  <data name="Identity_PasswordTooShort" xml:space="preserve">
+    <value>يجب أن تكون كلمة المرور {0} أحرف على الأقل.</value>
+  </data>
+  <data name="Identity_DuplicateUserName" xml:space="preserve">
+    <value>اسم المستخدم '{0}' مستخدم بالفعل.</value>
+  </data>
+  <data name="Identity_DuplicateEmail" xml:space="preserve">
+    <value>البريد الإلكتروني '{0}' مستخدم بالفعل.</value>
+  </data>
+  <data name="Identity_InvalidUserName" xml:space="preserve">
+    <value>اسم المستخدم '{0}' غير صالح، يمكن أن يحتوي فقط على أحرف أو أرقام.</value>
+  </data>
+  <data name="Identity_InvalidEmail" xml:space="preserve">
+    <value>البريد الإلكتروني '{0}' غير صالح.</value>
+  </data>
+  <data name="Identity_UnknownError" xml:space="preserve">
+    <value>حدث خطأ أثناء إنشاء المستخدم.</value>
   </data>
 </root> 

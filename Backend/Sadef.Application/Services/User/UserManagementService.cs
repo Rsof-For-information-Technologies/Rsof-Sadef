@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net;
 using Sadef.Application.Services.Email;
 using Sadef.Application.DTOs.UserDtos;
+using Microsoft.Extensions.Localization;
 
 namespace Sadef.Application.Services.User
 {
@@ -28,8 +29,9 @@ namespace Sadef.Application.Services.User
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmailService _emailService;
+        private readonly IStringLocalizer _localizer;
 
-        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IValidator<RegisterUserWithEmailDto> registerValidator, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IValidator<LoginUserDto> loginValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<UpdateUserDto> updateUserValidator, IValidator<UpdateUserPasswordDto> updateUserPasswordValidator, IValidator<RefreshTokenDto> refreshTokendValidator)
+        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IValidator<RegisterUserWithEmailDto> registerValidator, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IValidator<LoginUserDto> loginValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<UpdateUserDto> updateUserValidator, IValidator<UpdateUserPasswordDto> updateUserPasswordValidator, IValidator<RefreshTokenDto> refreshTokendValidator, IStringLocalizerFactory localizerFactory)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -43,6 +45,7 @@ namespace Sadef.Application.Services.User
             _updateUserValidator = updateUserValidator;
             _updateUserPasswordValidator = updateUserPasswordValidator;
             _refreshTokendValidator = refreshTokendValidator;
+            _localizer = localizerFactory.Create("Messages", "Sadef.Application");
         }
 
         public async Task<Response<bool>> CreateUserAsync(RegisterUserWithEmailDto request)
@@ -66,7 +69,10 @@ namespace Sadef.Application.Services.User
 
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
-                return new Response<bool>(string.Join(", ", result.Errors.Select(e => e.Description)));
+            {
+                var localizedErrors = result.Errors.Select(e => GetLocalizedIdentityError(e.Code, e.Description)).ToList();
+                return new Response<bool>(string.Join(", ", localizedErrors));
+            }
 
             await _userManager.AddToRoleAsync(user, request.Role);
 
@@ -78,14 +84,41 @@ namespace Sadef.Application.Services.User
 
                 if (!confirmResult.Succeeded)
                 {
-                    return new Response<bool>("Failed to auto-verify Admin/SuperAdmin email.");
+                    return new Response<bool>(_localizer["User_FailedAutoVerifyAdminEmail"]);
                 }
 
-                return new Response<bool>(true, "User registered successfully.");
+                return new Response<bool>(true, _localizer["User_Registered"]);
             }
             // Generate and send email verification link
             await SendEmailVerificationAsync(user);
-            return new Response<bool>(true , "User registered successfully and a verification email sent.");
+            return new Response<bool>(true , _localizer["User_RegisteredAndVerificationSent"]);
+        }
+
+        private string GetLocalizedIdentityError(string errorCode, string description)
+        {
+            return errorCode switch
+            {
+                "PasswordRequiresNonAlphanumeric" => _localizer["Identity_PasswordRequiresNonAlphanumeric"],
+                "PasswordRequiresDigit" => _localizer["Identity_PasswordRequiresDigit"],
+                "PasswordRequiresLower" => _localizer["Identity_PasswordRequiresLower"],
+                "PasswordRequiresUpper" => _localizer["Identity_PasswordRequiresUpper"],
+                "PasswordTooShort" => _localizer["Identity_PasswordTooShort"],
+                "DuplicateUserName" => ExtractValueFromDescription(description, "Username '", "' is already taken.", "Identity_DuplicateUserName"),
+                "DuplicateEmail" => ExtractValueFromDescription(description, "Email '", "' is already taken.", "Identity_DuplicateEmail"),
+                "InvalidUserName" => ExtractValueFromDescription(description, "User name '", "' is invalid, can only contain letters or digits.", "Identity_InvalidUserName"),
+                "InvalidEmail" => ExtractValueFromDescription(description, "Email '", "' is invalid.", "Identity_InvalidEmail"),
+                _ => _localizer["Identity_UnknownError"]
+            };
+        }
+
+        private string ExtractValueFromDescription(string description, string prefix, string suffix, string localizedKey)
+        {
+            if (description.StartsWith(prefix) && description.EndsWith(suffix))
+            {
+                var value = description.Substring(prefix.Length, description.Length - prefix.Length - suffix.Length);
+                return _localizer[localizedKey, value];
+            }
+            return description; // Fallback to original description if parsing fails
         }
 
         private async Task SendEmailVerificationAsync(ApplicationUser user)
@@ -110,13 +143,13 @@ namespace Sadef.Application.Services.User
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
-                return new Response<string>("User not found");
+                return new Response<string>(_localizer["User_NotFound"]);
             var decodedToken = Uri.UnescapeDataString(request.Token);
             var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
             if (result.Succeeded)
-                return new Response<string>("Email verified successfully");
+                return new Response<string>(_localizer["User_EmailVerified"]);
 
-            return new Response<string>("Email verification failed");
+            return new Response<string>(_localizer["User_EmailVerificationFailed"]);
         }
 
         public async Task<Response<UserLoginResultDTO>> LoginUserAsync(LoginUserDto request)
@@ -131,15 +164,15 @@ namespace Sadef.Application.Services.User
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
             {
-                return new Response<UserLoginResultDTO>("Invalid email or password.");
+                return new Response<UserLoginResultDTO>(_localizer["User_InvalidEmailOrPassword"]);
             }
             if (!user.EmailConfirmed)
             {
-                return new Response<UserLoginResultDTO>("Email not verified. Please verify your email before logging in.");
+                return new Response<UserLoginResultDTO>(_localizer["User_EmailNotVerified"]);
             }
             if (await _userManager.IsLockedOutAsync(user))
             {
-                return new Response<UserLoginResultDTO>("User account is locked due to multiple failed login attempts.");
+                return new Response<UserLoginResultDTO>(_localizer["User_AccountLocked"]);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -157,7 +190,7 @@ namespace Sadef.Application.Services.User
             UserLoginResultDTO? resultDTO = null;
             resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, refreshToken);
 
-            return new Response<UserLoginResultDTO>(resultDTO, "Login successful.");
+            return new Response<UserLoginResultDTO>(resultDTO, _localizer["User_LoginSuccessful"]);
 
         }
 
@@ -172,7 +205,7 @@ namespace Sadef.Application.Services.User
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return new Response<bool>("User not found.");
+                return new Response<bool>(_localizer["User_NotFound"]);
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -181,7 +214,7 @@ namespace Sadef.Application.Services.User
             var clientUrl = request.clientUrl;
             if (string.IsNullOrEmpty(clientUrl))
             {
-                return new Response<bool>("Client URL is not configured.");
+                return new Response<bool>(_localizer["User_ClientUrlNotConfigured"]);
             }
 
             var resetUrl = $"{clientUrl}/?token={encodedToken}&email={user.Email}";
@@ -196,10 +229,10 @@ namespace Sadef.Application.Services.User
             bool emailSent = await _emailService.SendEmailAsync(user.Email, "Reset Password", emailBody);
             if (!emailSent)
             {
-                return new Response<bool>("Failed to send recovery email.");
+                return new Response<bool>(_localizer["User_FailedToSendRecoveryEmail"]);
             }
 
-            return new Response<bool>(true, "Recovery email sent successfully.");
+            return new Response<bool>(true, _localizer["User_RecoveryEmailSent"]);
         }
 
         public async Task<Response<bool>> ResetPasswordAsync(ResetPasswordDto request)
@@ -213,7 +246,7 @@ namespace Sadef.Application.Services.User
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return new Response<bool>("User not found.");
+                return new Response<bool>(_localizer["User_NotFound"]);
             }
 
             var decodedToken = Uri.UnescapeDataString(request.ResetToken);
@@ -222,7 +255,7 @@ namespace Sadef.Application.Services.User
             if (!resetResult.Succeeded)
             {
                 var errors = string.Join(", ", resetResult.Errors.Select(e => e.Description));
-                return new Response<bool>($"Failed to reset password: {errors}");
+                return new Response<bool>(string.Format(_localizer["User_FailedToResetPassword"], errors));
             }
 
             string emailBody = @"
@@ -232,10 +265,10 @@ namespace Sadef.Application.Services.User
             bool emailSent = await _emailService.SendEmailAsync(user.Email, "Password Reset Confirmation", emailBody);
             if (!emailSent)
             {
-                return new Response<bool>("Password reset was successful, but confirmation email failed to send.");
+                return new Response<bool>(_localizer["User_PasswordResetButEmailFailed"]);
             }
 
-            return new Response<bool>(true, "Password reset successfully. A confirmation email has been sent.");
+            return new Response<bool>(true, _localizer["User_PasswordResetAndEmailSent"]);
 
         }
 
@@ -244,7 +277,7 @@ namespace Sadef.Application.Services.User
             var users = await _userManager.Users.ToListAsync();
             if (users == null || !users.Any())
             {
-                return new Response<List<UserResultDTO>>("No users found.");
+                return new Response<List<UserResultDTO>>(_localizer["User_NoUsersFound"]);
             }
             var userDtos = users.Select(u => new UserResultDTO
             {
@@ -270,7 +303,7 @@ namespace Sadef.Application.Services.User
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
-                return new Response<bool>("User not found.");
+                return new Response<bool>(_localizer["User_NotFound"]);
             }
 
             if (!string.Equals(user.Email, request.Email, StringComparison.OrdinalIgnoreCase))
@@ -278,7 +311,7 @@ namespace Sadef.Application.Services.User
                 var existingUser = await _userManager.FindByEmailAsync(request.Email);
                 if (existingUser != null && existingUser.Id != request.UserId)
                 {
-                    return new Response<bool>("Email is already in use by another user.");
+                    return new Response<bool>(_localizer["User_EmailAlreadyInUse"]);
                 }
 
                 user.Email = request.Email;
@@ -292,7 +325,7 @@ namespace Sadef.Application.Services.User
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
-                return new Response<bool>("Failed to update user.");
+                return new Response<bool>(_localizer["User_FailedToUpdate"]);
             }
 
             var currentRoles = await _userManager.GetRolesAsync(user);
@@ -300,7 +333,7 @@ namespace Sadef.Application.Services.User
             {
                 if (!await _roleManager.RoleExistsAsync(request.Role))
                 {
-                    return new Response<bool>($"Role '{request.Role}' does not exist.");
+                    return new Response<bool>(string.Format(_localizer["User_RoleDoesNotExist"], request.Role));
                 }
 
                 if (currentRoles.Count > 0)
@@ -311,17 +344,17 @@ namespace Sadef.Application.Services.User
                 var roleResult = await _userManager.AddToRoleAsync(user, request.Role);
                 if (!roleResult.Succeeded)
                 {
-                    return new Response<bool>("Failed to update role.");
+                    return new Response<bool>(_localizer["User_FailedToUpdateRole"]);
                 }
             }
 
-            return new Response<bool>(true, "User updated successfully.");
+            return new Response<bool>(true, _localizer["User_Updated"]);
         }
         public async Task<Response<UserResultDTO>> GetUserByIdAsync(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
-                return new Response<UserResultDTO>("User not found");
+                return new Response<UserResultDTO>(_localizer["User_NotFound"]);
 
             return new Response<UserResultDTO>(new UserResultDTO
             {
@@ -338,7 +371,7 @@ namespace Sadef.Application.Services.User
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-                return new Response<bool>("User not found.");
+                return new Response<bool>(_localizer["User_NotFound"]);
 
             user.IsActive = !user.IsActive;
             var result = await _userManager.UpdateAsync(user);
@@ -359,7 +392,7 @@ namespace Sadef.Application.Services.User
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
-                return new Response<bool>(false, "User not found.");
+                return new Response<bool>(false, _localizer["User_NotFound"]);
             }
 
             var loggedInUserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -367,30 +400,30 @@ namespace Sadef.Application.Services.User
 
             if (loggedInUserId == null || loggedInUserRoles == null)
             {
-                return new Response<bool>(false, "Unauthorized access.");
+                return new Response<bool>(false, _localizer["User_UnauthorizedAccess"]);
             }
 
             var isAuthorized = loggedInUserId == request.UserId || loggedInUserRoles.Contains("Admin") || loggedInUserRoles.Contains("SuperAdmin");
 
             if (!isAuthorized)
             {
-                return new Response<bool>(false, "You are not authorized to update this user's password.");
+                return new Response<bool>(false, _localizer["User_NotAuthorizedToUpdatePassword"]);
             }
 
             var passwordCheck = await _userManager.CheckPasswordAsync(user, request.OldPassword);
             if (!passwordCheck)
             {
-                return new Response<bool>(false, "Old password is incorrect.");
+                return new Response<bool>(false, _localizer["User_OldPasswordIncorrect"]);
             }
 
             var passwordChangeResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
             if (!passwordChangeResult.Succeeded)
             {
                 var errors = string.Join(", ", passwordChangeResult.Errors.Select(e => e.Description));
-                return new Response<bool>(false, $"Failed to change password: {errors}");
+                return new Response<bool>(false, string.Format(_localizer["User_FailedToChangePassword"], errors));
             }
 
-            return new Response<bool>(true, "Password changed successfully.");
+            return new Response<bool>(true, _localizer["User_PasswordChanged"]);
         }
         public async Task<Response<UserLoginResultDTO>> RefreshTokenAsync(RefreshTokenDto request)
         {
@@ -403,7 +436,7 @@ namespace Sadef.Application.Services.User
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return new Response<UserLoginResultDTO>("Invalid email.");
+                return new Response<UserLoginResultDTO>(_localizer["User_InvalidEmail"]);
             }
 
             var savedRefreshToken = await _userManager.GetAuthenticationTokenAsync(user, "Default", "RefreshToken");
@@ -411,12 +444,12 @@ namespace Sadef.Application.Services.User
 
             if (savedRefreshToken != request.RefreshToken)
             {
-                return new Response<UserLoginResultDTO>("Invalid refresh token.");
+                return new Response<UserLoginResultDTO>(_localizer["User_InvalidRefreshToken"]);
             }
 
             if (DateTime.TryParse(refreshTokenExpiry, out DateTime expiryTime) && expiryTime < DateTime.UtcNow)
             {
-                return new Response<UserLoginResultDTO>("Refresh token expired, please log in again.");
+                return new Response<UserLoginResultDTO>(_localizer["User_RefreshTokenExpired"]);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -437,7 +470,7 @@ namespace Sadef.Application.Services.User
             UserLoginResultDTO? resultDTO = null;
             resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, newRefreshToken);
 
-            return new Response<UserLoginResultDTO>(resultDTO, "Token refreshed successfully.");
+            return new Response<UserLoginResultDTO>(resultDTO, _localizer["User_TokenRefreshed"]);
         }
 
     }

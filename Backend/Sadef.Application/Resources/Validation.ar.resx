@@ -66,6 +66,30 @@
   <data name="Property_InvalidId" xml:space="preserve">
     <value>معرف العقار غير صالح.</value>
   </data>
+  <data name="Property_MetaTitleMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز عنوان الميتا {0} حرفًا.</value>
+  </data>
+  <data name="Property_MetaDescriptionMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز وصف الميتا {0} حرفًا.</value>
+  </data>
+  <data name="Property_MetaKeywordsMaxLength" xml:space="preserve">
+    <value>لا يمكن أن تتجاوز كلمات الميتا الرئيسية {0} حرفًا.</value>
+  </data>
+  <data name="Property_CanonicalUrlMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز الرابط القانوني {0} حرفًا.</value>
+  </data>
+  <data name="Property_CanonicalUrlInvalid" xml:space="preserve">
+    <value>تنسيق الرابط القانوني غير صالح.</value>
+  </data>
+  <data name="Property_SlugMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز السلاق {0} حرفًا.</value>
+  </data>
+  <data name="Property_SlugInvalid" xml:space="preserve">
+    <value>يجب أن يكون السلاق مناسبًا للرابط (أحرف صغيرة، أرقام، وشرطات فقط).</value>
+  </data>
+  <data name="Property_ExpiryDateFuture" xml:space="preserve">
+    <value>يجب أن يكون تاريخ الانتهاء في المستقبل.</value>
+  </data>
   <data name="Lead_FullNameRequired" xml:space="preserve">
     <value>الاسم الكامل مطلوب.</value>
   </data>
@@ -86,5 +110,68 @@
   </data>
   <data name="Lead_StatusInvalid" xml:space="preserve">
     <value>قيمة حالة العميل المحتمل غير صالحة.</value>
+  </data>
+  <data name="User_FirstNameRequired" xml:space="preserve">
+    <value>الاسم الأول مطلوب.</value>
+  </data>
+  <data name="User_FirstNameLetters" xml:space="preserve">
+    <value>يجب أن يحتوي الاسم الأول على أحرف ومسافات فقط.</value>
+  </data>
+  <data name="User_FirstNameMaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز الاسم الأول {0} حرفًا.</value>
+  </data>
+  <data name="User_LastNameRequired" xml:space="preserve">
+    <value>اسم العائلة مطلوب.</value>
+  </data>
+  <data name="User_LastNameLetters" xml:space="preserve">
+    <value>يجب أن يحتوي اسم العائلة على أحرف ومسافات فقط.</value>
+  </data>
+  <data name="User_LastNameMaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز اسم العائلة {0} حرفًا.</value>
+  </data>
+  <data name="User_EmailRequired" xml:space="preserve">
+    <value>البريد الإلكتروني مطلوب.</value>
+  </data>
+  <data name="User_EmailInvalid" xml:space="preserve">
+    <value>تنسيق البريد الإلكتروني غير صالح.</value>
+  </data>
+  <data name="User_PasswordRequired" xml:space="preserve">
+    <value>كلمة المرور مطلوبة.</value>
+  </data>
+  <data name="User_PasswordMinLength" xml:space="preserve">
+    <value>يجب أن تتكون كلمة المرور من {0} أحرف على الأقل.</value>
+  </data>
+  <data name="User_ConfirmPasswordMatch" xml:space="preserve">
+    <value>كلمتا المرور غير متطابقتين.</value>
+  </data>
+  <data name="User_RoleRequired" xml:space="preserve">
+    <value>الدور مطلوب.</value>
+  </data>
+  <data name="User_RoleInvalid" xml:space="preserve">
+    <value>يرجى إدخال دور صالح.</value>
+  </data>
+  <data name="User_TokenRequired" xml:space="preserve">
+    <value>الرمز مطلوب.</value>
+  </data>
+  <data name="User_UserIdRequired" xml:space="preserve">
+    <value>معرف المستخدم مطلوب.</value>
+  </data>
+  <data name="User_OldPasswordRequired" xml:space="preserve">
+    <value>كلمة المرور القديمة مطلوبة.</value>
+  </data>
+  <data name="User_NewPasswordRequired" xml:space="preserve">
+    <value>كلمة المرور الجديدة مطلوبة.</value>
+  </data>
+  <data name="User_NewPasswordMinLength" xml:space="preserve">
+    <value>يجب أن تتكون كلمة المرور الجديدة من {0} أحرف على الأقل.</value>
+  </data>
+  <data name="User_ConfirmNewPasswordRequired" xml:space="preserve">
+    <value>تأكيد كلمة المرور الجديدة مطلوب.</value>
+  </data>
+  <data name="User_ConfirmNewPasswordMatch" xml:space="preserve">
+    <value>يجب أن تتطابق كلمة المرور الجديدة مع التأكيد.</value>
+  </data>
+  <data name="User_RefreshTokenRequired" xml:space="preserve">
+    <value>رمز التحديث مطلوب.</value>
   </data>
 </root> 

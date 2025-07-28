@@ -66,6 +66,30 @@
   <data name="Property_InvalidId" xml:space="preserve">
     <value>Invalid property ID.</value>
   </data>
+  <data name="Property_MetaTitleMaxLength" xml:space="preserve">
+    <value>Meta title cannot exceed {0} characters.</value>
+  </data>
+  <data name="Property_MetaDescriptionMaxLength" xml:space="preserve">
+    <value>Meta description cannot exceed {0} characters.</value>
+  </data>
+  <data name="Property_MetaKeywordsMaxLength" xml:space="preserve">
+    <value>Meta keywords cannot exceed {0} characters.</value>
+  </data>
+  <data name="Property_CanonicalUrlMaxLength" xml:space="preserve">
+    <value>Canonical URL cannot exceed {0} characters.</value>
+  </data>
+  <data name="Property_CanonicalUrlInvalid" xml:space="preserve">
+    <value>Canonical URL format is invalid.</value>
+  </data>
+  <data name="Property_SlugMaxLength" xml:space="preserve">
+    <value>Slug must not exceed {0} characters.</value>
+  </data>
+  <data name="Property_SlugInvalid" xml:space="preserve">
+    <value>Slug must be URL-friendly (lowercase letters, numbers, and dashes only).</value>
+  </data>
+  <data name="Property_ExpiryDateFuture" xml:space="preserve">
+    <value>Expiry date must be in the future.</value>
+  </data>
   <data name="Lead_FullNameRequired" xml:space="preserve">
     <value>Full name is required.</value>
   </data>
@@ -86,5 +110,68 @@
   </data>
   <data name="Lead_StatusInvalid" xml:space="preserve">
     <value>Invalid lead status value.</value>
+  </data>
+  <data name="User_FirstNameRequired" xml:space="preserve">
+    <value>First name is required.</value>
+  </data>
+  <data name="User_FirstNameLetters" xml:space="preserve">
+    <value>First name must contain only letters and spaces.</value>
+  </data>
+  <data name="User_FirstNameMaxLength" xml:space="preserve">
+    <value>First name cannot exceed {0} characters.</value>
+  </data>
+  <data name="User_LastNameRequired" xml:space="preserve">
+    <value>Last name is required.</value>
+  </data>
+  <data name="User_LastNameLetters" xml:space="preserve">
+    <value>Last name must contain only letters and spaces.</value>
+  </data>
+  <data name="User_LastNameMaxLength" xml:space="preserve">
+    <value>Last name cannot exceed {0} characters.</value>
+  </data>
+  <data name="User_EmailRequired" xml:space="preserve">
+    <value>Email is required.</value>
+  </data>
+  <data name="User_EmailInvalid" xml:space="preserve">
+    <value>Invalid email address format.</value>
+  </data>
+  <data name="User_PasswordRequired" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="User_PasswordMinLength" xml:space="preserve">
+    <value>Password must be at least {0} characters long.</value>
+  </data>
+  <data name="User_ConfirmPasswordMatch" xml:space="preserve">
+    <value>Passwords do not match.</value>
+  </data>
+  <data name="User_RoleRequired" xml:space="preserve">
+    <value>Role is required.</value>
+  </data>
+  <data name="User_RoleInvalid" xml:space="preserve">
+    <value>Please enter a valid role</value>
+  </data>
+  <data name="User_TokenRequired" xml:space="preserve">
+    <value>Token is required.</value>
+  </data>
+  <data name="User_UserIdRequired" xml:space="preserve">
+    <value>User ID is required.</value>
+  </data>
+  <data name="User_OldPasswordRequired" xml:space="preserve">
+    <value>Old password is required.</value>
+  </data>
+  <data name="User_NewPasswordRequired" xml:space="preserve">
+    <value>New password is required.</value>
+  </data>
+  <data name="User_NewPasswordMinLength" xml:space="preserve">
+    <value>New password must be at least {0} characters long.</value>
+  </data>
+  <data name="User_ConfirmNewPasswordRequired" xml:space="preserve">
+    <value>Confirm new password is required.</value>
+  </data>
+  <data name="User_ConfirmNewPasswordMatch" xml:space="preserve">
+    <value>Confirm new password must match the new password.</value>
+  </data>
+  <data name="User_RefreshTokenRequired" xml:space="preserve">
+    <value>Refresh token is required.</value>
   </data>
 </root> 
