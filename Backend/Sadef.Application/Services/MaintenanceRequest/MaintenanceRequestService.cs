@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Application.Services.PropertyTimeLine;
+using Sadef.Domain.PropertyEntity;
 using Sadef.Application.Utils;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Validator;
@@ -22,6 +24,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
         private readonly IValidator<CreateMaintenanceRequestDto> _createMaintenanceRequestValidator;
         private readonly IValidator<UpdateMaintenanceRequestDto> _updateMaintenanceRequestStatusValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
+        private readonly IPropertyTimeLineService _propertyTimeLineService;
         private readonly IDistributedCache _cache;
 
         public MaintenanceRequestService(
@@ -30,12 +33,14 @@ namespace Sadef.Application.Services.MaintenanceRequest
             IValidator<CreateMaintenanceRequestDto> createMaintenanceRequestValidator,
             IValidator<UpdateMaintenanceRequestDto> updateMaintenanceRequestStatusValidator,
             IQueryRepositoryFactory queryRepositoryFactory,
+            IPropertyTimeLineService propertyTimeLineService,
             IDistributedCache cache)
         {
             _uow = uow;
             _mapper = mapper;
             _createMaintenanceRequestValidator = createMaintenanceRequestValidator;
             _queryRepositoryFactory = queryRepositoryFactory;
+            _propertyTimeLineService = propertyTimeLineService;
             _updateMaintenanceRequestStatusValidator = updateMaintenanceRequestStatusValidator;
             _cache = cache;
         }
@@ -104,6 +109,13 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().AddAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            if (lead != null)
+            {
+                var propertyQuery = _queryRepositoryFactory.QueryRepository<Property>();
+                var property = await propertyQuery.Queryable().FirstOrDefaultAsync(p => p.Id == lead.PropertyId);
+                if (property != null)
+                    await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "A maintenance request has been created for property.");
+            }
             await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
