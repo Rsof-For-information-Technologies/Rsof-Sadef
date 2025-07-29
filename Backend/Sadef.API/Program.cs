@@ -13,6 +13,7 @@ using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
+using Sadef.Application.DTOs.ContactDtos;
 using Sadef.Application.Services.AuditLog;
 using Sadef.Application.Services.Blogs;
 using Sadef.Application.Services.Email;
@@ -22,6 +23,7 @@ using Sadef.Application.Services.MaintenanceRequest;
 using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
 using Sadef.Application.Services.Whatsapp;
+using Sadef.Application.Services.Contact;
 using Sadef.Common.Domain;
 using Sadef.Common.EFCore.Middleware;
 using Sadef.Common.Infrastructure.EfCore.Db;
@@ -215,6 +217,42 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
                        return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory , contextAccessor);
                    });
+                   
+                   // Contact validators
+                   svc.AddScoped<IValidator<CreateContactDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", typeof(CreateContactValidator).Assembly.GetName().Name);
+                       return new CreateContactValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<UpdateContactDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", typeof(UpdateContactValidator).Assembly.GetName().Name);
+                       return new UpdateContactValidator(localizer);
+                   });
+                   svc.AddScoped<IValidator<UpdateContactStatusDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", typeof(UpdateContactStatusValidator).Assembly.GetName().Name);
+                       return new UpdateContactStatusValidator(localizer);
+                   });
+                   
+                   // Contact service
+                   svc.AddScoped<IContactService>(provider =>
+                   {
+                       var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+                       var mapper = provider.GetRequiredService<IMapper>();
+                       var createValidator = provider.GetRequiredService<IValidator<CreateContactDto>>();
+                       var updateValidator = provider.GetRequiredService<IValidator<UpdateContactDto>>();
+                       var updateStatusValidator = provider.GetRequiredService<IValidator<UpdateContactStatusDto>>();
+                       var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+                       var cache = provider.GetRequiredService<IDistributedCache>();
+                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                       return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, cache, localizerFactory, contextAccessor);
+                   });
+                   
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
                    svc.AddCors(options =>
