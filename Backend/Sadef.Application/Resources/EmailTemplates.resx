@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+To add a new resource category (e.g., Notifications, Errors), create a new .resx file in this folder (e.g., Notifications.resx, Errors.resx) and its language-specific versions (e.g., Notifications.ar.resx).
+Use the same key naming convention (Category_MessageName) and access them via IStringLocalizer or IStringLocalizerFactory in your code.
+-->
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="WelcomeSubject" xml:space="preserve">
+    <value>Welcome to Sadef!</value>
+  </data>
+  <data name="WelcomeBody" xml:space="preserve">
+    <value>&lt;p&gt;Hello {0},&lt;br/&gt;Welcome to Sadef!&lt;/p&gt;</value>
+  </data>
+  <data name="EmailVerificationSubject" xml:space="preserve">
+    <value>Verify your email</value>
+  </data>
+  <data name="EmailVerificationBody" xml:space="preserve">
+    <value>&lt;p&gt;Click &lt;a href="{0}"&gt;here&lt;/a&gt; to verify your email.&lt;/p&gt;</value>
+  </data>
+</root> 

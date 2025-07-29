@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Common.Infrastructure.Wrappers;
@@ -55,6 +56,14 @@ namespace Sadef.API.Controllers
             var result = await _leadService.ChangeStatusAsync(dto);
             return Ok(result);
         }
+        [HttpGet("my-leads")]
+        public async Task<IActionResult> GetMyLeads()
+        {
+            var email = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var result = await _leadService.GetLeadsCreatedByUserAsync(email);
+            return Ok(result);
+        }
+
 
     }
 }
