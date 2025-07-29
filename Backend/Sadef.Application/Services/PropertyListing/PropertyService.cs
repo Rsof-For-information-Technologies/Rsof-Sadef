@@ -102,8 +102,7 @@ namespace Sadef.Application.Services.PropertyListing
                 return new Response<PaginatedResponse<PropertyDto>>(cachedResult, _localizer["Property_ListedFromCache"]);
             }
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
-                var query = queryRepo.Queryable()
-                            .Include(p => p.Images);
+            var query = queryRepo.Queryable().Include(p => p.Images).Include(p => p.Videos);
 
             var totalCount = await query.CountAsync();
             var items = await query.Where(p => !p.ExpiryDate.HasValue || p.ExpiryDate > DateTime.UtcNow)
@@ -117,8 +116,9 @@ namespace Sadef.Application.Services.PropertyListing
                 var dto = _mapper.Map<PropertyDto>(p);
                 dto.ImageBase64Strings = p.Images?.Select(img =>
                     $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
+                dto.VideoUrls = p.Videos?.Select(v =>
+                    $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}").ToList() ?? new();
                 return dto;
-
             }).ToList();
 
             var paged = new PaginatedResponse<PropertyDto>(result, totalCount, request.PageNumber, request.PageSize);
@@ -131,7 +131,6 @@ namespace Sadef.Application.Services.PropertyListing
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
 
             return new Response<PaginatedResponse<PropertyDto>>(paged, _localizer["Property_Listed"]);
-
         }
 
         public async Task<Response<PropertyDto>> GetPropertyByIdAsync(int id)
@@ -140,6 +139,7 @@ namespace Sadef.Application.Services.PropertyListing
             var property = await queryRepo
                 .Queryable()
                 .Include(p => p.Images!)
+                .Include(p => p.Videos)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
