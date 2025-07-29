@@ -65,5 +65,23 @@ namespace Sadef.Application.Services.PropertyTimeLine
             var responseDto = _mapper.Map<PropertyTimeLineLogDto>(propertyTimeline);
             return new Response<PropertyTimeLineLogDto>(responseDto, "Property Logged successfully.");
         }
+
+        public async Task<Response<List<PropertyTimeLineLogDto>>> GetPropertyTimeLineByID(int propertyID)
+        {
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.PropertyEntity.PropertyTimeLine>();
+
+            var timelines = await repo.Queryable()
+                .Where(r => r.PropertyId == propertyID)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            if (timelines == null || timelines.Count == 0)
+            {
+                return new Response<List<PropertyTimeLineLogDto>>($"No timeline logs found for PropertyId: {propertyID}.");
+            }
+
+            var timelineDtos = _mapper.Map<List<PropertyTimeLineLogDto>>(timelines);
+            return new Response<List<PropertyTimeLineLogDto>>(timelineDtos, "Property timeline logs retrieved successfully.");
+        }
     }
 }
