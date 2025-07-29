@@ -4,6 +4,7 @@ using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
 using Sadef.Application.DTOs.AuditLogDtos;
+using Sadef.Application.DTOs.PropertyTimeLineDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Domain.BlogsEntity;
@@ -62,6 +63,9 @@ namespace Sadef.Application.MappingProfile
             // Audit Log
             CreateMap<AuditLog, AuditLogDto>();
 
+            // PropertyTimeLine
+            CreateMap<CreatePropertyTimeLineLogDto, PropertyTimeLine>();
+            CreateMap<PropertyTimeLine, PropertyTimeLineLogDto>();
         }
     }
 }

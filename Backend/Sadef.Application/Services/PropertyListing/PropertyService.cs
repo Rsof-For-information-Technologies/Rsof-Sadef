@@ -6,6 +6,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
+using Sadef.Application.Services.PropertyTimeLine;
+using Sadef.Common.Services.CurrentUser;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.Utils;
 using Sadef.Common.Domain;
@@ -25,8 +27,18 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator;
         private readonly IDistributedCache _cache;
         private readonly IStringLocalizer _localizer;
+        private readonly IPropertyTimeLineService _propertyTimeLineService;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory)
+        public PropertyService(
+            IMapper mapper,
+            IUnitOfWorkAsync uow,
+            IDistributedCache cache,
+            IStringLocalizerFactory localizerFactory,
+            IQueryRepositoryFactory queryRepositoryFactory,
+            IValidator<CreatePropertyDto> createPropertyDto,
+            IPropertyTimeLineService propertyTimeLineService,
+            IValidator<PropertyExpiryUpdateDto> expireValidator,
+            IValidator<UpdatePropertyDto> updatePropertyValidator)
         {
             _uow = uow;
             _mapper = mapper;
@@ -36,6 +48,7 @@ namespace Sadef.Application.Services.PropertyListing
             _cache = cache;
             _expireValidator = expireValidator;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
+            _propertyTimeLineService = propertyTimeLineService;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -80,6 +93,7 @@ namespace Sadef.Application.Services.PropertyListing
             }
             await _uow.RepositoryAsync<Property>().AddAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Created");
             await _cache.RemoveAsync("property:page=1&size=10");
             var createdDto = _mapper.Map<PropertyDto>(property);
             createdDto.ImageBase64Strings = property.Images?
@@ -225,6 +239,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(existing);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(existing.Id, existing.Status, "Property Updated");
             await _cache.RemoveAsync("property:page=1&size=10");
             var updatedDto = _mapper.Map<PropertyDto>(existing);
             updatedDto.ImageBase64Strings = existing.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
@@ -265,6 +280,7 @@ namespace Sadef.Application.Services.PropertyListing
             property.Status = dto.status;
             await repo.UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Status Updated");
 
             var updatedDto = _mapper.Map<PropertyDto>(property);
             await _cache.RemoveAsync("property:page=1&size=10");
