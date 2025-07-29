@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Common.Domain;
@@ -13,12 +14,14 @@ namespace Sadef.Application.Services.Favorites
         private readonly IUnitOfWorkAsync _uow;
         private readonly IQueryRepositoryFactory _queryFactory;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer _localizer;
 
-        public FavoriteService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper)
+        public FavoriteService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper, IStringLocalizerFactory localizerFactory)
         {
             _uow = uow;
             _queryFactory = queryFactory;
             _mapper = mapper;
+            _localizer = localizerFactory.Create("Messages", "Sadef.Application");
         }
 
         public async Task<Response<string>> AddFavoriteAsync(string userId, int propertyId)
@@ -28,7 +31,7 @@ namespace Sadef.Application.Services.Favorites
                 .AnyAsync(f => f.UserId == userId && f.PropertyId == propertyId);
 
             if (exists)
-                return new Response<string>("Property already favorited");
+                return new Response<string>(_localizer["Favorite_AlreadyExists"]);
 
             var favorite = new FavoriteProperty
             {
@@ -38,7 +41,7 @@ namespace Sadef.Application.Services.Favorites
 
             await _uow.RepositoryAsync<FavoriteProperty>().AddAsync(favorite);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            return new Response<string>("Property added to favorites");
+            return new Response<string>(_localizer["Favorite_Added"]);
         }
 
         public async Task<Response<string>> RemoveFavoriteAsync(string userId, int propertyId)
@@ -49,11 +52,11 @@ namespace Sadef.Application.Services.Favorites
                 .FirstOrDefaultAsync(f => f.UserId == userId && f.PropertyId == propertyId);
 
             if (favorite == null)
-                return new Response<string>("Favorite not found");
+                return new Response<string>(_localizer["Favorite_NotFound"]);
 
             await _uow.RepositoryAsync<FavoriteProperty>().DeleteAsync(favorite);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            return new Response<string>("Property removed from favorites");
+            return new Response<string>(_localizer["Favorite_Removed"]);
         }
 
         public async Task<Response<List<PropertyDto>>> GetUserFavoritesAsync(string userId)
@@ -77,7 +80,7 @@ namespace Sadef.Application.Services.Favorites
                 return dto;
             }).ToList();
 
-            return new Response<List<PropertyDto>>(propertyDtos, "Favorites loaded");
+            return new Response<List<PropertyDto>>(propertyDtos, _localizer["Favorite_Loaded"]);
         }
     }
 }

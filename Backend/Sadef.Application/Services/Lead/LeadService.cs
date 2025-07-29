@@ -1,7 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.LeadDtos;
@@ -22,8 +25,10 @@ namespace Sadef.Application.Services.Lead
         private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IDistributedCache _cache;
+        private readonly IStringLocalizer _localizer;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache)
+        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IStringLocalizerFactory localizerFactory , IHttpContextAccessor httpContextAccessor)
         {
             _uow = uow;
             _mapper = mapper;
@@ -31,6 +36,8 @@ namespace Sadef.Application.Services.Lead
             _queryRepositoryFactory = queryRepositoryFactory;
             _updateLeadValidator = updateLeadValidator;
             _cache = cache;
+            _localizer = localizerFactory.Create("Messages", "Sadef.Application");
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -43,18 +50,18 @@ namespace Sadef.Application.Services.Lead
             }
             if (dto.PropertyId.HasValue)
             {
-
                 var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
                 var propertyExists = await queryRepo
                     .Queryable()
                     .AnyAsync(p => p.Id == dto.PropertyId.Value);
                 if (!propertyExists)
-                    return new Response<LeadDto>("Invalid property reference. The specified property does not exist.");
+                    return new Response<LeadDto>(_localizer["Lead_InvalidPropertyReference"]);
             }
 
             var lead = _mapper.Map<Domain.LeadEntity.Lead>(dto);
             lead.Status = LeadStatus.New;
             lead.CreatedAt = DateTime.UtcNow;
+            //lead.CreatedBy = GetCurrentUserId();
 
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
@@ -62,7 +69,7 @@ namespace Sadef.Application.Services.Lead
             await _cache.RemoveAsync("lead:dashboard:stats");
 
             var responseDto = _mapper.Map<LeadDto>(lead);
-            return new Response<LeadDto>(responseDto, "Inquiry submitted successfully.");
+            return new Response<LeadDto>(responseDto, _localizer["Lead_Created"]);
         }
 
         public async Task<Response<PaginatedResponse<LeadDto>>> GetPaginatedAsync(int pageNumber, int pageSize, LeadFilterDto filters, bool isExport)
@@ -77,7 +84,11 @@ namespace Sadef.Application.Services.Lead
             if (cached != null)
             {
                 var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<LeadDto>>(cached);
-                return new Response<PaginatedResponse<LeadDto>>(cachedResult!, "Leads retrieved from cache");
+                if (cachedResult != null)
+                {
+                    return new Response<PaginatedResponse<LeadDto>>(cachedResult, _localizer["Lead_Listed"]);
+                }
+
             }
 
             var result = await GetFreshPaginatedLeadsAsync(pageNumber, pageSize, filters, false);
@@ -116,14 +127,14 @@ namespace Sadef.Application.Services.Lead
                 };
             }
 
-            return new Response<PaginatedResponse<LeadDto>>(paged, "Leads retrieved successfully");
+            return new Response<PaginatedResponse<LeadDto>>(paged, _localizer["Lead_Listed"]);
         }
 
         public async Task<Response<LeadDto>> GetByIdAsync(int id)
         {
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             var lead = await repo.Queryable().FirstOrDefaultAsync(b => b.Id == id);
-            if (lead == null) return new Response<LeadDto>("Lead not found");
+            if (lead == null) return new Response<LeadDto>(_localizer["Lead_NotFound"]);
             return new Response<LeadDto>(_mapper.Map<LeadDto>(lead));
         }
 
@@ -141,7 +152,7 @@ namespace Sadef.Application.Services.Lead
 
             if (lead == null)
             {
-                return new Response<LeadDto>("Lead not found");
+                return new Response<LeadDto>(_localizer["Lead_NotFound"]);
             }
 
             _mapper.Map(dto, lead);
@@ -150,7 +161,7 @@ namespace Sadef.Application.Services.Lead
             await LeadServiceHelper.InvalidateAsync(_cache);
             await _cache.RemoveAsync("lead:dashboard:stats");
 
-            return new Response<LeadDto>(_mapper.Map<LeadDto>(lead), "Lead updated successfully.");
+            return new Response<LeadDto>(_mapper.Map<LeadDto>(lead), _localizer["Lead_Updated"]);
         }
 
         public async Task<Response<LeadDashboardStatsDto>> GetLeadDashboardStatsAsync()
@@ -162,7 +173,7 @@ namespace Sadef.Application.Services.Lead
                 var dtoData = JsonConvert.DeserializeObject<LeadDashboardStatsDto>(cached);
                 if (dtoData != null)
                 {
-                    return new Response<LeadDashboardStatsDto>(dtoData, "Lead dashboard stats loaded");
+                    return new Response<LeadDashboardStatsDto>(dtoData, _localizer["Lead_DashboardLoaded"]);
                 }
             }
 
@@ -201,7 +212,7 @@ namespace Sadef.Application.Services.Lead
             };
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
 
-            return new Response<LeadDashboardStatsDto>(dto, "Lead dashboard stats loaded");
+            return new Response<LeadDashboardStatsDto>(dto, _localizer["Lead_DashboardLoaded"]);
         }
 
         public async Task<Response<LeadDto>> ChangeStatusAsync(UpdateLeadStatusDto dto)
@@ -212,7 +223,7 @@ namespace Sadef.Application.Services.Lead
                 .FirstOrDefaultAsync(p => p.Id == dto.id);
 
             if (lead == null)
-                return new Response<LeadDto>("Lead not found");
+                return new Response<LeadDto>(_localizer["Lead_NotFound"]);
 
             var currentStatus = lead.Status;
 
@@ -227,12 +238,12 @@ namespace Sadef.Application.Services.Lead
             };
 
             if (!dto.status.HasValue)
-                return new Response<LeadDto>("Status cannot be null");
+                return new Response<LeadDto>(_localizer["Lead_StatusRequired"]);
 
             if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
                 !validNextStatuses.Contains(dto.status.Value))
             {
-                return new Response<LeadDto>($"Invalid status transition from {currentStatus} to {dto.status.Value}");
+                return new Response<LeadDto>(string.Format(_localizer["Lead_InvalidStatusTransition"], currentStatus, dto.status.Value));
             }
 
             lead.Status = dto.status.Value;
@@ -245,7 +256,27 @@ namespace Sadef.Application.Services.Lead
             await LeadServiceHelper.InvalidateAsync(_cache);
             await _cache.RemoveAsync("lead:dashboard:stats");
 
-            return new Response<LeadDto>(updatedDto, $"Status updated successfully from {currentStatus} to {dto.status.Value}");
+            return new Response<LeadDto>(updatedDto, string.Format(_localizer["Lead_StatusUpdated"], currentStatus, dto.status.Value));
+        }
+        public async Task<Response<List<LeadDto>>> GetLeadsCreatedByUserAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new Response<List<LeadDto>>("Invalid user email");
+
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
+            //var leads = await repo.Queryable()
+            //                      .Where(l => l.CreatedBy == email)
+            //                      .OrderByDescending(l => l.CreatedAt)
+            //                      .ToListAsync();
+            var leads = await repo.Queryable()
+            .Include(l => l.Property)
+            .Where(l => l.CreatedBy == email)
+            .OrderByDescending(l => l.CreatedAt)
+            .ToListAsync();
+
+            var dtoList = _mapper.Map<List<LeadDto>>(leads);
+
+            return new Response<List<LeadDto>>(dtoList, "Leads created by current user retrieved successfully.");
         }
     }
 }

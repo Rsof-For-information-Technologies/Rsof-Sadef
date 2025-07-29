@@ -9,6 +9,7 @@ using Sadef.Application.DTOs.PropertyDtos;
 using Azure.Core;
 using FluentValidation;
 using Sadef.Application.Services.PropertyListing;
+using Microsoft.Extensions.Localization;
 
 namespace Sadef.Application.Services.Blogs
 {
@@ -19,14 +20,16 @@ namespace Sadef.Application.Services.Blogs
         private readonly IMapper _mapper;
         private readonly IValidator<CreateBlogDto> _createBlogValidator;
         private readonly IValidator<UpdateBlogDto> _updateBlogValidator;
+        private readonly IStringLocalizer _localizer;
 
-        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator)
+        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, IStringLocalizerFactory localizerFactory)
         {
             _uow = uow;
             _queryFactory = queryFactory;
             _mapper = mapper;
             _createBlogValidator = createBlogValidator;
             _updateBlogValidator = updateBlogValidator;
+            _localizer = localizerFactory.Create("Messages", "Sadef.Application");
         }
         public async Task<Response<PaginatedResponse<BlogDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
         {
@@ -52,7 +55,7 @@ namespace Sadef.Application.Services.Blogs
         {
             var repo = _queryFactory.QueryRepository<Blog>();
             var blog = await repo.Queryable().FirstOrDefaultAsync(b => b.Id == id);
-            if (blog == null) return new Response<BlogDto>("Blog not found");
+            if (blog == null) return new Response<BlogDto>(_localizer["Blog_NotFound"]);
             return new Response<BlogDto>(_mapper.Map<BlogDto>(blog));
         }
 
@@ -78,7 +81,7 @@ namespace Sadef.Application.Services.Blogs
             await _uow.RepositoryAsync<Blog>().AddAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
             var blogDto = _mapper.Map<BlogDto>(blog);
-            return new Response<BlogDto>(blogDto, "Blog created successfully");
+            return new Response<BlogDto>(blogDto, _localizer["Blog_Created"]);
         }
 
         public async Task<Response<BlogDto>> UpdateAsync(UpdateBlogDto dto)
@@ -94,7 +97,7 @@ namespace Sadef.Application.Services.Blogs
                 .QueryRepository<Blog>()
                 .Queryable()
                 .FirstOrDefaultAsync(x => x.Id == dto.Id);
-            if (blog == null) return new Response<BlogDto>("Blog not found");
+            if (blog == null) return new Response<BlogDto>(_localizer["Blog_NotFound"]);
         
             _mapper.Map(dto, blog);
             if (dto.CoverImage != null)
@@ -110,7 +113,7 @@ namespace Sadef.Application.Services.Blogs
             await repo.UpdateAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
             var updatedDto = _mapper.Map<BlogDto>(blog);
-            return new Response<BlogDto>(updatedDto, "Blog updated successfully");
+            return new Response<BlogDto>(updatedDto, _localizer["Blog_Updated"]);
         }
 
         public async Task<Response<string>> DeleteAsync(int id)
@@ -120,10 +123,10 @@ namespace Sadef.Application.Services.Blogs
                 .QueryRepository<Blog>()
                 .Queryable()
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (blog == null) return new Response<string>("Blog not found");
+            if (blog == null) return new Response<string>(_localizer["Blog_NotFound"]);
             await repo.DeleteAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            return new Response<string>("Blog deleted successfully");
+            return new Response<string>(_localizer["Blog_Deleted"]);
         }
     }
 }

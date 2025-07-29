@@ -1,151 +1,147 @@
 ﻿using FluentValidation;
 using Sadef.Application.Constants;
 using Sadef.Application.DTOs.UserDtos;
+using Microsoft.Extensions.Localization;
 namespace Sadef.Application.Services.User
 {
     public class UserRegisterValidator : AbstractValidator<RegisterUserWithEmailDto>
     {
-
-        public UserRegisterValidator()
+        public UserRegisterValidator(IStringLocalizer localizer)
         {
-
             RuleFor(x => x.FirstName)
-               .NotEmpty().WithMessage("First name is required.")
-               .Matches(@"^[A-Za-z\s]+$").WithMessage("First name must contain only letters and spaces.")
-               .MaximumLength(50).WithMessage("First name cannot exceed 50 characters.");
+               .NotEmpty().WithMessage(localizer["User_FirstNameRequired"])
+               .Matches(@"^[A-Za-z\s]+$").WithMessage(localizer["User_FirstNameLetters"])
+               .MaximumLength(50).WithMessage(localizer["User_FirstNameMaxLength", 50]);
 
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("Last name is required.")
-                .Matches(@"^[A-Za-z\s]+$").WithMessage("Last name must contain only letters and spaces.")
-                .MaximumLength(50).WithMessage("Last name cannot exceed 50 characters.");
+                .NotEmpty().WithMessage(localizer["User_LastNameRequired"])
+                .Matches(@"^[A-Za-z\s]+$").WithMessage(localizer["User_LastNameLetters"])
+                .MaximumLength(50).WithMessage(localizer["User_LastNameMaxLength", 50]);
 
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
+                .NotEmpty().WithMessage(localizer["User_EmailRequired"])
                 .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                .WithMessage("Invalid email address format.");
+                .WithMessage(localizer["User_EmailInvalid"]);
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters long.");
+                .NotEmpty().WithMessage(localizer["User_PasswordRequired"])
+                .MinimumLength(6).WithMessage(localizer["User_PasswordMinLength", 6]);
 
             RuleFor(x => x.ConfirmPassword)
-                .Equal(x => x.Password).WithMessage("Passwords do not match.");
+                .Equal(x => x.Password).WithMessage(localizer["User_ConfirmPasswordMatch"]);
 
             RuleFor(x => x.Role)
-               .NotEmpty().WithMessage("Role is required.")
+               .NotEmpty().WithMessage(localizer["User_RoleRequired"])
                 .Must(role => UserRoles.ValidRoles.Contains(role))
-                .WithMessage("Please enter a valid role");
+                .WithMessage(localizer["User_RoleInvalid"]);
         }
     }
     public class UserLoginValidator : AbstractValidator<LoginUserDto>
     {
-        public UserLoginValidator()
+        public UserLoginValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Email)
-               .NotEmpty().WithMessage("Email is required.")
+               .NotEmpty().WithMessage(localizer["User_EmailRequired"])
                .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-               .WithMessage("Invalid email address format.");
+               .WithMessage(localizer["User_EmailInvalid"]);
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters long.");
+                .NotEmpty().WithMessage(localizer["User_PasswordRequired"])
+                .MinimumLength(6).WithMessage(localizer["User_PasswordMinLength", 6]);
         }
     }
     public class ResetPasswordValidator : AbstractValidator<ResetPasswordDto>
     {
-        public ResetPasswordValidator()
+        public ResetPasswordValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
+                .NotEmpty().WithMessage(localizer["User_EmailRequired"])
                 .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                .WithMessage("Invalid email address format.");
+                .WithMessage(localizer["User_EmailInvalid"]);
 
             RuleFor(x => x.ResetToken)
-                .NotEmpty().WithMessage("Token is required.");
+                .NotEmpty().WithMessage(localizer["User_TokenRequired"]);
 
             RuleFor(x => x.NewPassword)
-                .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters long.");
+                .NotEmpty().WithMessage(localizer["User_PasswordRequired"])
+                .MinimumLength(6).WithMessage(localizer["User_PasswordMinLength", 6]);
 
             RuleFor(x => x.ConfirmNewPassword)
-                .Equal(x => x.NewPassword).WithMessage("Passwords do not match.");
+                .Equal(x => x.NewPassword).WithMessage(localizer["User_ConfirmPasswordMatch"]);
         }
-
     }
     public class ForgotPasswordValidator : AbstractValidator<ForgotPasswordDto>
     {
-        public ForgotPasswordValidator()
+        public ForgotPasswordValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
+                .NotEmpty().WithMessage(localizer["User_EmailRequired"])
                 .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                .WithMessage("Invalid email address format.");
-
+                .WithMessage(localizer["User_EmailInvalid"]);
         }
     }
     public class UpdateUserValidator : AbstractValidator<UpdateUserDto>
     {
-
-        public UpdateUserValidator()
+        public UpdateUserValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.UserId)
                 .NotEmpty()
-                .WithMessage("User ID is required.");
+                .WithMessage(localizer["User_UserIdRequired"]);
 
             RuleFor(x => x.FirstName)
-               .NotEmpty().WithMessage("First name is required.")
-               .Matches(@"^[A-Za-z\s]+$").WithMessage("First name must contain only letters and spaces.")
-               .MaximumLength(50).WithMessage("First name cannot exceed 50 characters.");
+               .NotEmpty().WithMessage(localizer["User_FirstNameRequired"])
+               .Matches(@"^[A-Za-z\s]+$").WithMessage(localizer["User_FirstNameLetters"])
+               .MaximumLength(50).WithMessage(localizer["User_FirstNameMaxLength", 50]);
 
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("Last name is required.")
-                .Matches(@"^[A-Za-z\s]+$").WithMessage("Last name must contain only letters and spaces.")
-                .MaximumLength(50).WithMessage("Last name cannot exceed 50 characters.");
+                .NotEmpty().WithMessage(localizer["User_LastNameRequired"])
+                .Matches(@"^[A-Za-z\s]+$").WithMessage(localizer["User_LastNameLetters"])
+                .MaximumLength(50).WithMessage(localizer["User_LastNameMaxLength", 50]);
 
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
+                .NotEmpty().WithMessage(localizer["User_EmailRequired"])
                 .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                .WithMessage("Invalid email address format.");
+                .WithMessage(localizer["User_EmailInvalid"]);
 
             RuleFor(x => x.Role)
-               .NotEmpty().WithMessage("Role is required.")
+               .NotEmpty().WithMessage(localizer["User_RoleRequired"])
                 .Must(role => UserRoles.ValidRoles.Contains(role))
-                .WithMessage("Please enter a valid role");
+                .WithMessage(localizer["User_RoleInvalid"]);
         }
     }
     public class UpdateUserPasswordValidator : AbstractValidator<UpdateUserPasswordDto>
     {
-        public UpdateUserPasswordValidator()
+        public UpdateUserPasswordValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.UserId)
                 .NotEmpty()
-                .WithMessage("User ID is required.");
+                .WithMessage(localizer["User_UserIdRequired"]);
             RuleFor(x => x.OldPassword)
                 .NotEmpty()
-                .WithMessage("Old password is required.");
+                .WithMessage(localizer["User_OldPasswordRequired"]);
             RuleFor(x => x.NewPassword)
                 .NotEmpty()
-                .WithMessage("New password is required.")
+                .WithMessage(localizer["User_NewPasswordRequired"])
                 .MinimumLength(6)
-                .WithMessage("New password must be at least 6 characters long.");
+                .WithMessage(localizer["User_NewPasswordMinLength", 6]);
             RuleFor(x => x.ConfirmNewPassword)
                 .NotEmpty()
-                .WithMessage("Confirm new password is required.")
+                .WithMessage(localizer["User_ConfirmNewPasswordRequired"])
                 .Equal(x => x.NewPassword)
-                .WithMessage("Confirm new password must match the new password.");
+                .WithMessage(localizer["User_ConfirmNewPasswordMatch"]);
         }
     }
     public class RefreshTokenValidator : AbstractValidator<RefreshTokenDto>
     {
-        public RefreshTokenValidator()
+        public RefreshTokenValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
+                .NotEmpty().WithMessage(localizer["User_EmailRequired"])
                 .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                .WithMessage("Invalid email address format.");
+                .WithMessage(localizer["User_EmailInvalid"]);
 
             RuleFor(x => x.RefreshToken)
-                .NotEmpty().WithMessage("Refresh token is required.");
+                .NotEmpty().WithMessage(localizer["User_RefreshTokenRequired"]);
         }
     }
 }

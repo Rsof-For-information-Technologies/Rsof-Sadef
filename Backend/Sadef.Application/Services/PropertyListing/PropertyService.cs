@@ -3,6 +3,7 @@ using Azure.Core;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.PropertyDtos;
@@ -23,8 +24,9 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IValidator<UpdatePropertyDto> _updatePropertyValidator;
         private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator;
         private readonly IDistributedCache _cache;
+        private readonly IStringLocalizer _localizer;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory)
         {
             _uow = uow;
             _mapper = mapper;
@@ -33,6 +35,7 @@ namespace Sadef.Application.Services.PropertyListing
             _createPropertyValidator = createPropertyDto;
             _cache = cache;
             _expireValidator = expireValidator;
+            _localizer = localizerFactory.Create("Messages", "Sadef.Application");
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -85,7 +88,7 @@ namespace Sadef.Application.Services.PropertyListing
             createdDto.VideoUrls = property.Videos?
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
-            return new Response<PropertyDto>(createdDto, "Property created successfully");
+            return new Response<PropertyDto>(createdDto, _localizer["Property_Created"]);
         }
 
 
@@ -96,7 +99,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!string.IsNullOrEmpty(cached))
             {
                 var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
-                return new Response<PaginatedResponse<PropertyDto>>(cachedResult, "Properties retrieved successfully");
+                return new Response<PaginatedResponse<PropertyDto>>(cachedResult, _localizer["Property_ListedFromCache"]);
             }
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
             var query = queryRepo.Queryable().Include(p => p.Images).Include(p => p.Videos);
@@ -127,7 +130,7 @@ namespace Sadef.Application.Services.PropertyListing
             };
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
 
-            return new Response<PaginatedResponse<PropertyDto>>(paged, "Properties retrieved successfully");
+            return new Response<PaginatedResponse<PropertyDto>>(paged, _localizer["Property_Listed"]);
         }
 
         public async Task<Response<PropertyDto>> GetPropertyByIdAsync(int id)
@@ -140,7 +143,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
-                return new Response<PropertyDto>("Property not found.");
+                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
 
             var dto = _mapper.Map<PropertyDto>(property);
             dto.ImageBase64Strings = property.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
@@ -148,7 +151,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
 
-            return new Response<PropertyDto>(dto, "Property found successfully");
+            return new Response<PropertyDto>(dto, _localizer["Property_Found"]);
         }
 
         public async Task<Response<string>> DeletePropertyAsync(int id)
@@ -160,14 +163,14 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
-                return new Response<string>("Property not found");
+                return new Response<string>(_localizer["Property_NotFound"]);
             property.IsActive = false; // Soft delete
 
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("property:page=1&size=10");
-            return new Response<string>("Property deleted successfully");
+            return new Response<string>(_localizer["Property_Deleted"]);
         }
 
         public async Task<Response<PropertyDto>> UpdatePropertyAsync(UpdatePropertyDto dto)
@@ -185,7 +188,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
             if (existing == null)
-                return new Response<PropertyDto>("Property not found");
+                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
 
             _mapper.Map(dto, existing);
 
@@ -229,7 +232,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
 
-            return new Response<PropertyDto>(updatedDto, "Property updated successfully");
+            return new Response<PropertyDto>(updatedDto, _localizer["Property_Updated"]);
         }
 
         public async Task<Response<PropertyDto>> ChangeStatusAsync(PropertyStatusUpdateDto dto)
@@ -240,7 +243,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
             if (property == null)
-                return new Response<PropertyDto>("Property not found");
+                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
 
             var currentStatus = property.Status;
 
@@ -256,7 +259,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
                 !validNextStatuses.Contains(dto.status))
             {
-                return new Response<PropertyDto>($"Invalid status transition from {currentStatus} to {dto.status}");
+                return new Response<PropertyDto>(string.Format(_localizer["Property_InvalidStatusTransition"], currentStatus, dto.status));
             }
 
             property.Status = dto.status;
@@ -265,7 +268,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             var updatedDto = _mapper.Map<PropertyDto>(property);
             await _cache.RemoveAsync("property:page=1&size=10");
-            return new Response<PropertyDto>(updatedDto, $"Status updated successfully from {currentStatus} to {property.Status}");
+            return new Response<PropertyDto>(updatedDto, string.Format(_localizer["Property_StatusUpdated"], currentStatus, property.Status));
         }
 
         public async Task<Response<PaginatedResponse<PropertyDto>>> GetFilteredPropertiesAsync(PropertyFilterRequest request)
@@ -276,7 +279,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!string.IsNullOrEmpty(cached))
             {
                 var fromCache = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
-                return new Response<PaginatedResponse<PropertyDto>>(fromCache, "Fetched from cache");
+                return new Response<PaginatedResponse<PropertyDto>>(fromCache, _localizer["Property_FilteredFromCache"]);
             }
 
             var query = _queryRepositoryFactory.QueryRepository<Property>()
@@ -308,7 +311,7 @@ namespace Sadef.Application.Services.PropertyListing
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
             });
 
-            return new Response<PaginatedResponse<PropertyDto>>(paged, "Fetched with filters");
+            return new Response<PaginatedResponse<PropertyDto>>(paged, _localizer["Property_Filtered"]);
         }
         public async Task<Response<PropertyDto>> UpdateExpiryAsync(PropertyExpiryUpdateDto dto)
         {
@@ -324,14 +327,14 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
             if (property == null)
-                return new Response<PropertyDto>("Property not found");
+                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
 
             property.ExpiryDate = dto.ExpiryDate;
             await repo.UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("property:page=1&size=10");
             var result = _mapper.Map<PropertyDto>(property);
-            return new Response<PropertyDto>(result, $"Expiry set to {dto.ExpiryDate:yyyy-MM-dd}");
+            return new Response<PropertyDto>(result, string.Format(_localizer["Property_ExpirySet"], dto.ExpiryDate.ToString("yyyy-MM-dd")));
         }
         public async Task<Response<PropertyDashboardStatsDto>> GetPropertyDashboardStatsAsync()
         {
@@ -340,7 +343,7 @@ namespace Sadef.Application.Services.PropertyListing
             if (!string.IsNullOrEmpty(cached))
             {
                 var dtoData = JsonConvert.DeserializeObject<PropertyDashboardStatsDto>(cached);
-                return new Response<PropertyDashboardStatsDto>(dtoData, "Dashboard stats loaded");
+                return new Response<PropertyDashboardStatsDto>(dtoData, _localizer["Property_DashboardLoadedFromCache"]);
             }
             var query = _queryRepositoryFactory.QueryRepository<Property>().Queryable();
 
@@ -402,7 +405,7 @@ namespace Sadef.Application.Services.PropertyListing
             };
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
 
-            return new Response<PropertyDashboardStatsDto>(dto, "Dashboard stats loaded");
+            return new Response<PropertyDashboardStatsDto>(dto, _localizer["Property_DashboardLoaded"]);
         }
     }
 }
