@@ -12,6 +12,7 @@ using Sadef.Application.DTOs.BlogDtos;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Application.DTOs.PropertyTimeLineDtos;
 using Sadef.Application.DTOs.UserDtos;
 using Sadef.Application.Services.AuditLog;
 using Sadef.Application.Services.Blogs;
@@ -175,6 +176,15 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizer = factory.Create("Validation", typeof(UpdateBlogValidator).Assembly.GetName().Name);
                        return new UpdateBlogValidator(localizer);
                    });
+
+                   // Property timeline validator
+                   svc.AddScoped<IValidator<CreatePropertyTimeLineLogDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new CreatePropertyTimeLineValidator();
+                   });
+
                    svc.AddScoped<IPropertyService>(provider =>
                    {
                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
@@ -185,7 +195,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var cache = provider.GetRequiredService<IDistributedCache>();
                        var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory);
+                       var propertyTimeLineService = provider.GetRequiredService<IPropertyTimeLineService>();
+                       return new PropertyService(mapper, uow, cache, localizerFactory, queryFactory, createValidator, propertyTimeLineService, expireValidator, updateValidator);
                    });
                    svc.AddScoped<IBlogService>(provider =>
                    {
@@ -215,7 +226,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var cache = provider.GetRequiredService<IDistributedCache>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory , contextAccessor);
+                       var propertyTimeLineService = provider.GetRequiredService<IPropertyTimeLineService>();
+                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory , contextAccessor, propertyTimeLineService);
                    });
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();

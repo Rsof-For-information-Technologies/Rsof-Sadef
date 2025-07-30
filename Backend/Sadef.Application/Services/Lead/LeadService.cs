@@ -55,10 +55,8 @@ namespace Sadef.Application.Services.Lead
             if (dto.PropertyId.HasValue)
             {
                 var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
-                property = await queryRepo
-                    .Queryable()
-                    .AnyAsync(p => p.Id == dto.PropertyId.Value);
-                if (!property)
+                property = await queryRepo.Queryable().FirstOrDefaultAsync(p => p.Id == dto.PropertyId.Value);
+                if (property != null)
                     return new Response<LeadDto>(_localizer["Lead_InvalidPropertyReference"]);
             }
 
