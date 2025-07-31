@@ -6,10 +6,10 @@ using Sadef.Common.Domain;
 using Sadef.Domain.BlogsEntity;
 using Microsoft.EntityFrameworkCore;
 using Sadef.Application.DTOs.PropertyDtos;
-using Azure.Core;
 using FluentValidation;
-using Sadef.Application.Services.PropertyListing;
+using Sadef.Application.Utils;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Configuration;
 
 namespace Sadef.Application.Services.Blogs
 {
@@ -20,15 +20,17 @@ namespace Sadef.Application.Services.Blogs
         private readonly IMapper _mapper;
         private readonly IValidator<CreateBlogDto> _createBlogValidator;
         private readonly IValidator<UpdateBlogDto> _updateBlogValidator;
+        private readonly IConfiguration _configuration;
         private readonly IStringLocalizer _localizer;
 
-        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, IStringLocalizerFactory localizerFactory)
+        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, IStringLocalizerFactory localizerFactory, IConfiguration configuration)
         {
             _uow = uow;
             _queryFactory = queryFactory;
             _mapper = mapper;
             _createBlogValidator = createBlogValidator;
             _updateBlogValidator = updateBlogValidator;
+            _configuration = configuration;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
         }
         public async Task<Response<PaginatedResponse<BlogDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
@@ -67,19 +69,24 @@ namespace Sadef.Application.Services.Blogs
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<BlogDto>(errorMessage);
             }
+
             var blog = _mapper.Map<Blog>(dto);
             if (dto.CoverImage != null)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await dto.CoverImage.CopyToAsync(memoryStream);
-                    var base64Logo = Convert.ToBase64String(memoryStream.ToArray());
+                var basePath = _configuration["UploadSettings:BlogMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "blog");
+                var virtualPathBase = "uploads/blog";
+                var savedFiles = await FileUploadHelper.SaveFilesAsync(new[] { dto.CoverImage }, basePath, "cover", virtualPathBase);
 
-                    blog.CoverImage = base64Logo;
+                var coverImageUrl = savedFiles.FirstOrDefault().Url;
+                if (!string.IsNullOrWhiteSpace(coverImageUrl))
+                {
+                    blog.CoverImage = coverImageUrl;
                 }
             }
+
             await _uow.RepositoryAsync<Blog>().AddAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+
             var blogDto = _mapper.Map<BlogDto>(blog);
             return new Response<BlogDto>(blogDto, _localizer["Blog_Created"]);
         }
@@ -92,6 +99,7 @@ namespace Sadef.Application.Services.Blogs
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<BlogDto>(errorMessage);
             }
+
             var repo = _uow.RepositoryAsync<Blog>();
             var blog = await _queryFactory
                 .QueryRepository<Blog>()
@@ -102,16 +110,23 @@ namespace Sadef.Application.Services.Blogs
             _mapper.Map(dto, blog);
             if (dto.CoverImage != null)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await dto.CoverImage.CopyToAsync(memoryStream);
-                    var base64Logo = Convert.ToBase64String(memoryStream.ToArray());
+                if (!string.IsNullOrWhiteSpace(blog.CoverImage))
+                    FileUploadHelper.RemoveFileIfExists(blog.CoverImage);
 
-                    blog.CoverImage = base64Logo;
+                var basePath = _configuration["UploadSettings:BlogMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "blog");
+                var virtualPathBase = "uploads/blog";
+                var savedFiles = await FileUploadHelper.SaveFilesAsync(new[] { dto.CoverImage }, basePath, "cover", virtualPathBase);
+
+                var coverImageUrl = savedFiles.FirstOrDefault().Url;
+                if (!string.IsNullOrWhiteSpace(coverImageUrl))
+                {
+                    blog.CoverImage = coverImageUrl;
                 }
             }
+
             await repo.UpdateAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+
             var updatedDto = _mapper.Map<BlogDto>(blog);
             return new Response<BlogDto>(updatedDto, _localizer["Blog_Updated"]);
         }

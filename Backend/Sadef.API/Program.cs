@@ -195,7 +195,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var createValidator = provider.GetRequiredService<IValidator<CreateBlogDto>>();
                        var updateValidator = provider.GetRequiredService<IValidator<UpdateBlogDto>>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory);
+                       var configuration = provider.GetRequiredService<IConfiguration>();
+                       return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory, configuration);
                    });
                    svc.AddScoped<IFavoriteService>(provider =>
                    {
