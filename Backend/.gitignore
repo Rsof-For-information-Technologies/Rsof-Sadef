@@ -47,3 +47,4 @@ _ReSharper*
 
 # Exclude .env files if used
 .env
+Sadef.API/wwwroot/uploads/*

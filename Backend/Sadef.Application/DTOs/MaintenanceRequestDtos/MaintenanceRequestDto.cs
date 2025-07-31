@@ -14,7 +14,7 @@ namespace Sadef.Application.DTOs.MaintenanceRequestDtos
         public string? Description { get; set; }
         public string? AdminResponse { get; set; }
         public MaintenanceRequestStatus? Status { get; set; }
-        public List<string>? ImageBase64Strings { get; set; }
+        public List<string>? ImageUrls { get; set; }
         public List<string>? VideoUrls { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool? IsActive { get; set; }

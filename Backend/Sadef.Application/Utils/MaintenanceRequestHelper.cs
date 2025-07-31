@@ -1,4 +1,5 @@
-﻿using Sadef.Application.DTOs.MaintenanceRequestDtos;
+﻿using Microsoft.AspNetCore.Http;
+using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Domain.Constants;
 using Sadef.Domain.MaintenanceRequestEntity;
 
@@ -47,6 +48,63 @@ namespace Sadef.Application.Utils
 
             errorMessage = null;
             return true;
+        }
+        public static async Task<List<MaintenanceImage>> SaveImagesAsync(IEnumerable<IFormFile> images, string uploadRoot, int requestId)
+        {
+            var imageList = new List<MaintenanceImage>();
+            Directory.CreateDirectory(uploadRoot);
+
+            foreach (var file in images)
+            {
+                var extension = Path.GetExtension(file.FileName);
+                var fileName = $"img_{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(uploadRoot, fileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                imageList.Add(new MaintenanceImage
+                {
+                    ContentType = file.ContentType,
+                    ImageUrl = $"/uploads/maintenance/{requestId}/{fileName}"
+                });
+            }
+
+            return imageList;
+        }
+
+        public static async Task<List<MaintenanceVideo>> SaveVideosAsync(IEnumerable<IFormFile> videos, string uploadRoot, int requestId)
+        {
+            var videoList = new List<MaintenanceVideo>();
+            Directory.CreateDirectory(uploadRoot);
+
+            foreach (var file in videos)
+            {
+                var extension = Path.GetExtension(file.FileName);
+                var fileName = $"vid_{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(uploadRoot, fileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                videoList.Add(new MaintenanceVideo
+                {
+                    ContentType = file.ContentType,
+                    VideoUrl = $"/uploads/maintenance/{requestId}/{fileName}"
+                });
+            }
+
+            return videoList;
+        }
+
+        public static void DeleteFiles(IEnumerable<string> relativePaths)
+        {
+            foreach (var path in relativePaths)
+            {
+                var fullPath = Path.Combine("wwwroot", path.TrimStart('/'));
+                if (File.Exists(fullPath))
+                    File.Delete(fullPath);
+            }
         }
     }
 }

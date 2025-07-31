@@ -9,7 +9,7 @@ namespace Sadef.Domain.MaintenanceRequestEntity
 {
     public class MaintenanceImage : AggregateRootBase
     {
-        public byte[] ImageData { get; set; }
+        public string ImageUrl { get; set; }
         public string ContentType { get; set; }
         public int MaintenanceRequestId { get; set; }
         public MaintenanceRequest MaintenanceRequest { get; set; }
