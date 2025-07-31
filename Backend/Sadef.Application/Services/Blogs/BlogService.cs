@@ -10,6 +10,8 @@ using FluentValidation;
 using Sadef.Application.Utils;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace Sadef.Application.Services.Blogs
 {
@@ -22,19 +24,30 @@ namespace Sadef.Application.Services.Blogs
         private readonly IValidator<UpdateBlogDto> _updateBlogValidator;
         private readonly IConfiguration _configuration;
         private readonly IStringLocalizer _localizer;
+        private readonly IDistributedCache _cache;
 
-        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, IStringLocalizerFactory localizerFactory, IConfiguration configuration)
+        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, IStringLocalizerFactory localizerFactory, IConfiguration configuration, IDistributedCache cache)
         {
             _uow = uow;
-            _queryFactory = queryFactory;
+            _cache = cache;
             _mapper = mapper;
+            _queryFactory = queryFactory;
+            _configuration = configuration;
             _createBlogValidator = createBlogValidator;
             _updateBlogValidator = updateBlogValidator;
-            _configuration = configuration;
-            _localizer = localizerFactory.Create("Messages", "Sadef.Application");
+            _localizer = localizerFactory.Create("Messages", "Sadef.Application");      
         }
+
         public async Task<Response<PaginatedResponse<BlogDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
         {
+            string cacheKey = $"blogs:paginated:{pageNumber}:{pageSize}";
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (cached != null)
+            {
+                var paged = JsonSerializer.Deserialize<PaginatedResponse<BlogDto>>(cached);
+                return new Response<PaginatedResponse<BlogDto>>(paged);
+            }
+
             var repo = _queryFactory.QueryRepository<Blog>();
             var query = repo.Queryable().OrderByDescending(b => b.PublishedAt);
 
@@ -42,15 +55,47 @@ namespace Sadef.Application.Services.Blogs
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var dtoList = _mapper.Map<List<BlogDto>>(items);
 
-            var paged = new PaginatedResponse<BlogDto>(dtoList, total, pageNumber, pageSize);
-            return new Response<PaginatedResponse<BlogDto>>(paged);
+            var pagedResponse = new PaginatedResponse<BlogDto>(dtoList, total, pageNumber, pageSize);
+
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(pagedResponse), options);
+
+            return new Response<PaginatedResponse<BlogDto>>(pagedResponse);
         }
+
         public async Task<Response<List<BlogDto>>> GetAllAsync()
         {
+            string cacheKey = "blogs:all";
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (cached != null)
+            {
+                var cachedDtoList = JsonSerializer.Deserialize<List<BlogDto>>(cached);
+                return new Response<List<BlogDto>>(cachedDtoList);
+            }
+
             var repo = _queryFactory.QueryRepository<Blog>();
             var list = await repo.Queryable().OrderByDescending(b => b.PublishedAt).ToListAsync();
             var dtoList = _mapper.Map<List<BlogDto>>(list);
+
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(dtoList), options);
+
             return new Response<List<BlogDto>>(dtoList);
+        }
+        private async Task InvalidateBlogCacheAsync()
+        {
+            await _cache.RemoveAsync("blogs:all");
+            // If you use a distributed cache that supports key enumeration, remove all paginated keys.
+            // Otherwise, consider using a cache library that supports pattern removal.
+            // For demonstration, you may want to remove a few common paginated keys:
+            for (int page = 1; page <= 5; page++)
+            {
+                for (int size = 10; size <= 50; size += 10)
+                {
+                    string paginatedKey = $"blogs:paginated:{page}:{size}";
+                    await _cache.RemoveAsync(paginatedKey);
+                }
+            }
         }
 
         public async Task<Response<BlogDto>> GetByIdAsync(int id)
@@ -86,6 +131,7 @@ namespace Sadef.Application.Services.Blogs
 
             await _uow.RepositoryAsync<Blog>().AddAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await InvalidateBlogCacheAsync();
 
             var blogDto = _mapper.Map<BlogDto>(blog);
             return new Response<BlogDto>(blogDto, _localizer["Blog_Created"]);
@@ -126,6 +172,7 @@ namespace Sadef.Application.Services.Blogs
 
             await repo.UpdateAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await InvalidateBlogCacheAsync();
 
             var updatedDto = _mapper.Map<BlogDto>(blog);
             return new Response<BlogDto>(updatedDto, _localizer["Blog_Updated"]);
@@ -141,6 +188,8 @@ namespace Sadef.Application.Services.Blogs
             if (blog == null) return new Response<string>(_localizer["Blog_NotFound"]);
             await repo.DeleteAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await InvalidateBlogCacheAsync();
+
             return new Response<string>(_localizer["Blog_Deleted"]);
         }
     }
