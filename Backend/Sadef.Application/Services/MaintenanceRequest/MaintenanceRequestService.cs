@@ -78,25 +78,34 @@ namespace Sadef.Application.Services.MaintenanceRequest
             request.Images = new List<MaintenanceImage>();
             request.Videos = new List<MaintenanceVideo>();
 
-            await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().AddAsync(request);
-            await _uow.SaveChangesAsync(CancellationToken.None);
-
-            var webRootPath = _configuration["UploadSettings:MaintenanceRequestMedia"] ?? Directory.GetCurrentDirectory();
-            var uploadRoot = Path.Combine(webRootPath, request.Id.ToString());
-            Directory.CreateDirectory(uploadRoot);
+            var basePath = _configuration["UploadSettings:MaintenanceRequestMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "maintenance");
+            var virtualPathBase = "uploads/maintenance";
 
             if (dto.Images != null)
-                request.Images = await MaintenanceRequestHelper.SaveImagesAsync(dto.Images, uploadRoot, request.Id);
+            {
+                var imageResults = await FileUploadHelper.SaveFilesAsync(dto.Images, basePath, "img", virtualPathBase);
+                request.Images = imageResults.Select(x => new MaintenanceImage
+                {
+                    ContentType = x.ContentType,
+                    ImageUrl = x.Url
+                }).ToList();
+            }
 
             if (dto.Videos != null)
-                request.Videos = await MaintenanceRequestHelper.SaveVideosAsync(dto.Videos, uploadRoot, request.Id);
+            {
+                var videoResults = await FileUploadHelper.SaveFilesAsync(dto.Videos, basePath, "vid", virtualPathBase);
+                request.Videos = videoResults.Select(x => new MaintenanceVideo
+                {
+                    ContentType = x.ContentType,
+                    VideoUrl = x.Url
+                }).ToList();
+            }
 
+            await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().AddAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
-            responseDto.ImageUrls = request.Images.Select(x => x.ImageUrl).ToList();
-            responseDto.VideoUrls = request.Videos.Select(x => x.VideoUrl).ToList();
             return new Response<MaintenanceRequestDto>(responseDto, _localizer["MaintenanceRequest_Created"]);
         }
         public async Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters)
@@ -216,25 +225,40 @@ namespace Sadef.Application.Services.MaintenanceRequest
             request.Description = dto.Description;
             request.UpdatedAt = DateTime.UtcNow;
 
-            var webRootPath = _configuration["UploadSettings:MaintenanceRequestMedia"] ?? Directory.GetCurrentDirectory();
-            var uploadRoot = Path.Combine(webRootPath, request.Id.ToString());
-            Directory.CreateDirectory(uploadRoot);
+            var basePath = _configuration["UploadSettings:MaintenanceRequestMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "maintenance");
+            var virtualPathBase = "uploads/maintenance";
 
             // Clear existing images if new ones are uploaded
             if (dto.Images != null && dto.Images.Any())
             {
-                if (request.Images != null)
-                    MaintenanceRequestHelper.DeleteFiles(request.Images.Select(x => x.ImageUrl));
+                if (request.Images != null && request.Images.Any())
+                {
+                    var oldImagePaths = request.Images.Select(x => x.ImageUrl);
+                    FileUploadHelper.DeleteFiles(oldImagePaths);
+                }
 
-                request.Images = await MaintenanceRequestHelper.SaveImagesAsync(dto.Images, uploadRoot, request.Id);
+                var imageResults = await FileUploadHelper.SaveFilesAsync(dto.Images, basePath, "img", virtualPathBase);
+                request.Images = imageResults.Select(x => new MaintenanceImage
+                {
+                    ContentType = x.ContentType,
+                    ImageUrl = x.Url
+                }).ToList();
             }
 
             if (dto.Videos != null && dto.Videos.Any())
             {
-                if (request.Videos != null)
-                    MaintenanceRequestHelper.DeleteFiles(request.Videos.Select(x => x.VideoUrl));
+                if (request.Videos != null && request.Videos.Any())
+                {
+                    var oldVideoPaths = request.Videos.Select(x => x.VideoUrl);
+                    FileUploadHelper.DeleteFiles(oldVideoPaths);
+                }
 
-                request.Videos = await MaintenanceRequestHelper.SaveVideosAsync(dto.Videos, uploadRoot, request.Id);
+                var videoResults = await FileUploadHelper.SaveFilesAsync(dto.Videos, basePath, "vid", virtualPathBase);
+                request.Videos = videoResults.Select(x => new MaintenanceVideo
+                {
+                    ContentType = x.ContentType,
+                    VideoUrl = x.Url
+                }).ToList();
             }
 
             await repo.UpdateAsync(request);
@@ -242,9 +266,6 @@ namespace Sadef.Application.Services.MaintenanceRequest
             await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
-            responseDto.ImageUrls = request.Images?.Select(x => x.ImageUrl).ToList() ?? new();
-            responseDto.VideoUrls = request.Videos?.Select(x => x.VideoUrl).ToList() ?? new();
-
             return new Response<MaintenanceRequestDto>(responseDto, _localizer["MaintenanceRequest_Updated"]);
         }
 

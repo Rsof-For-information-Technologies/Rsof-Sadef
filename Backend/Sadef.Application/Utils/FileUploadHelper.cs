@@ -38,6 +38,24 @@ namespace Sadef.Application.Utils
                 File.Delete(fullPath);
             }
         }
+
+        public static void DeleteFiles(IEnumerable<string> relativePaths)
+        {
+            if (relativePaths == null) return;
+
+            foreach (var path in relativePaths)
+            {
+                if (string.IsNullOrWhiteSpace(path)) continue;
+
+                var fullPath = Path.Combine("wwwroot", path.TrimStart('/'));
+
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                }
+            }
+        }
+
     }
 
 }
