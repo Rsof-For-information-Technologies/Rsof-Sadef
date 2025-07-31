@@ -1,0 +1,105 @@
+"use client";
+import { Title, Text, Button, Popover } from "rizzui";
+import cn from "@/utils/class-names";
+import { routes } from "@/config/routes";
+import Link from "next/link";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useUserStore } from "@/store/user.store";
+import { ShadcnAvatar, ShadcnAvatarFallback, ShadcnAvatarImage } from "@/components/shadCn/ui/avatar";
+import { Params } from "@/types/params";
+
+function DropdownMenu() {
+  const { logOutUser, userInfo } = useUserStore();
+  const params = useParams<Params>()
+  const router = useRouter();
+
+  return (
+    <div className="w-64 text-left rtl:text-right">
+      <div className="flex items-center border-b border-gray-300 px-6 pb-5 pt-6">
+        <ShadcnAvatar className="!h-9 w-9 sm:!h-10 sm:!w-10">
+          {/* <ShadcnAvatarImage
+            src={userInfo?.profileImage
+              ? `${process.env.NEXT_PUBLIC_SERVER_BASE_URL}/api/image/${userInfo?.profileImage}`
+              : ""}
+          /> */}
+          <ShadcnAvatarFallback>
+            {userInfo?.firstName}{userInfo?.lastName}
+          </ShadcnAvatarFallback>
+        </ShadcnAvatar>
+
+        <Link href={`/${params.locale}${routes.profile}`} className="ms-3">
+          <Title as="h6" className="font-semibold max-w-40 break-words">
+            {userInfo?.firstName + " " + userInfo?.lastName}
+          </Title>
+          <Text className="text-gray-600 max-w-40 break-words">{userInfo?.email}</Text>
+        </Link>
+      </div>
+      <div className="border-t border-gray-300 px-6 pb-6 pt-5">
+        <Button
+          className="h-auto w-full justify-start p-0 font-medium text-gray-700 outline-none focus-within:text-gray-600 hover:text-gray-900 focus-visible:ring-0"
+          variant="text"
+          onClick={() => {
+            logOutUser(true);
+            router.push(routes.auth.login);
+          }}
+        >
+          Sign Out
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function ProfileMenu({
+  buttonClassName,
+  username = false,
+}: { buttonClassName?: string; avatarClassName?: string; username?: boolean; }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const { userInfo } = useUserStore();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  return (
+    <Popover
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      shadow="sm"
+      placement="bottom-end"
+    >
+      <Popover.Trigger>
+        <Button
+          className={cn(
+            "w-9 shrink-0 rounded-full outline-none focus-visible:ring-[1.5px] focus-visible:ring-gray-400 focus-visible:ring-offset-2 active:translate-y-px sm:w-10",
+            buttonClassName
+          )}
+        >
+          <ShadcnAvatar className="!h-9 w-9 sm:!h-10 sm:!w-10">
+            {/* <ShadcnAvatarImage
+              src={userInfo?.profileImage
+                ? `${process.env.NEXT_PUBLIC_SERVER_BASE_URL}/api/image/${userInfo?.profileImage}`
+                : ""}
+            /> */}
+            <ShadcnAvatarFallback>
+              {userInfo?.firstName}{userInfo?.lastName}
+            </ShadcnAvatarFallback>
+          </ShadcnAvatar>
+
+
+          {!!username && (
+            <span className="username hidden text-gray-200 md:inline-flex dark:text-gray-700">
+              Hi, Andry
+            </span>
+          )}
+        </Button>
+      </Popover.Trigger>
+
+      <Popover.Content className="z-[9999] p-0 dark:bg-gray-100 [&>svg]:dark:fill-gray-100">
+        <DropdownMenu />
+      </Popover.Content>
+    </Popover>
+  );
+}
