@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Password } from "rizzui";
+import { Button, Password, Title } from "rizzui";
 import { UserUpdatePassword } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { ChangePasswordSchema, changePasswordSchema } from "@/validators/updatePaseword.schema";
@@ -11,11 +11,12 @@ import HorizontalFormBlockWrapper from "@/app/shared/modal-views/horiozontal-blo
 import { useUserStore } from "@/store/user.store";
 import { routes } from "@/config/routes";
 import { toast } from "sonner";
+import { PiArrowLeft } from "react-icons/pi";
 
 export default function PasswordSettingsView() {
   const [isLoading, setLoading] = useState(false);
   const router = useRouter();
-  const { userInfo, getUserInfo } = useUserStore();
+  const { userInfo } = useUserStore();
 
   const {
     register,
@@ -33,10 +34,6 @@ export default function PasswordSettingsView() {
       confirmNewPassword: "",
     },
   });
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
 
   useEffect(() => {
     if (userInfo?.id) {
@@ -88,81 +85,93 @@ export default function PasswordSettingsView() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="@container"
-      id="password-change-form"
-    >
-      <div className="mx-auto w-full max-w-screen-sm">
-        <HorizontalFormBlockWrapper
-          title="Current Password"
-          titleClassName="text-base font-medium"
-        >
-          <Password
-            id="current-password"
-            {...register("oldPassword")}
-            placeholder="Enter your current password"
-            error={errors.oldPassword?.message}
-          />
-        </HorizontalFormBlockWrapper>
-
-        <HorizontalFormBlockWrapper
-          title="New Password"
-          titleClassName="text-base font-medium"
-        >
-          <Controller
-            control={control}
-            name="newPassword"
-            render={({ field }) => (
-              <Password
-                {...field}
-                id="new-password"
-                placeholder="Enter new password"
-                error={errors.newPassword?.message}
-              />
-            )}
-          />
-        </HorizontalFormBlockWrapper>
-
-        <HorizontalFormBlockWrapper
-          title="Confirm New Password"
-          titleClassName="text-base font-medium"
-        >
-          <Controller
-            control={control}
-            name="confirmNewPassword"
-            render={({ field }) => (
-              <Password
-                {...field}
-                id="confirm-password"
-                placeholder="Confirm new password"
-                error={errors.confirmNewPassword?.message}
-              />
-            )}
-          />
-        </HorizontalFormBlockWrapper>
-
-        <div className="mt-6 flex w-auto items-center justify-end gap-3">
-          <Button
-            id="cancel-password-change"
-            type="button"
-            variant="outline"
-            onClick={() => reset()}
-            disabled={isLoading}
+    <>
+      <button
+        className="text-gray-600 hover:text-gray-900"
+        onClick={() => router.back()}
+      >
+        <span className="flex items-center gap-2">
+          <PiArrowLeft className="h-5 w-5" />
+          Back
+        </span>
+      </button>
+      <Title as="h1" className="text-2xl font-bold mb-6 text-center">Change Password</Title>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="@container"
+        id="password-change-form"
+      >
+        <div className="mx-auto w-full max-w-screen-sm">
+          <HorizontalFormBlockWrapper
+            title="Current Password"
+            titleClassName="text-base font-medium"
           >
-            Cancel
-          </Button>
-          <Button
-            id="submit-password-change"
-            type="submit"
-            variant="solid"
-            isLoading={isLoading}
-            disabled={isLoading || !userInfo?.id}
+            <Password
+              id="current-password"
+              {...register("oldPassword")}
+              placeholder="Enter your current password"
+              error={errors.oldPassword?.message}
+            />
+          </HorizontalFormBlockWrapper>
+
+          <HorizontalFormBlockWrapper
+            title="New Password"
+            titleClassName="text-base font-medium"
           >
-            Update Password
-          </Button>
+            <Controller
+              control={control}
+              name="newPassword"
+              render={({ field }) => (
+                <Password
+                  {...field}
+                  id="new-password"
+                  placeholder="Enter new password"
+                  error={errors.newPassword?.message}
+                />
+              )}
+            />
+          </HorizontalFormBlockWrapper>
+
+          <HorizontalFormBlockWrapper
+            title="Confirm New Password"
+            titleClassName="text-base font-medium"
+          >
+            <Controller
+              control={control}
+              name="confirmNewPassword"
+              render={({ field }) => (
+                <Password
+                  {...field}
+                  id="confirm-password"
+                  placeholder="Confirm new password"
+                  error={errors.confirmNewPassword?.message}
+                />
+              )}
+            />
+          </HorizontalFormBlockWrapper>
+
+          <div className="mt-6 flex w-auto items-center justify-end gap-3">
+            <Button
+              id="cancel-password-change"
+              type="button"
+              variant="outline"
+              onClick={() => reset()}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              id="submit-password-change"
+              type="submit"
+              variant="solid"
+              isLoading={isLoading}
+              disabled={isLoading || !userInfo?.id}
+            >
+              Update Password
+            </Button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }

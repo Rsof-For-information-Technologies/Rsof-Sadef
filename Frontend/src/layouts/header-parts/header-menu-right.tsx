@@ -6,9 +6,15 @@ import ThemeSwitcher from "./header-menu-right-parts/theme-switcher";
 import { useUserStore } from "@/store/user.store";
 import RingBellSolidIcon from "@/components/icons/ring-bell-solid";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/shadCn/ui/popover";
+import { useEffect } from "react";
 
 export default function HeaderMenuRight() {
-  const { userInfo } = useUserStore();
+  const { userInfo, getUserInfo } = useUserStore();
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
   return (
     <div className="ms-auto grid shrink-0 grid-cols-3 items-center gap-2 text-gray-700 xs:gap-3 xl:gap-4">
       <Popover>

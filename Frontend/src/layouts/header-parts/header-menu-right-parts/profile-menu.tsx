@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/user.store";
 import { ShadcnAvatar, ShadcnAvatarFallback, ShadcnAvatarImage } from "@/components/shadCn/ui/avatar";
 import { Params } from "@/types/params";
+import { PiLockKey, PiSignOut } from "react-icons/pi";
 
 function DropdownMenu() {
   const { logOutUser, userInfo } = useUserStore();
@@ -24,7 +25,7 @@ function DropdownMenu() {
               : ""}
           /> */}
           <ShadcnAvatarFallback>
-            {userInfo?.firstName}{userInfo?.lastName}
+            {userInfo?.firstName?.charAt(0)}{userInfo?.lastName?.charAt(0)}
           </ShadcnAvatarFallback>
         </ShadcnAvatar>
 
@@ -35,7 +36,19 @@ function DropdownMenu() {
           <Text className="text-gray-600 max-w-40 break-words">{userInfo?.email}</Text>
         </Link>
       </div>
-      <div className="border-t border-gray-300 px-6 pb-6 pt-5">
+      <div className="px-6 pb-5 pt-5">
+        <Button
+            className="h-auto w-full justify-start p-0 font-medium text-gray-700 outline-none focus-within:text-gray-600 hover:text-gray-900 focus-visible:ring-0"
+            variant="text"
+            onClick={() => {
+              router.push(routes.profile.changePassword);
+            }}
+          >
+            <PiLockKey className="mr-2 h-5 w-5" />
+            Change Password
+          </Button>
+      </div>
+      <div className="border-t border-gray-300 px-6 pb-5 pt-5">
         <Button
           className="h-auto w-full justify-start p-0 font-medium text-gray-700 outline-none focus-within:text-gray-600 hover:text-gray-900 focus-visible:ring-0"
           variant="text"
@@ -44,6 +57,7 @@ function DropdownMenu() {
             router.push(routes.auth.login);
           }}
         >
+          <PiSignOut className="mr-2 h-5 w-5" />
           Sign Out
         </Button>
       </div>
@@ -84,7 +98,7 @@ export default function ProfileMenu({
                 : ""}
             /> */}
             <ShadcnAvatarFallback>
-              {userInfo?.firstName}{userInfo?.lastName}
+              {userInfo?.firstName?.charAt(0)}{userInfo?.lastName?.charAt(0)}
             </ShadcnAvatarFallback>
           </ShadcnAvatar>
 
