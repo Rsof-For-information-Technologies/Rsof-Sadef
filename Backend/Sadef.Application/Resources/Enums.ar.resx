@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="PropertyStatus_Pending" xml:space="preserve">
+    <value>قيد الانتظار</value>
+  </data>
+  <data name="PropertyStatus_Approved" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="PropertyStatus_Sold" xml:space="preserve">
+    <value>مباع</value>
+  </data>
+  <data name="PropertyStatus_Rejected" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="PropertyStatus_Archived" xml:space="preserve">
+    <value>مؤرشف</value>
+  </data>
+  
+  <data name="PropertyType_Apartment" xml:space="preserve">
+    <value>شقة</value>
+  </data>
+  <data name="PropertyType_Villa" xml:space="preserve">
+    <value>فيلا</value>
+  </data>
+  <data name="PropertyType_House" xml:space="preserve">
+    <value>منزل</value>
+  </data>
+  <data name="PropertyType_Office" xml:space="preserve">
+    <value>مكتب</value>
+  </data>
+  <data name="PropertyType_Shop" xml:space="preserve">
+    <value>محل</value>
+  </data>
+  <data name="PropertyType_Plot" xml:space="preserve">
+    <value>قطعة أرض</value>
+  </data>
+  <data name="PropertyType_Warehouse" xml:space="preserve">
+    <value>مستودع</value>
+  </data>
+  <data name="PropertyType_Building" xml:space="preserve">
+    <value>مبنى</value>
+  </data>
+  <data name="PropertyType_Farmhouse" xml:space="preserve">
+    <value>مزرعة</value>
+  </data>
+  <data name="PropertyType_Penthouse" xml:space="preserve">
+    <value>بنتهاوس</value>
+  </data>
+  <data name="PropertyType_Studio" xml:space="preserve">
+    <value>استوديو</value>
+  </data>
+  <data name="PropertyType_Commercial" xml:space="preserve">
+    <value>تجاري</value>
+  </data>
+  <data name="PropertyType_Industrial" xml:space="preserve">
+    <value>صناعي</value>
+  </data>
+  <data name="PropertyType_MixedUse" xml:space="preserve">
+    <value>استخدام مختلط</value>
+  </data>
+  <data name="PropertyType_Hotel" xml:space="preserve">
+    <value>فندق</value>
+  </data>
+  <data name="PropertyType_Mall" xml:space="preserve">
+    <value>مركز تجاري</value>
+  </data>
+  
+  <data name="UnitCategory_ResidentialApartment" xml:space="preserve">
+    <value>شقة سكنية</value>
+  </data>
+  <data name="UnitCategory_RooftopUnit" xml:space="preserve">
+    <value>وحدة سطح</value>
+  </data>
+  <data name="UnitCategory_Duplex" xml:space="preserve">
+    <value>دوبلكس</value>
+  </data>
+  <data name="UnitCategory_Studio" xml:space="preserve">
+    <value>استوديو</value>
+  </data>
+  <data name="UnitCategory_Penthouse" xml:space="preserve">
+    <value>بنتهاوس</value>
+  </data>
+  <data name="UnitCategory_GroundFloorUnit" xml:space="preserve">
+    <value>وحدة الطابق الأرضي</value>
+  </data>
+  <data name="UnitCategory_Loft" xml:space="preserve">
+    <value>لوفت</value>
+  </data>
+  <data name="UnitCategory_CommercialSuite" xml:space="preserve">
+    <value>جناح تجاري</value>
+  </data>
+  <data name="UnitCategory_ExecutiveOffice" xml:space="preserve">
+    <value>مكتب تنفيذي</value>
+  </data>
+  <data name="UnitCategory_RetailShop" xml:space="preserve">
+    <value>محل تجاري</value>
+  </data>
+  <data name="UnitCategory_WarehouseUnit" xml:space="preserve">
+    <value>وحدة مستودع</value>
+  </data>
+  <data name="UnitCategory_HotelRoom" xml:space="preserve">
+    <value>غرفة فندق</value>
+  </data>
+  <data name="UnitCategory_SharedUnit" xml:space="preserve">
+    <value>وحدة مشتركة</value>
+  </data>
+  
+  <data name="FeatureList_Pool" xml:space="preserve">
+    <value>مسبح</value>
+  </data>
+  <data name="FeatureList_Garden" xml:space="preserve">
+    <value>حديقة</value>
+  </data>
+  <data name="FeatureList_Gym" xml:space="preserve">
+    <value>صالة رياضية</value>
+  </data>
+  <data name="FeatureList_Security" xml:space="preserve">
+    <value>أمن</value>
+  </data>
+  <data name="FeatureList_Parking" xml:space="preserve">
+    <value>موقف سيارات</value>
+  </data>
+  <data name="FeatureList_Elevator" xml:space="preserve">
+    <value>مصعد</value>
+  </data>
+  <data name="FeatureList_Balcony" xml:space="preserve">
+    <value>شرفة</value>
+  </data>
+  <data name="FeatureList_AC" xml:space="preserve">
+    <value>تكييف</value>
+  </data>
+</root> 

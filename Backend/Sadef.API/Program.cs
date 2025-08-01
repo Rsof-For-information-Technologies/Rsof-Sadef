@@ -24,6 +24,8 @@ using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
 using Sadef.Application.Services.Whatsapp;
 using Sadef.Application.Services.Contact;
+using Sadef.Application.Services.Multilingual;
+using Sadef.Application.Services.PropertyListing;
 using Sadef.Common.Domain;
 using Sadef.Common.EFCore.Middleware;
 using Sadef.Common.Infrastructure.EfCore.Db;
@@ -32,10 +34,14 @@ using Sadef.Common.RestTemplate.Db;
 using Sadef.Infrastructure.DBContext;
 using Microsoft.AspNetCore.Identity;
 using Sadef.Common.Infrastructure.EFCore.Identity;
+using Sadef.Common.Infrastructure.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+// Add HTTP context accessor
+builder.Services.AddHttpContextAccessor();
 
 // Configure supported cultures
 var supportedCultures = new[] { "en", "ar" };
@@ -175,18 +181,21 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizer = factory.Create("Validation", typeof(UpdateBlogValidator).Assembly.GetName().Name);
                        return new UpdateBlogValidator(localizer);
                    });
-                   svc.AddScoped<IPropertyService>(provider =>
-                   {
-                       var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
-                       var mapper = provider.GetRequiredService<IMapper>();
-                       var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
-                       var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
-                       var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
-                       var cache = provider.GetRequiredService<IDistributedCache>();
-                       var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
-                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory);
-                   });
+                                       svc.AddScoped<IPropertyService>(provider =>
+                    {
+                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+                        var mapper = provider.GetRequiredService<IMapper>();
+                        var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+                        var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
+                        var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
+                        var cache = provider.GetRequiredService<IDistributedCache>();
+                        var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
+                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                        var context = provider.GetRequiredService<SadefDbContext>();
+                        var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                        var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
+                        return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService);
+                    });
                    svc.AddScoped<IBlogService>(provider =>
                    {
                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
@@ -255,6 +264,12 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
+                   
+                                       // Multilingual services
+                    svc.AddScoped<IMultilingualService, MultilingualService>();
+                    svc.AddScoped<ILanguageService, LanguageService>();
+                    svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
+                    svc.AddScoped<PropertyServiceMultilingual>();
                    svc.AddCors(options =>
                    {
                        options.AddPolicy("AllowFrontend", policy =>
@@ -289,6 +304,10 @@ if (locOptions != null)
 {
     app.UseRequestLocalization(locOptions);
 }
+
+// Use custom language detection middleware
+app.UseLanguageDetection();
+
 app.UseCors("AllowFrontend");
 app.UseCustomTemplate();
 app.Run();

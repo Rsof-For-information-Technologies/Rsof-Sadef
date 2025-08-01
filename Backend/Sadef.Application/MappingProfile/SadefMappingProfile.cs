@@ -27,14 +27,15 @@ namespace Sadef.Application.MappingProfile
             //Property
             CreateMap<CreatePropertyDto, Property>()
                .ForMember(dest => dest.Images, opt => opt.Ignore())
-               .ForMember(dest => dest.Videos, opt => opt.Ignore());
+               .ForMember(dest => dest.Videos, opt => opt.Ignore())
+               .ForMember(dest => dest.Translations, opt => opt.Ignore());
 
             CreateMap<UpdatePropertyDto, Property>()
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.Videos, opt => opt.Ignore());
 
             CreateMap<Property, PropertyDto>()
-                .ForMember(dest => dest.PropertyType, opt => opt.MapFrom(src => src.PropertyType.ToString()))
+                .ForMember(dest => dest.PropertyType, opt => opt.MapFrom(src => src.PropertyType))
                 .ForMember(dest => dest.VideoUrls, opt => opt.Ignore())
                 .ForMember(dest => dest.ImageBase64Strings, opt => opt.Ignore());
 

@@ -15,6 +15,9 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<PropertyDto>> UpdateExpiryAsync(PropertyExpiryUpdateDto dto);
         Task<Response<PropertyDashboardStatsDto>> GetPropertyDashboardStatsAsync();
 
+        // Multilingual methods
+        Task<Response<MultilingualPropertyDto>> GetMultilingualPropertyByIdAsync(int id, string languageCode);
+        Task<Response<PaginatedResponse<PropertyDto>>> GetLocalizedPropertiesAsync(PaginationRequest request, string languageCode);
+        Task<Response<bool>> SavePropertyTranslationsAsync(int propertyId, Dictionary<string, PropertyTranslationDto> translations);
     }
-
 }

@@ -37,6 +37,7 @@ namespace Sadef.Domain.PropertyEntity
         public string? Slug { get; set; }
         public string? CanonicalUrl { get; set; }
 
+        // Navigation property for translations
+        public ICollection<PropertyTranslation> Translations { get; set; } = new List<PropertyTranslation>();
     }
-
 }

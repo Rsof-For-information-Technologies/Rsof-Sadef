@@ -38,5 +38,8 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public string? MetaKeywords { get; set; }
         public string? Slug { get; set; }
         public string? CanonicalUrl { get; set; }
+
+        // Multilingual support - optional translations
+        public Dictionary<string, PropertyTranslationDto>? Translations { get; set; }
     }
 }

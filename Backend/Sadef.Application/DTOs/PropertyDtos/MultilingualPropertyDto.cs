@@ -1,15 +1,17 @@
-﻿using Sadef.Domain.Constants;
+using Sadef.Domain.Constants;
 
 namespace Sadef.Application.DTOs.PropertyDtos
 {
-    public class PropertyDto
+    public class MultilingualPropertyDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
         public string PropertyType { get; set; } = string.Empty;
+        public string PropertyTypeDisplay { get; set; } = string.Empty;
         public string? UnitCategory { get; set; }
+        public string UnitCategoryDisplay { get; set; } = string.Empty;
         public string City { get; set; }
         public string Location { get; set; }
         public double AreaSize { get; set; }
@@ -18,6 +20,7 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public int? TotalFloors { get; set; }
         public List<string> ImageBase64Strings { get; set; }
         public string Status { get; set; } = string.Empty;
+        public string StatusDisplay { get; set; } = string.Empty;
         public DateTime? ExpiryDate { get; set; }
         public bool IsExpired => ExpiryDate.HasValue && ExpiryDate.Value <= DateTime.UtcNow;
         public List<string> VideoUrls { get; set; }
@@ -37,5 +40,8 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public string? MetaKeywords { get; set; }
         public string? Slug { get; set; }
         public string? CanonicalUrl { get; set; }
+        
+        // Multilingual properties
+        public Dictionary<string, PropertyTranslationDto> Translations { get; set; } = new();
     }
-}
+} 
