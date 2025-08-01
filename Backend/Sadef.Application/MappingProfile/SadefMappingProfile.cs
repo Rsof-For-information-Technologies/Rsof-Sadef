@@ -36,7 +36,7 @@ namespace Sadef.Application.MappingProfile
             CreateMap<Property, PropertyDto>()
                 .ForMember(dest => dest.PropertyType, opt => opt.MapFrom(src => src.PropertyType.ToString()))
                 .ForMember(dest => dest.VideoUrls, opt => opt.Ignore())
-                .ForMember(dest => dest.ImageBase64Strings, opt => opt.Ignore());
+                .ForMember(dest => dest.ImageUrls, opt => opt.Ignore());
 
             //Blogs
             CreateMap<CreateBlogDto, Blog>();

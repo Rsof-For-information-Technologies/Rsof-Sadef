@@ -185,7 +185,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var cache = provider.GetRequiredService<IDistributedCache>();
                        var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory);
+                       var configuration = provider.GetRequiredService<IConfiguration>();
+                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, configuration);
                    });
                    svc.AddScoped<IBlogService>(provider =>
                    {

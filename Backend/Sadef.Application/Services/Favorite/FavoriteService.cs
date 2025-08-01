@@ -73,10 +73,8 @@ namespace Sadef.Application.Services.Favorites
             var propertyDtos = favorites.Select(f =>
             {
                 var dto = _mapper.Map<PropertyDto>(f.Property);
-                dto.ImageBase64Strings = f.Property.Images?.Select(img =>
-                    $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
-                dto.VideoUrls = f.Property.Videos?.Select(vid =>
-                    $"data:{vid.ContentType};base64,{Convert.ToBase64String(vid.VideoData)}").ToList() ?? new();
+                dto.ImageUrls = f.Property.Images?.Select(img => img.ImageUrl).ToList() ?? new();
+                dto.VideoUrls = f.Property.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
                 return dto;
             }).ToList();
 
