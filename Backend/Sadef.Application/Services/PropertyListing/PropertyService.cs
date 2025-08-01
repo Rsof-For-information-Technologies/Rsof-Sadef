@@ -593,30 +593,5 @@ namespace Sadef.Application.Services.PropertyListing
             return "en"; // Default to English
         }
 
-        // Multilingual method implementations
-        public async Task<Response<MultilingualPropertyDto>> GetMultilingualPropertyByIdAsync(int id, string languageCode)
-        {
-            // This method will be implemented later when we integrate the multilingual service
-            throw new NotImplementedException("Multilingual functionality not yet implemented in PropertyService");
-        }
-
-        public async Task<Response<PaginatedResponse<PropertyDto>>> GetLocalizedPropertiesAsync(PaginationRequest request, string languageCode)
-        {
-            // This method will be implemented later when we integrate the multilingual service
-            throw new NotImplementedException("Multilingual functionality not yet implemented in PropertyService");
-        }
-
-        public async Task<Response<bool>> SavePropertyTranslationsAsync(int propertyId, Dictionary<string, PropertyTranslationDto> translations)
-        {
-            try
-            {
-                await SavePropertyTranslationsInternalAsync(propertyId, translations);
-                return new Response<bool>(true, "Translations saved successfully");
-            }
-            catch (Exception ex)
-            {
-                return new Response<bool>($"Error saving translations: {ex.Message}");
-            }
-        }
     }
 }

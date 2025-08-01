@@ -265,11 +265,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
                    
-                                       // Multilingual services
-                    svc.AddScoped<IMultilingualService, MultilingualService>();
                     svc.AddScoped<ILanguageService, LanguageService>();
                     svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
-                    svc.AddScoped<PropertyServiceMultilingual>();
                    svc.AddCors(options =>
                    {
                        options.AddPolicy("AllowFrontend", policy =>
