@@ -27,6 +27,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
         private readonly IDistributedCache _cache;
         private readonly IStringLocalizer _localizer;
         private readonly IConfiguration _configuration;
+        private const string MaintenanceCacheVersionKey = "maintenance:version";
+        private const string MaintenanceDashboardcacheKey = "maintenancerequest:dashboard:stats";
 
         public MaintenanceRequestService(
             IUnitOfWorkAsync uow,
@@ -103,13 +105,22 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().AddAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
             return new Response<MaintenanceRequestDto>(responseDto, _localizer["MaintenanceRequest_Created"]);
         }
         public async Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters)
         {
+            string cacheKey = await CacheHelper.GeneratePaginatedCacheKey(_cache, MaintenanceCacheVersionKey, "maintenance", pageNumber, pageSize, filters);
+            var cachedData = await _cache.GetStringAsync(cacheKey);
+            if (cachedData != null)
+            {
+                var cachedResult = System.Text.Json.JsonSerializer.Deserialize<PaginatedResponse<MaintenanceRequestDto>>(cachedData);
+                if (cachedResult != null)
+                    return new Response<PaginatedResponse<MaintenanceRequestDto>>(cachedResult);
+            }
             var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
             var query = MaintenanceRequestHelper.ApplyFilters(repo.Queryable(), filters);
 
@@ -122,13 +133,9 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .ToListAsync();
 
             var dtoList = _mapper.Map<List<MaintenanceRequestDto>>(paginatedItems);
-
-            var paginatedResponse = new PaginatedResponse<MaintenanceRequestDto>(
-                dtoList,
-                totalCount,
-                pageNumber,
-                pageSize
-            );
+            var paginatedResponse = new PaginatedResponse<MaintenanceRequestDto>(dtoList, totalCount, pageNumber, pageSize);
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) };
+            await _cache.SetStringAsync(cacheKey, System.Text.Json.JsonSerializer.Serialize(paginatedResponse), options);
 
             return new Response<PaginatedResponse<MaintenanceRequestDto>>(
                 paginatedResponse,
@@ -157,8 +164,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
         public async Task<Response<MaintenanceRequestDashboardStatsDto>> GetDashboardStatsAsync()
         {
-            string cacheKey = "maintenancerequest:dashboard:stats";
-            var cached = await _cache.GetStringAsync(cacheKey);
+            var cached = await _cache.GetStringAsync(MaintenanceDashboardcacheKey);
             if (!string.IsNullOrEmpty(cached))
             {
                 var dtoData = JsonConvert.DeserializeObject<MaintenanceRequestDashboardStatsDto>(cached);
@@ -194,7 +200,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
             };
-            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
+            await _cache.SetStringAsync(MaintenanceDashboardcacheKey, JsonConvert.SerializeObject(dto), options);
 
             return new Response<MaintenanceRequestDashboardStatsDto>(dto, _localizer["MaintenanceRequest_DashboardLoaded"]);
         }
@@ -263,7 +269,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             await repo.UpdateAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
             return new Response<MaintenanceRequestDto>(responseDto, _localizer["MaintenanceRequest_Updated"]);
@@ -283,7 +290,9 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().UpdateAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
+
             var response = new Response<string>(_localizer["MaintenanceRequest_Deleted"]);
             response.Succeeded = true;
             return response;
@@ -320,7 +329,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var updatedDto = _mapper.Map<MaintenanceRequestDto>(request);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
 
             return new Response<MaintenanceRequestDto>(updatedDto, _localizer["MaintenanceRequest_StatusUpdated", currentStatus, newStatus]);
         }
