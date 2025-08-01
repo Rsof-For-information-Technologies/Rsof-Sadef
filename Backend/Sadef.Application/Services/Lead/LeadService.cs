@@ -27,6 +27,8 @@ namespace Sadef.Application.Services.Lead
         private readonly IDistributedCache _cache;
         private readonly IStringLocalizer _localizer;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private const string LeadDashboardCacheKey = "lead:dashboard:stats";
+        private const string LeadVersionKey = "leads:version";
 
         public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IStringLocalizerFactory localizerFactory , IHttpContextAccessor httpContextAccessor)
         {
@@ -65,8 +67,8 @@ namespace Sadef.Application.Services.Lead
 
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await LeadServiceHelper.InvalidateAsync(_cache);
-            await _cache.RemoveAsync("lead:dashboard:stats");
+            await CacheHelper.IncrementCacheVersionAsync(_cache, LeadVersionKey);
+            await CacheHelper.RemoveCacheKeyAsync(_cache, LeadDashboardCacheKey);
 
             var responseDto = _mapper.Map<LeadDto>(lead);
             return new Response<LeadDto>(responseDto, _localizer["Lead_Created"]);
@@ -79,7 +81,7 @@ namespace Sadef.Application.Services.Lead
                 return await GetFreshPaginatedLeadsAsync(pageNumber, pageSize, filters, true);
             }
 
-            var cacheKey = await LeadServiceHelper.GenerateFilteredLeadCacheKey(_cache, pageNumber, pageSize, filters);
+            var cacheKey = await CacheHelper.GeneratePaginatedCacheKey(_cache, LeadVersionKey, "lead", pageNumber, pageSize, filters);
             var cached = await _cache.GetStringAsync(cacheKey);
             if (cached != null)
             {
@@ -158,8 +160,8 @@ namespace Sadef.Application.Services.Lead
             _mapper.Map(dto, lead);
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().UpdateAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await LeadServiceHelper.InvalidateAsync(_cache);
-            await _cache.RemoveAsync("lead:dashboard:stats");
+            await CacheHelper.IncrementCacheVersionAsync(_cache, LeadVersionKey);
+            await CacheHelper.RemoveCacheKeyAsync(_cache, LeadDashboardCacheKey);
 
             return new Response<LeadDto>(_mapper.Map<LeadDto>(lead), _localizer["Lead_Updated"]);
         }
@@ -253,8 +255,8 @@ namespace Sadef.Application.Services.Lead
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var updatedDto = _mapper.Map<LeadDto>(lead);
-            await LeadServiceHelper.InvalidateAsync(_cache);
-            await _cache.RemoveAsync("lead:dashboard:stats");
+            await CacheHelper.IncrementCacheVersionAsync(_cache, LeadVersionKey);
+            await CacheHelper.RemoveCacheKeyAsync(_cache, LeadDashboardCacheKey);
 
             return new Response<LeadDto>(updatedDto, string.Format(_localizer["Lead_StatusUpdated"], currentStatus, dto.status.Value));
         }

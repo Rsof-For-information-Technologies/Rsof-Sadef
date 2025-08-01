@@ -113,7 +113,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
         }
         public async Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters)
         {
-            string cacheKey = await CacheHelper.GeneratePaginatedCacheKey(_cache, MaintenanceCacheVersionKey, "maintenance", pageNumber, pageSize, filters);
+            var cacheKey = await CacheHelper.GeneratePaginatedCacheKey(_cache, MaintenanceCacheVersionKey, "maintenance", pageNumber, pageSize, filters);
             var cachedData = await _cache.GetStringAsync(cacheKey);
             if (cachedData != null)
             {
