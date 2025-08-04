@@ -22,7 +22,7 @@ async function getProperties(searchParams: SearchParams) {
     return properties;
   } catch (error) {
     console.log("Error fetching properties:", error);
-    return { succeeded: false} as GetProperties;
+    return { succeeded: false } as GetProperties;
   }
 }
 
@@ -33,16 +33,16 @@ export default async function PropertyPage() {
   return (
     <Authenticate >
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-      <div className="flex justify-between items-center py-6">
-        <div>
-          <h1 className="mb-4 text-2xl font-semibold">Property List Page</h1>
-          <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+        <div className="flex justify-between items-center py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">Property List Page</h1>
+            <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+          </div>
+          <div>
+            <NavigateCreateProperty />
+          </div>
         </div>
-        <div>
-          <NavigateCreateProperty />
-        </div>
-      </div>
-      <PropertyPageClient initialProperties={activeProperties} />
+        <PropertyPageClient initialProperties={activeProperties} />
       </Authorize>
     </Authenticate>
   );
