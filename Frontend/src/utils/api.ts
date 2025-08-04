@@ -2,7 +2,7 @@ import { BlogFormData, CreateBlogResponse, GetBlogs } from '@/types/blog';
 import { CreateLeadResponse, GetLeads } from '@/types/lead';
 import { LoginResponse } from '@/types/login';
 import { MaintenenceRequestDetail, MaintenenceRequestResponse } from '@/types/maintenanceRequest';
-import { PropertyFormData, CreatePropertyResponse, GetProperties } from '@/types/property';
+import { PropertyFormData, CreatePropertyResponse, GetProperties, PropertyFilters, GetFilteredProperties } from '@/types/property';
 import { UpdatePasswordResponse } from '@/types/updatePassword';
 import { ChangePasswordSchema } from '@/validators/updatePaseword.schema';
 import axios from 'axios';
@@ -346,6 +346,26 @@ export const getAllProperties = async (pageNumber = 1, pageSize = 10): Promise<G
   }
 };
 
+export const getFilteredProperties = async (filters: PropertyFilters): Promise<GetFilteredProperties> => {
+  const api = apiCall();
+  try {
+    const params = new URLSearchParams();
+
+    if (filters.city) params.append('city', filters.city);
+    if (filters.location) params.append('location', filters.location);
+    if (filters.status !== undefined) params.append('status', String(filters.status));
+    if (filters.propertyType !== undefined) params.append('propertyType', String(filters.propertyType));
+    if (filters.pageNumber) params.append('pageNumber', String(filters.pageNumber));
+    if (filters.pageSize) params.append('pageSize', String(filters.pageSize));
+
+    const { data } = await api.get<GetFilteredProperties>(`/api/v1/property/filtered?${params.toString()}`);
+    return data;
+  } catch (error) {
+    console.error('Get filtered properties failed:', error);
+    throw error;
+  }
+};
+
 export const deleteProperty = async (id: string | number) => {
   const api = apiCall();
   try {
@@ -378,6 +398,8 @@ export const PropertyExpireDuration = async (id: number, expiryDate: string) => 
     throw error;
   }
 };
+
+// Lead API functions
 
 export const getAllLeads = async (pageNumber = 1, pageSize = 10): Promise<GetLeads> => {
   const api = apiCall();

@@ -59,17 +59,17 @@ function LoginForm() {
         }
     };
 
-    const logout = searchParams.get("logout")
-    useEffect(() => {
+    // const logout = searchParams.get("logout")
+    // useEffect(() => {
 
-        if (logout === "true") {
-            const urlSearchParams = new URLSearchParams(searchParams.toString());
-            removeLocalStorage("user-info");
-            // setUserInfo()
-            urlSearchParams.delete("logout");
-            router.push(`/${routes.auth.login}?${urlSearchParams}`)
-        }
-    }, [logout, router, searchParams])
+    //     if (logout === "true") {
+    //         const urlSearchParams = new URLSearchParams(searchParams.toString());
+    //         removeLocalStorage("user-info");
+    //         // setUserInfo()
+    //         urlSearchParams.delete("logout");
+    //         router.push(`/${routes.auth.login}?${urlSearchParams}`)
+    //     }
+    // }, [logout, router, searchParams])
 
     return (
         <form action={() => handleSubmit(onSubmit)()}>

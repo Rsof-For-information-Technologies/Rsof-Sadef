@@ -22,7 +22,7 @@ function Authenticate({ children, }: T_Authenticate) {
     const searchParams = useSearchParams()
 
     const pathName = usePathname()
-    
+
     console.log("Authenticate Rendered", { userInfo, searchParams, pathName })
     useEffect(() => {
         setUserInfo(getLocalStorage("user-info") as User)
@@ -37,20 +37,21 @@ function Authenticate({ children, }: T_Authenticate) {
 
             queryParams.set("navigate_to", pathName);
 
-            router.push(`/${routes.auth.login}?${queryParams.toString()}`);
+            router.push(`${routes.auth.login}?${queryParams.toString()}`);
 
         }
     }, [userInfo, router, mounted, pathName, searchParams])
 
 
-    if (userInfo) return (
-        <>
-            {children}
-        </>
-    )
-
-    else
+    if (userInfo){
+        return (
+            <>
+                {children}
+            </>
+        )
+    }else{
         return null
+    }
 
 }
 

@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import React from 'react';
 import dayjs from 'dayjs';
 import { PropertyItem } from '@/types/property';
+import { propertyOptions, propertyStatuses } from '@/constants/constants';
 
 type Columns = {
   sortConfig?: any;
@@ -222,15 +223,6 @@ export const getBlogColumns = ({
 ];
 
 // property columns
-
-const propertyStatuses = [
-  { label: 'Pending', value: 0 },
-  { label: 'Approved', value: 1 },
-  { label: 'Sold', value: 2 },
-  { label: 'Rejected', value: 3 },
-  { label: 'Archived', value: 4 },
-];
-
 export const getPropertyColumns = ({
   sortConfig,
   onHeaderCellClick,
@@ -241,7 +233,7 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('id'),
     dataIndex: 'id',
     key: 'id',
-    width: 80,
+    minWidth: 100,
     render: (value: number) => <Text>#{value}</Text>,
   },
   {
@@ -249,7 +241,7 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('title'),
     dataIndex: 'title',
     key: 'title',
-    width: 200,
+    minWidth: 300,
     render: (value: string) => <Text>{value}</Text>,
   },
   // {
@@ -264,7 +256,7 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('price'),
     dataIndex: 'price',
     key: 'price',
-    width: 100,
+    minWidth: 100,
     render: (value: number) => <Text>${value}</Text>,
   },
   {
@@ -272,7 +264,7 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('city'),
     dataIndex: 'city',
     key: 'city',
-    width: 120,
+    minWidth: 120,
     render: (value: string) => <Text>{value}</Text>,
   },
   {
@@ -280,7 +272,7 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('location'),
     dataIndex: 'location',
     key: 'location',
-    width: 180,
+    minWidth: 180,
     render: (value: string) => <Text>{value}</Text>,
   },
   // {
@@ -296,7 +288,7 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('bedrooms'),
     dataIndex: 'bedrooms',
     key: 'bedrooms',
-    width: 80,
+    minWidth: 80,
     render: (value: number) => <Text>{value}</Text>,
   },
   {
@@ -304,14 +296,14 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('bathrooms'),
     dataIndex: 'bathrooms',
     key: 'bathrooms',
-    width: 80,
+    minWidth: 80,
     render: (value: number) => <Text>{value}</Text>,
   },
   {
     title: ( <HeaderCell title="Status" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} /> ),
     dataIndex: 'status',
     key: 'status',
-    width: 120,
+    minWidth: 120,
     render: (value: number) => {
       const status = propertyStatuses.find((s) => s.value === value);
       let color: "warning" | "success" | "info" | "danger" | "secondary" = "secondary";
@@ -330,20 +322,23 @@ export const getPropertyColumns = ({
       );
     },
   },
-  // {
-  //   title: <HeaderCell title="Expiry Date" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'}/>,
-  //   onHeaderCell: () => onHeaderCellClick('expiryDate'),
-  //   dataIndex: 'expiryDate',
-  //   key: 'expiryDate',
-  //   width: 140,
-  //   render: (value: string | null) => value ? <DateCell date={new Date(value)} /> : <Text>{value}</Text>,
-  // },
+  {
+    title: <HeaderCell title="Property Type" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
+    onHeaderCell: () => onHeaderCellClick('propertyType'),
+    dataIndex: 'propertyType',
+    key: 'propertyType',
+    minWidth: 180,
+    render: (value: number) => {
+      const type = propertyOptions.find((t) => t.value === value);
+      return <Text>{type?.label ?? "Unknown"}</Text>;
+    },
+  },
   {
     title: <HeaderCell title="Expiry Date" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'}/>,
     onHeaderCell: () => onHeaderCellClick('expiryDate'),
     dataIndex: 'expiryDate',
     key: 'expiryDate',
-    width: 180,
+    minWidth: 180,
     render: (_: string | null, row: any) => <ExpiryDateDuration row={row} />,
   },
   {
@@ -351,14 +346,14 @@ export const getPropertyColumns = ({
     onHeaderCell: () => onHeaderCellClick('isInvestorOnly'),
     dataIndex: 'isInvestorOnly',
     key: 'isInvestorOnly',
-    width: 140,
+    minWidth: 180,
     render: (value: boolean) => value ? <Badge color="info">Yes</Badge> : <Badge color="secondary">No</Badge>,
   },
   {
     title: <HeaderCell title="Actions" className='flex justify-end'/>,
     dataIndex: 'action',
     key: 'action',
-    width: 50,
+    minWidth: 50,
     render: (_: string, row: any) => {
 
       const status = propertyStatuses.find((s) => s.value === row.status);

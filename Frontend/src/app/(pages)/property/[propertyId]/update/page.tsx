@@ -1,6 +1,6 @@
 import { getPropertyById } from "@/utils/api";
 import { notFound } from "next/navigation";
-import UpdatePropertyForm from "./UpdatePropertyForm";
+import UpdatePropertyForm from "./updatePropertyForm";
 
 export default async function UpdatePropertyPage({
   params,

@@ -118,3 +118,23 @@ export type GetProperties = {
     pageSize: number,
     extra: string | null,
 }
+
+export type PropertyFilters = {
+    city?: string;
+    location?: string;
+    status?: number;
+    propertyType?: number;
+    pageNumber?: number;
+    pageSize?: number;
+}
+
+export type GetFilteredProperties = {
+    succeeded: boolean,
+    message: string | null,
+    validationResultModel: string | null,
+    data: PropertyData,
+    totalCount: number,
+    pageNumber: number,
+    pageSize: number,
+    extra: string | null,
+}

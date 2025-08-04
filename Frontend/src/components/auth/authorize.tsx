@@ -24,7 +24,7 @@ const checkAuthorize = (userInfo: User | undefined, allowedRoles: UserRole[]) =>
     return allowedRoles.includes(userInfo.role);
 }
 
-function Authorize({ children, allowedRoles, navigate }: T_Authorize) {
+function Authorize({ children, allowedRoles, navigate = false }: T_Authorize) {
     const { setUserInfo, userInfo } = useUserStore()
     const [hasAccess, setHasAccess] = useState<boolean>(false);
     const isMounted = useIsMounted()
@@ -46,14 +46,22 @@ function Authorize({ children, allowedRoles, navigate }: T_Authorize) {
         }
     }, [userInfo, allowedRoles])
 
-    // useEffect(() => {
-    //     if (!hasAccess && userInfo && navigate) {
-    //         const authorizedUrl = findFirstAuthorizedUrl();
-    //         if (authorizedUrl) {
-    //             router.push(authorizedUrl);
-    //         }
-    //     }
-    // }, [hasAccess, userInfo, router, navigate, params])
+    useEffect(() => {
+        console.log("outside if", { page:window.location.pathname,hasAccess, userInfo, navigate })
+        if (hasAccess === false) {
+            if(userInfo){
+                console.log("inside if", { hasAccess, userInfo, navigate })
+                const authorizedUrl = findFirstAuthorizedUrl();
+                console.log({authorizedUrl})
+                if (navigate) {
+                    console.log("Redirecting to authorized URL:", authorizedUrl);
+                    router.push(authorizedUrl);
+                }
+            }
+        }else{
+            console.log("User has access, no redirection needed.");
+        }
+    }, [hasAccess, userInfo, router, navigate, params])
 
     if (!isMounted)
         return null;

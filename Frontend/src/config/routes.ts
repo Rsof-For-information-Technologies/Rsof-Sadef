@@ -92,6 +92,7 @@ export const routes = {
   },
 
   lead:{
+    list: "/lead",
     leadDetails: (leadId: string) => `/lead/${leadId}`,
   },
 

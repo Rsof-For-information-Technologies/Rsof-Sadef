@@ -15,6 +15,9 @@ import { ContactPublishingStep } from "../(components)/contact-publishing-step"
 import { createProperty } from "@/utils/api"
 import { Button } from "rizzui"
 import { basicInfoSchema, contactPublishingSchema, CreatePropertyFormData, createPropertySchema, locationSchema, propertyDetailsSchema, propertyMediaSchema } from "@/validators/createProperty"
+import Authenticate from "@/components/auth/authenticate"
+import Authorize from "@/components/auth/authorize"
+import { UserRole } from "@/types/userRoles"
 
 const STEPS = [
   { title: "Basic Info", component: BasicInfoStep, schema: basicInfoSchema },
@@ -99,56 +102,60 @@ export default function CreatePropertyPage() {
   const CurrentStepComponent = STEPS[currentStep - 1].component
 
   return (
-    <div className="container">
-      <div className="py-4 text-center">
-        <h1 className="mb-4 text-2xl font-semibold">Create New Property</h1>
-        <p className="mb-6 text-gray-600"> This page allows you to create the new property. </p>
-      </div>
+    <Authenticate>
+      <Authorize allowedRoles={[UserRole.Admin, UserRole.SuperAdmin]} navigate={true}>
+        <div className="container">
+          <div className="py-4 text-center">
+            <h1 className="mb-4 text-2xl font-semibold">Create New Property</h1>
+            <p className="mb-6 text-gray-600"> This page allows you to create the new property. </p>
+          </div>
 
-      <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} stepTitles={STEPS.map((step) => step.title)} />
+          <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} stepTitles={STEPS.map((step) => step.title)} />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <CurrentStepComponent form={form} />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <CurrentStepComponent form={form} />
 
-        <div className="flex justify-between pt-6">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            className="flex items-center gap-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
+            <div className="flex justify-between pt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 1}
+                className="flex items-center gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
 
-          {currentStep < STEPS.length ? (
-            <Button type="button" onClick={nextStep} className="flex items-center gap-2">
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Create Property
-            </Button>
+              {currentStep < STEPS.length ? (
+                <Button type="button" onClick={nextStep} className="flex items-center gap-2">
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
+                  {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Create Property
+                </Button>
+              )}
+            </div>
+          </form>
+
+          {/* Debug: Show validation errors */}
+          {Object.keys(errors).length > 0 && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h3 className="text-red-800 font-medium mb-2">Validation Errors:</h3>
+              <ul className="text-red-700 text-sm space-y-1">
+                {Object.entries(errors).map(([field, error]) => (
+                  <li key={field}>
+                    <strong>{field}:</strong> {error?.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
-      </form>
-
-      {/* Debug: Show validation errors */}
-      {Object.keys(errors).length > 0 && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <h3 className="text-red-800 font-medium mb-2">Validation Errors:</h3>
-          <ul className="text-red-700 text-sm space-y-1">
-            {Object.entries(errors).map(([field, error]) => (
-              <li key={field}>
-                <strong>{field}:</strong> {error?.message}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+        </Authorize>
+    </Authenticate>
   )
 }
