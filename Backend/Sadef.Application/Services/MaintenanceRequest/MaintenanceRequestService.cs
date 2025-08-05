@@ -80,8 +80,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             request.Images = new List<MaintenanceImage>();
             request.Videos = new List<MaintenanceVideo>();
 
-            var basePath = _configuration["UploadSettings:MaintenanceRequestMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "maintenance");
-            var virtualPathBase = "uploads/maintenance";
+            var basePath = _configuration["UploadSettings:Paths:MaintenanceRequestMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:MaintenanceRequestMedia"] ?? "/uploads/maintenance";
 
             if (dto.Images != null)
             {
@@ -231,8 +231,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             request.Description = dto.Description;
             request.UpdatedAt = DateTime.UtcNow;
 
-            var basePath = _configuration["UploadSettings:MaintenanceRequestMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "maintenance");
-            var virtualPathBase = "uploads/maintenance";
+            var basePath = _configuration["UploadSettings:Paths:MaintenanceRequestMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:MaintenanceRequestMedia"] ?? "/uploads/maintenance";
 
             // Clear existing images if new ones are uploaded
             if (dto.Images != null && dto.Images.Any())

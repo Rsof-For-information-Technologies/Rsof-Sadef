@@ -150,8 +150,8 @@ namespace Sadef.Application.Services.Blogs
                 if (!string.IsNullOrWhiteSpace(blog.CoverImage))
                     FileUploadHelper.RemoveFileIfExists(blog.CoverImage);
 
-                var basePath = _configuration["UploadSettings:BlogMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "blog");
-                var virtualPathBase = "uploads/blog";
+                var basePath = _configuration["UploadSettings:Paths:BlogAttachments"] ?? Directory.GetCurrentDirectory();
+                var virtualPathBase = _configuration["UploadSettings:RelativePaths:BlogMedia"] ?? "/uploads/blog";
                 var savedFiles = await FileUploadHelper.SaveFilesAsync(new[] { dto.CoverImage }, basePath, "cover", virtualPathBase);
 
                 var coverImageUrl = savedFiles.FirstOrDefault().Url;

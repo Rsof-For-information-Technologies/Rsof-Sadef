@@ -53,8 +53,8 @@ namespace Sadef.Application.Services.PropertyListing
             property.Images = new List<PropertyImage>();
             property.Videos = new List<PropertyVideo>();
 
-            var basePath = _configuration["UploadSettings:PropertyMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "property");
-            var virtualPathBase = "uploads/property";
+            var basePath = _configuration["UploadSettings:Paths:PropertyMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:PropertyMedia"] ?? "/uploads/property";
 
             if (dto.Images != null)
             {
@@ -179,8 +179,8 @@ namespace Sadef.Application.Services.PropertyListing
                 return new Response<PropertyDto>(_localizer["Property_NotFound"]);
 
             _mapper.Map(dto, existing);
-            var basePath = _configuration["UploadSettings:PropertyMedia"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "property");
-            var virtualPathBase = "uploads/property";
+            var basePath = _configuration["UploadSettings:Paths:PropertyMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:PropertyMedia"] ?? "/uploads/property";
 
             if (dto.Images != null && dto.Images.Any())
             {
