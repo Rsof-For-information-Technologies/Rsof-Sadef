@@ -1,14 +1,13 @@
 "use client"
 
-import { useUserStore } from '@/store/user.store';
-import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
 import { useIsMounted } from '@/hooks/use-is-mounted';
-import { getLocalStorage } from '@/utils/localStorage';
-import { Params } from '@/types/params';
+import { useUserStore } from '@/store/user.store';
 import { User } from '@/types/user';
 import { UserRole } from '@/types/userRoles';
 import { findFirstAuthorizedUrl } from '@/utils/findFirstAuthorizedUrl';
+import { getLocalStorage } from '@/utils/localStorage';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 type T_Authorize = {
     children: React.ReactNode;
@@ -24,12 +23,11 @@ const checkAuthorize = (userInfo: User | undefined, allowedRoles: UserRole[]) =>
     return allowedRoles.includes(userInfo.role);
 }
 
-function Authorize({ children, allowedRoles, navigate }: T_Authorize) {
+function Authorize({ children, allowedRoles, navigate = false }: T_Authorize) {
     const { setUserInfo, userInfo } = useUserStore()
     const [hasAccess, setHasAccess] = useState<boolean>(false);
     const isMounted = useIsMounted()
     const router = useRouter();
-    const params = useParams<Params>()
 
     useEffect(() => {
         if (!userInfo)
@@ -46,14 +44,17 @@ function Authorize({ children, allowedRoles, navigate }: T_Authorize) {
         }
     }, [userInfo, allowedRoles])
 
-    // useEffect(() => {
-    //     if (!hasAccess && userInfo && navigate) {
-    //         const authorizedUrl = findFirstAuthorizedUrl();
-    //         if (authorizedUrl) {
-    //             router.push(authorizedUrl);
-    //         }
-    //     }
-    // }, [hasAccess, userInfo, router, navigate, params])
+    useEffect(() => {
+        if (isMounted && userInfo) {
+            const authorized = checkAuthorize(userInfo, allowedRoles);
+            setHasAccess(authorized);
+
+            if (!authorized && navigate) {
+                const authorizedUrl = findFirstAuthorizedUrl();
+                router.push(authorizedUrl);
+            }
+        }
+    }, [userInfo, allowedRoles, navigate, isMounted]);
 
     if (!isMounted)
         return null;

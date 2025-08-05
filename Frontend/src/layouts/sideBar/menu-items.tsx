@@ -3,6 +3,7 @@ import { FaBlog, FaFolderOpen, FaHourglassEnd, FaUser } from "react-icons/fa";
 import { UserRole } from "@/types/userRoles";
 import { User } from "@/types/user";
 import { JSX } from "react";
+import { BsBuilding } from 'react-icons/bs';
 
 
 // Note: do not add href in the label object, it is rendering as label
@@ -29,7 +30,7 @@ export function MenuItems(user: User): MenuItem[] {
     [
       {
         name: "Dashboard",
-        href: `/${routes.dashboard}`,
+        href: `${routes.dashboard}`,
         icon: <FaFolderOpen />,
         allowedRoles: [UserRole.Admin, UserRole.Investor, UserRole.SuperAdmin, UserRole.Visitor],
       },

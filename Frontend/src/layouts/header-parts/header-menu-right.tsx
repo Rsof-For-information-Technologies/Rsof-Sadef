@@ -9,12 +9,12 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/shadCn/ui/
 import { useEffect } from "react";
 
 export default function HeaderMenuRight() {
-  const { userInfo } = useUserStore();
+  const { userInfo, getUserInfo } = useUserStore();
+
   useEffect(() => {
-    if (!userInfo) {
-      console.log("User info loaded:", userInfo);
-    }
-  }, [userInfo]);
+    getUserInfo();
+  }, []);
+
   return (
     <div className="ms-auto grid shrink-0 grid-cols-3 items-center gap-2 text-gray-700 xs:gap-3 xl:gap-4">
       <Popover>

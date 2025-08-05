@@ -92,6 +92,7 @@ export const routes = {
   },
 
   lead:{
+    list: "/lead",
     leadDetails: (leadId: string) => `/lead/${leadId}`,
   },
 
@@ -101,6 +102,8 @@ export const routes = {
     forgotPassword: "/auth/forgot-password",
     resetPassword: "/auth/reset-password",
   },
-  profile: "/profile/edit-profile",
-
+  profile: {
+    editProfile: "/profile/edit-profile",
+    changePassword: "/profile/change-password",
+  },
 };
