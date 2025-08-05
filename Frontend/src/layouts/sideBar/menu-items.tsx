@@ -5,6 +5,7 @@ import { User } from "@/types/user";
 import { JSX } from "react";
 import { BsBuilding } from 'react-icons/bs';
 
+
 // Note: do not add href in the label object, it is rendering as label
 export type MenuItemDropdownItem = {
   name: string;
