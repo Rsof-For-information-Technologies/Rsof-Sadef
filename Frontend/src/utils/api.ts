@@ -213,6 +213,17 @@ export const getMaintenanceRequestDashboard = async () => {
   }
 };
 
+export const getPropertyDashboard = async () => {
+  const api = apiCall();
+  try {
+    const response = await api.get('/api/v1/property/dashboard');
+    return response.data;
+  } catch (error) {
+    console.error('Get property dashboard failed:', error);
+    throw error;
+  }
+};
+
 // Property API functions
 
 export const createProperty = async (data: PropertyFormData) => {

@@ -1,6 +1,7 @@
 import { Title } from "rizzui";
 import LeadDashboard from "./(components)/LeadDashboard";
 import MaintenanceRequestDashboard from "./(components)/MaintenanceRequestDashboard";
+import PropertyDashboard from "./(components)/PropertyDashboard";
 
 const Dashboard = () => {
     return (
@@ -9,6 +10,14 @@ const Dashboard = () => {
                 Dashboard
             </Title>
             
+            {/* Property Dashboard */}
+            <div>
+                <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
+                    Property Analytics
+                </Title>
+                <PropertyDashboard />
+            </div>
+
             {/* Lead Dashboard */}
             <div>
                 <Title as="h3" className="mb-4 text-gray-800 dark:text-white">

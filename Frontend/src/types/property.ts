@@ -138,3 +138,29 @@ export type GetFilteredProperties = {
     pageSize: number,
     extra: string | null,
 }
+
+// Property Dashboard Types
+export type PropertyDashboardData = {
+    totalProperties: number;
+    activeProperties: number;
+    expiredProperties: number;
+    pendingCount: number;
+    approvedCount: number;
+    soldCount: number;
+    rejectedCount: number;
+    archivedCount: number;
+    listedThisWeek: number;
+    totalExpectedAnnualRent: number;
+    totalProjectedResaleValue: number;
+    propertiesWithInvestmentData: number;
+    unitCategoryCounts: {
+        [key: string]: number;
+    };
+}
+
+export type PropertyDashboardResponse = {
+    succeeded: boolean;
+    message: string | null;
+    validationResultModel: string | null;
+    data: PropertyDashboardData;
+}
