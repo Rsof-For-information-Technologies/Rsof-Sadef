@@ -351,7 +351,6 @@ namespace Sadef.Application.Services.PropertyListing
             var oneWeekAgo = now.AddDays(-7);
 
             var total = await query.CountAsync();
-            var active = await query.CountAsync(p => !p.ExpiryDate.HasValue || p.ExpiryDate > now);
             var expired = await query.CountAsync(p => p.ExpiryDate.HasValue && p.ExpiryDate <= now);
 
             var pending = await query.CountAsync(p => p.Status == PropertyStatus.Pending);
@@ -378,13 +377,16 @@ namespace Sadef.Application.Services.PropertyListing
                 .Select(g => new { Category = g.Key.ToString(), Count = g.Count() })
                 .ToDictionaryAsync(g => g.Category ?? "Unknown", g => g.Count);
             var activeProperties = await query
-                .Where(p => p.IsActive.HasValue && p.IsActive.Value)
-                .CountAsync();
+               .Where(p =>
+                   (p.IsActive.HasValue && p.IsActive.Value) &&
+                   (!p.ExpiryDate.HasValue || p.ExpiryDate > now)
+               )
+               .CountAsync();
 
             var dto = new PropertyDashboardStatsDto
             {
                 TotalProperties = total,
-                ActiveProperties = active,
+                ActiveProperties = activeProperties,
                 ExpiredProperties = expired,
                 PendingCount = pending,
                 ApprovedCount = approved,
@@ -395,8 +397,7 @@ namespace Sadef.Application.Services.PropertyListing
                 PropertiesWithInvestmentData = propertiesWithInvestmentData,
                 TotalExpectedAnnualRent = totalRent,
                 TotalProjectedResaleValue = totalResale,
-                UnitCategoryCounts = unitCategoryCounts,
-                activeProperties = activeProperties
+                UnitCategoryCounts = unitCategoryCounts
             };
 
             var options = new DistributedCacheEntryOptions
