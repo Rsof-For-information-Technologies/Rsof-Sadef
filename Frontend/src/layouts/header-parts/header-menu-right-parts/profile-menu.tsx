@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/user.store";
-import { ShadcnAvatar, ShadcnAvatarFallback, ShadcnAvatarImage } from "@/components/shadCn/ui/avatar";
+import { ShadcnAvatar, ShadcnAvatarFallback } from "@/components/shadCn/ui/avatar";
 import { Params } from "@/types/params";
 
 function DropdownMenu() {
@@ -16,7 +16,7 @@ function DropdownMenu() {
 
   return (
     <div className="w-64 text-left rtl:text-right">
-      <div className="flex items-center border-b border-gray-300 px-6 pb-5 pt-6">
+      <div className="flex items-center border-b border-gray-300 px-5 pb-5 pt-6">
         <ShadcnAvatar className="!h-9 w-9 sm:!h-10 sm:!w-10">
           {/* <ShadcnAvatarImage
             src={userInfo?.profileImage
@@ -29,10 +29,11 @@ function DropdownMenu() {
         </ShadcnAvatar>
 
         <Link href={`/${params.locale}${routes.profile}`} className="ms-3">
-          <Title as="h6" className="font-semibold max-w-40 break-words">
+          <Title as="h6" className="font-semibold max-w-42 break-words">
             {userInfo?.firstName + " " + userInfo?.lastName}
           </Title>
-          <Text className="text-gray-600 max-w-40 break-words">{userInfo?.email}</Text>
+          <Text className="text-gray-600 max-w-42 break-words">{userInfo?.email}</Text>
+          <Text className="max-w-max text-center font-semibold border-2 bg-gray-100 border-gray-200 rounded-full px-2 mt-2">{userInfo?.role}</Text>
         </Link>
       </div>
       <div className="border-t border-gray-300 px-6 pb-6 pt-5">

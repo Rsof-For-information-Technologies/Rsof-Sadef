@@ -1,8 +1,30 @@
 import { Title } from "rizzui";
+import LeadDashboard from "./(components)/LeadDashboard";
+import MaintenanceRequestDashboard from "./(components)/MaintenanceRequestDashboard";
 
 const Dashboard = () => {
     return (
-        <Title>Dashboard</Title>
+        <div className="space-y-8">
+            <Title as="h2" className="text-gray-900 dark:text-white">
+                Dashboard
+            </Title>
+            
+            {/* Lead Dashboard */}
+            <div>
+                <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
+                    Lead Analytics
+                </Title>
+                <LeadDashboard />
+            </div>
+
+            {/* Maintenance Request Dashboard */}
+            <div>
+                <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
+                    Maintenance Request Analytics
+                </Title>
+                <MaintenanceRequestDashboard />
+            </div>
+        </div>
     );
 }
 

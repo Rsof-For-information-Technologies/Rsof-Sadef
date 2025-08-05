@@ -30,3 +30,20 @@ export type MaintenenceRequestDetail = {
     validationResultModel: string | null;
 };
 
+// Maintenance Request Dashboard Types
+export type MaintenanceRequestDashboardData = {
+    totalRequests: number;
+    requestsThisMonth: number;
+    pending: number;
+    inProgress: number;
+    resolved: number;
+    rejected: number;
+}
+
+export type MaintenanceRequestDashboardResponse = {
+    succeeded: boolean;
+    message: string | null;
+    validationResultModel: string | null;
+    data: MaintenanceRequestDashboardData;
+}
+

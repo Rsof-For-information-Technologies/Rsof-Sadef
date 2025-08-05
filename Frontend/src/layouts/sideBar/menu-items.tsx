@@ -1,5 +1,5 @@
 import { routes } from '@/config/routes';
-import { FaFolderOpen } from "react-icons/fa";
+import { FaBlog, FaFolderOpen, FaHourglassEnd, FaUser } from "react-icons/fa";
 import { UserRole } from "@/types/userRoles";
 import { User } from "@/types/user";
 import { JSX } from "react";
@@ -34,10 +34,78 @@ export function MenuItems(user: User): MenuItem[] {
         allowedRoles: [UserRole.Admin, UserRole.Investor, UserRole.SuperAdmin, UserRole.Visitor],
       },
       {
-        name: "Orders",
-        href: `/${routes.dashboard}`,
-        icon: <FaFolderOpen />,
-        allowedRoles: [UserRole.Admin],
+        name: "Property",
+        href: `#`,
+        icon: <BsBuilding />,
+        allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+        dropdownItems: [
+          {
+            name: "Property list",
+            href: `${routes.property.list}`,
+            badge: '',
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+          },
+          {
+            name: "Create Property",
+            href: `${routes.property.create}`,
+            badge: '',
+            allowedRoles: [UserRole.Admin],
+          }
+        ]
+      },
+      {
+        name: "Blog",
+        href: `#`,
+        icon: <FaBlog />,
+        allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+        dropdownItems: [
+          {
+            name: "Blog list",
+            href: `${routes.blog.list}`,
+            badge: '',
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+          },
+          {
+            name: "Create Blog",
+            href: `${routes.blog.create}`,
+            badge: '',
+            allowedRoles: [UserRole.Admin],
+          }
+        ]
+      },
+      {
+        name: "Lead",
+        href: `#`,
+        icon: <FaUser />,
+        allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+        dropdownItems: [
+          {
+            name: "Lead list",
+            href: `${routes.lead.list}`,
+            badge: '',
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+          },
+        ]
+      },
+      {
+        name: "Maintenance Request",
+        href: `#`,
+        icon: <FaHourglassEnd />,
+        allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+        dropdownItems: [
+          {
+            name: "Maintenance Request list",
+            href: `${routes.maintenanceRequest.list}`,
+            badge: '',
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+          },
+          {
+            name: "Create Maintenance Request",
+            href: `${routes.maintenanceRequest.create}`,
+            badge: '',
+            allowedRoles: [UserRole.Admin],
+          }
+        ]
       },
       // {
       //   name: "Product List",

@@ -191,6 +191,17 @@ export const deleteMaintenanceRequest = async (id : string | number) => {
   }
 }
 
+export const getMaintenanceRequestDashboard = async () => {
+  const api = apiCall();
+  try {
+    const response = await api.get('/api/v1/maintenancerequest/dashboard-stats');
+    return response.data;
+  } catch (error) {
+    console.error('Get maintenance request dashboard failed:', error);
+    throw error;
+  }
+};
+
 // Property API functions
 
 export const createProperty = async (data: PropertyFormData) => {
@@ -398,6 +409,17 @@ export const LeadUpdateStatus = async (id: number, status: number) => {
     return response.data;
   } catch (error) {
     console.error('Update lead status failed:', error);
+    throw error;
+  }
+};
+
+export const getLeadDashboard = async () => {
+  const api = apiCall();
+  try {
+    const response = await api.get('/api/v1/lead/dashboard');
+    return response.data;
+  } catch (error) {
+    console.error('Get lead dashboard failed:', error);
     throw error;
   }
 };
