@@ -361,11 +361,11 @@ namespace Sadef.Application.Services.PropertyListing
                 .Select(g => new { Category = g.Key.ToString(), Count = g.Count() })
                 .ToDictionaryAsync(g => g.Category ?? "Unknown", g => g.Count);
             var activeProperties = await query
-                .Where(p =>
-                    (p.IsActive.HasValue && p.IsActive.Value) &&
-                    (!p.ExpiryDate.HasValue || p.ExpiryDate > now)
-                )
-                .CountAsync();
+               .Where(p =>
+                   (p.IsActive.HasValue && p.IsActive.Value) &&
+                   (!p.ExpiryDate.HasValue || p.ExpiryDate > now)
+               )
+               .CountAsync();
 
             var dto = new PropertyDashboardStatsDto
             {
