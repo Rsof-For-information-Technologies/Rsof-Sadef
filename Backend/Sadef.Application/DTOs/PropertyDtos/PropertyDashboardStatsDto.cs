@@ -21,8 +21,6 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public decimal? TotalProjectedResaleValue { get; set; }
         public int PropertiesWithInvestmentData { get; set; }
         public Dictionary<string, int> UnitCategoryCounts { get; set; } = new();
-        public int activeProperties { get; set; }
-
     }
 
 }
