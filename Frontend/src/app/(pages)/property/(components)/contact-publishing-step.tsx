@@ -25,10 +25,10 @@ export function ContactPublishingStep({ form }: ContactPublishingStepProps) {
           <Label htmlFor="whatsAppNumber">WhatsApp Number</Label>
           <div className="relative">
             <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input id="whatsAppNumber" {...register("whatsAppNumber")} placeholder="+966 5 1234 5678" className="pl-10" />
+            <Input id="whatsAppNumber" {...register("whatsAppNumber")} placeholder="0511223344" className="pl-10" />
           </div>
           {errors.whatsAppNumber && <p className="text-sm text-red-600">{errors.whatsAppNumber.message}</p>}
-          <p className="text-sm text-gray-500">Include country code (e.g., +966 for SA)</p>
+          <p className="text-sm text-gray-500">Include country code (e.g., 05 for SA)</p>
         </div>
 
         <div className="bg-gray-50 p-4 rounded-lg">

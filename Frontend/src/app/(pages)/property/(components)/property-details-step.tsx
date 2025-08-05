@@ -68,7 +68,7 @@ export function PropertyDetailsStep({ form }: PropertyDetailsStepProps) {
           <RichTextEditor
             value={watch("description") || ""}
             onChange={val => setValue("description", val)}
-            // error={errors.description?.message}
+          // error={errors.description?.message}
           />
           {errors.description && <p className="text-sm text-red-600">{errors.description.message}</p>}
         </div>
@@ -84,23 +84,35 @@ export function PropertyDetailsStep({ form }: PropertyDetailsStepProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="projectedResaleValue">Projected Resale <span className="text-red-600">*</span></Label>
+            <Label htmlFor="projectedResaleValue">Projected Resale</Label>
             <Input
               id="projectedResaleValue"
               type="number"
-              {...register("projectedResaleValue", { valueAsNumber: true })}
+              min="0"
+              {...register("projectedResaleValue", {
+                setValueAs: (value: string) => (value === "" ? undefined : Number(value)),
+                required: "Projected resale value is required",
+                min: { value: 0, message: "Value must be positive" }
+              })}
               placeholder="Enter projected resale value"
             />
+            {errors.projectedResaleValue && <p className="text-sm text-red-600">{errors.projectedResaleValue.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="expectedAnnualRent">Expected Annual Rent <span className="text-red-600">*</span></Label>
+            <Label htmlFor="expectedAnnualRent">Expected Annual Rent</Label>
             <Input
               id="expectedAnnualRent"
               type="number"
-              {...register("expectedAnnualRent", { valueAsNumber: true })}
+              min="0"
+              {...register("expectedAnnualRent", {
+                setValueAs: (value: string) => (value === "" ? undefined : Number(value)),
+                required: "Expected annual rent is required",
+                min: { value: 0, message: "Value must be positive" }
+              })}
               placeholder="Enter expected annual rent"
             />
+            {errors.expectedAnnualRent && <p className="text-sm text-red-600">{errors.expectedAnnualRent.message}</p>}
           </div>
         </div>
 

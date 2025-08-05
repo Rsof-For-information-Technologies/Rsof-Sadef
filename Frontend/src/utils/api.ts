@@ -8,6 +8,7 @@ import { ChangePasswordSchema } from '@/validators/updatePaseword.schema';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { getCookie, removeCookie } from '@/utils/cookieStorage';
+import { convertNumberToLocalFormat } from './convertNumberToLocalFormat';
 
 const apiCall = () => {
   const instance = axios.create({
@@ -269,8 +270,9 @@ export const createProperty = async (data: PropertyFormData) => {
   if (data.latitude !== undefined) formData.append("Latitude", String(data.latitude));
   if (data.longitude !== undefined) formData.append("Longitude", String(data.longitude));
 
+  const phoneNumber = convertNumberToLocalFormat(data.whatsAppNumber || "");
   // Contact & Publishing
-  if (data.whatsAppNumber) formData.append("WhatsAppNumber", data.whatsAppNumber);
+  if (data.whatsAppNumber) formData.append("WhatsAppNumber", phoneNumber);
 
   try {
     const response = await api.post<CreatePropertyResponse>("/api/v1/property/create", formData, {
@@ -342,8 +344,9 @@ export const updateProperty = async (id: string | number, data: PropertyFormData
   if (data.latitude !== undefined) formData.append("Latitude", String(data.latitude))
   if (data.longitude !== undefined) formData.append("Longitude", String(data.longitude))
 
+  const phoneNumber = convertNumberToLocalFormat(data.whatsAppNumber || "");
   // Contact & Publishing
-  if (data.whatsAppNumber) formData.append("WhatsAppNumber", data.whatsAppNumber)
+  if (data.whatsAppNumber) formData.append("WhatsAppNumber", phoneNumber)
 
   try {
     const response = await api.put<CreatePropertyResponse>("/api/v1/property/update", formData, {

@@ -1,50 +1,15 @@
 "use client"
 
-import type { UseFormReturn } from "react-hook-form"
-import { CreatePropertyFormData } from "@/validators/createProperty"
 import { Label } from "@/components/shadCn/ui/label"
-import { Checkbox, Input, Select } from "rizzui"
 import { ShadCnNumberInput } from "@/components/shadCn/ui/numberInput"
+import { propertyOptions, unitsOptions } from "@/constants/constants"
+import { CreatePropertyFormData } from "@/validators/createProperty"
+import type { UseFormReturn } from "react-hook-form"
+import { Checkbox, Input, Select } from "rizzui"
 
 interface BasicInfoStepProps {
   form: UseFormReturn<CreatePropertyFormData>
 }
-
-const propertyOptions = [
-  { label: 'Apartment', value: 0 },
-  { label: 'Villa', value: 1 },
-  { label: 'House', value: 2 },
-  { label: 'Office', value: 3 },
-  { label: 'Shop', value: 4 },
-  { label: 'Plot', value: 5 },
-  { label: 'Warehouse', value: 6 },
-  { label: 'Building', value: 7 },
-  { label: 'Farmhouse', value: 8 },
-  { label: 'Penthouse', value: 9 },
-  { label: 'Studio', value: 10 },
-  { label: 'Commercial', value: 11 },
-  { label: 'Industrial', value: 12 },
-  { label: 'MixedUse', value: 13 },
-  { label: 'Hotel', value: 14 },
-  { label: 'Mall', value: 15 },
-];
-
-
-const unitsOptions = [
-  { label: "Residential Apartment", value: 0 },
-  { label: "Rooftop Unit", value: 1 },
-  { label: "Duplex", value: 2 },
-  { label: "Studio", value: 3 },
-  { label: "Penthouse", value: 4 },
-  { label: "Ground Floor Unit", value: 5 },
-  { label: "Loft", value: 6 },
-  { label: "Commercial Suite", value: 7 },
-  { label: "Executive Office", value: 8 },
-  { label: "Retail Shop", value: 9 },
-  { label: "Warehouse Unit", value: 10 },
-  { label: "Hotel Room", value: 11 },
-  { label: "Shared Unit", value: 12 },
-];
 
 export function BasicInfoStep({ form }: BasicInfoStepProps) {
   const {
@@ -133,7 +98,16 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="areaSize">Area Size (sq ft) <span className="text-red-600">*</span></Label>
-            <Input id="areaSize" min={0} type="number" {...register("areaSize", { valueAsNumber: true })} placeholder="Enter area size" />
+            <Input
+              id="areaSize"
+              min={1}
+              type="number"
+              {...register("areaSize", {
+                valueAsNumber: true,
+                setValueAs: v => v === "" ? undefined : parseFloat(v)
+              })}
+              placeholder="Enter area size"
+            />
             {errors.areaSize && <p className="text-sm text-red-600">{errors.areaSize.message}</p>}
           </div>
           <div className="space-y-2">
@@ -145,7 +119,7 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
               min={0}
               max={10}
               decimalScale={0}
-              value={watch("bedrooms")}
+              value={watch("bedrooms") ?? undefined}
               onValueChange={(value) => {
                 setValue("bedrooms", value || 0, { shouldValidate: true });
               }}
@@ -164,9 +138,9 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
               min={0}
               max={10}
               decimalScale={1}
-              value={watch("bathrooms")}
+              value={watch("bathrooms") ?? undefined}
               onValueChange={(value) => {
-                setValue("bathrooms", value || 0, { shouldValidate: true });
+                setValue("bathrooms", value ?? 0, { shouldValidate: true });
               }}
               stepper={0.5}
               thousandSeparator=""
@@ -184,14 +158,26 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="totalFloors">Total Floors</Label>
-            <Input id="totalFloors" type="number" {...register("totalFloors", { valueAsNumber: true })} placeholder="Total Floors" />
+            <ShadCnNumberInput
+              className="px-[14px] py-[8px] border-0"
+              id="totalFloors"
+              placeholder="Total Floors"
+              min={1}
+              decimalScale={0}
+              value={watch("totalFloors") ?? undefined}
+              onValueChange={(value) => {
+                setValue("totalFloors", value ?? undefined, { shouldValidate: true });
+              }}
+              stepper={1}
+            />
           </div>
 
           <div className="flex items-center space-x-2 pt-8">
             <Checkbox
-              checked={watch("isInvestorOnly")}
+              id="isInvestorOnly"
+              {...register("isInvestorOnly")}
+              checked={watch("isInvestorOnly") || false}
               label="Investor Only Property"
-              onChange={(checked) => setValue("isInvestorOnly", checked as unknown as boolean)}
             />
           </div>
         </div>

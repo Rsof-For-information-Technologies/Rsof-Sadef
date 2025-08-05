@@ -5,6 +5,7 @@ import type React from "react"
 import type { UseFormReturn } from "react-hook-form"
 import { Upload, X, ImageIcon, Video } from "lucide-react"
 import { useRef, useState } from "react"
+import { toast } from "sonner"
 import { CreatePropertyFormData } from "@/validators/createProperty"
 import { Label } from "@/components/shadCn/ui/label"
 import { Button } from "rizzui"
@@ -14,22 +15,86 @@ interface PropertyMediaStepProps {
 }
 
 export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
-  const { setValue, watch } = form
+  const { setValue, watch, formState: { errors } } = form
   const [images, setImages] = useState<File[]>(watch("images") || [])
   const [videos, setVideos] = useState<File[]>(watch("videos") || [])
   const imageInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
 
+  const validateImage = (file: File): boolean => {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!validTypes.includes(file.type)) {
+      toast.error(`File ${file.name} must be JPG, JPEG, PNG, or HEIC format`);
+      setValue('images', [], {
+        shouldValidate: true,
+        shouldDirty: true
+      });
+      return false;
+    }
+
+    if (file.size > maxSize) {
+      toast.error(`File ${file.name} must be less than 5MB`);
+      setValue('images', [], {
+        shouldValidate: true,
+        shouldDirty: true
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  const validateVideo = (file: File): boolean => {
+    const validTypes = ['video/mp4', 'video/quicktime', 'video/mov'];
+    const maxSize = 50 * 1024 * 1024; // 50MB
+
+    if (!validTypes.includes(file.type)) {
+      toast.error(`File ${file.name} must be MP4, MOV, or QuickTime format`);
+      setValue('videos', [], {
+        shouldValidate: true,
+        shouldDirty: true
+      });
+      return false;
+    }
+
+    if (file.size > maxSize) {
+      toast.error(`File ${file.name} must be less than 50MB`);
+      setValue('videos', [], {
+        shouldValidate: true,
+        shouldDirty: true
+      });
+      return false;
+    }
+
+    return true;
+  }
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || [])
-    const updatedImages = [...images, ...files]
+
+    if (images.length + files.length > 10) {
+      toast.error('Maximum 10 images allowed');
+      return;
+    }
+
+    const validFiles = files.filter(validateImage)
+    const updatedImages = [...images, ...validFiles]
     setImages(updatedImages)
     setValue("images", updatedImages)
   }
 
   const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || [])
-    const updatedVideos = [...videos, ...files]
+
+    if (videos.length + files.length > 3) {
+      toast.error('Maximum 3 videos allowed');
+      return;
+    }
+
+    const validFiles = files.filter(validateVideo)
+    const updatedVideos = [...videos, ...validFiles]
     setVideos(updatedVideos)
     setValue("videos", updatedVideos)
   }
@@ -119,6 +184,9 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
               <p className="text-sm text-gray-400">Click "Upload Images" to add property photos</p>
             </div>
           )}
+          {errors.images && (
+            <p className="text-sm text-red-600">{errors.images.message}</p>
+          )}
         </div>
 
         {/* Videos Section */}
@@ -176,6 +244,9 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
               <p className="text-gray-500">No videos uploaded yet</p>
               <p className="text-sm text-gray-400">Click "Upload Videos" to add property videos</p>
             </div>
+          )}
+          {errors.videos && (
+            <p className="text-sm text-red-600">{errors.videos.message}</p>
           )}
         </div>
       </div>
