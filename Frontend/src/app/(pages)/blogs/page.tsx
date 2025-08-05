@@ -4,6 +4,9 @@ import { GetBlogs } from "@/types/blog";
 import { getAllBlogs } from "@/utils/api";
 import { Metadata } from "next";
 import NavigateCreateBlog from "./(components)/navigateCreateBlog";
+import Authenticate from "@/components/auth/authenticate";
+import Authorize from "@/components/auth/authorize";
+import { UserRole } from "@/types/userRoles";
 
 export const metadata: Metadata = {
   title: "blogs",
@@ -27,26 +30,28 @@ async function getBlogs(searchParams: SearchParams) {
 export default async function SearchTablePage() {
   const blogs = await getBlogs({ pageNumber: 1, pageSize: 10 });
   return (
-    <>
-      <div className="flex justify-between items-center py-6">
-        <div>
-          <h1 className="mb-4 text-2xl font-semibold">Blog List Page</h1>
-          <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+    <Authenticate >
+      <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
+        <div className="flex justify-between items-center py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">Blog List Page</h1>
+            <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+          </div>
+          <div>
+            <NavigateCreateBlog/>
+          </div>
         </div>
-        <div>
-          <NavigateCreateBlog/>
-        </div>
-      </div>
-      <BasicTableWidget
-        title="Search Table"
-        variant="minimal"
-        data={blogs.data.items}
-        // @ts-ignore
-        getColumns={getBlogColumns}
-        enablePagination
-        searchPlaceholder="Search order..."
-        className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
-      />
-    </>
+        <BasicTableWidget
+          title="Search Table"
+          variant="minimal"
+          data={blogs.data.items}
+          // @ts-ignore
+          getColumns={getBlogColumns}
+          enablePagination
+          searchPlaceholder="Search order..."
+          className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
+        />
+      </Authorize>
+    </Authenticate>
   );
 }

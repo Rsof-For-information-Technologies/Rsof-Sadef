@@ -9,6 +9,9 @@ import { BlogForm, blogSchema } from "@/validators/createBlog";
 import RichTextEditor from "@/components/textEditor/rich-text-editor";
 import BlogPreview from "../blogPreview";
 import { BlogFormData } from "@/types/blog";
+import { UserRole } from "@/types/userRoles";
+import Authenticate from "@/components/auth/authenticate";
+import Authorize from "@/components/auth/authorize";
 
 
 const initialValues = {
@@ -69,97 +72,99 @@ function CreateBlog() {
   };
 
   return (
-    <>
-      <div className="mt-2 mb-6">
-        <h2>Create Blog</h2>
-      </div>
-      {error && (
-        <div className="flex justify-center w-full">
-          <div
-            role="alert"
-            className="flex items-center max-w-lg w-full justify-center gap-3 bg-red-100 border border-red-500 text-red-500 pb-2 px-4 py-2 rounded-md font-medium text-center shadow-sm mb-2"
-          >
-            <svg
-              className="w-5 h-5 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 8v4m0 4h.01"
-              />
-            </svg>
-            <span>{error}</span>
-          </div>
+    <Authenticate >
+      <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
+        <div className="mt-2 mb-6">
+          <h2>Create Blog</h2>
         </div>
-      )}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-3">
-              <Input
-                type="text"
-                label="Title"
-                id="title"
-                placeholder="Enter blog title"
-                className="font-medium"
-                inputClassName="text-sm"
-                error={errors.title?.message}
-                {...register("title")}
-              />
-              <RichTextEditor
-                label="Content"
-                id="content"
-                placeholder="Enter blog content"
-                error={errors.content?.message}
-                value={formValues.content}
-                onChange={(content) => setValue("content", content)}
-              />
-              <FileInput
-                label="Cover Image"
-                variant="outline"
-                accept="image/*"
-                onChange={handleImageChange}
+        {error && (
+          <div className="flex justify-center w-full">
+            <div
+              role="alert"
+              className="flex items-center max-w-lg w-full justify-center gap-3 bg-red-100 border border-red-500 text-red-500 pb-2 px-4 py-2 rounded-md font-medium text-center shadow-sm mb-2"
+            >
+              <svg
+                className="w-5 h-5 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4m0 4h.01"
+                />
+              </svg>
+              <span>{error}</span>
+            </div>
+          </div>
+        )}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-3">
+                <Input
+                  type="text"
+                  label="Title"
+                  id="title"
+                  placeholder="Enter blog title"
+                  className="font-medium"
+                  inputClassName="text-sm"
+                  error={errors.title?.message}
+                  {...register("title")}
+                />
+                <RichTextEditor
+                  label="Content"
+                  id="content"
+                  placeholder="Enter blog content"
+                  error={errors.content?.message}
+                  value={formValues.content}
+                  onChange={(content) => setValue("content", content)}
+                />
+                <FileInput
+                  label="Cover Image"
+                  variant="outline"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </div>
+
+              <BlogPreview
+                title={formValues.title}
+                content={formValues.content}
+                coverImage={formValues.coverImage}
+                previewImage={previewImage}
+                isPublished={formValues.isPublished}
               />
             </div>
-
-            <BlogPreview
-              title={formValues.title}
-              content={formValues.content}
-              coverImage={formValues.coverImage}
-              previewImage={previewImage}
-              isPublished={formValues.isPublished}
+            <Checkbox
+              className="m-2"
+              label="Publish"
+              size="sm"
+              error={errors.isPublished?.message}
+              {...register("isPublished")}
             />
+            <Button
+              className="bg-[#4675db] hover:bg-[#1d58d8] dark:hover:bg-[#1d58d8] dark:text-white"
+              type="submit"
+              size="md"
+              disabled={isSubmitting}
+            >
+              <span>Create Blog</span>
+            </Button>
           </div>
-          <Checkbox
-            className="m-2"
-            label="Publish"
-            size="sm"
-            error={errors.isPublished?.message}
-            {...register("isPublished")}
-          />
-          <Button
-            className="bg-[#4675db] hover:bg-[#1d58d8] dark:hover:bg-[#1d58d8] dark:text-white"
-            type="submit"
-            size="md"
-            disabled={isSubmitting}
-          >
-            <span>Create Blog</span>
-          </Button>
-        </div>
-      </form>
-    </>
+        </form>
+      </Authorize>
+    </Authenticate>
   );
 }
 
