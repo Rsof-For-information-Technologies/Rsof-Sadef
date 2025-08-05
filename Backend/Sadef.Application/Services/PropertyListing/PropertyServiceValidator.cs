@@ -119,9 +119,9 @@ namespace Sadef.Application.Services.PropertyListing
                .WithMessage(localizer["Property_MaxImages", 10]);
 
             RuleForEach(x => x.Images)
-                .Must(i => i.Length <= 5 * 1024 * 1024) // 5MB
+                .Must(i => i.Length <= 2 * 1024 * 1024) // 2MB
                 .When(x => x.Images != null && x.Images.Any())
-                .WithMessage(localizer["Property_ImageMaxSizeMB", 5])
+                .WithMessage(localizer["Property_ImageMaxSizeMB", 2])
                 .Must(i => i.ContentType.StartsWith("image/"))
                 .WithMessage(localizer["Property_ImageInvalidType"]);
 
