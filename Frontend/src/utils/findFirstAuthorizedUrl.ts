@@ -14,7 +14,7 @@ export const findFirstAuthorizedUrl = () => {
             return routes.dashboard;
 
         case UserRole.Admin:
-            return routes.blog.list;
+            return routes.dashboard;
 
         case UserRole.Investor:
             return routes.dashboard;

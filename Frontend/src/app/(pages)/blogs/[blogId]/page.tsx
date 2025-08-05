@@ -2,6 +2,9 @@ import React from "react";
 import BlogPreview from "../blogPreview";
 import { getBlogById } from "@/utils/api";
 import { notFound } from "next/navigation";
+import Authenticate from "@/components/auth/authenticate";
+import Authorize from "@/components/auth/authorize";
+import { UserRole } from "@/types/userRoles";
 
 async function DetailsBlog({ params }: { params: { blogId: string } }) {
   try {
@@ -22,23 +25,25 @@ async function DetailsBlog({ params }: { params: { blogId: string } }) {
     };
 
     return (
-      <>
-        <div className="py-4 text-center">
-          <h1 className="mb-4 text-2xl font-semibold">Blog Details</h1>
-          <p className="mb-6 text-gray-600"> This page displays the details of a specific blog post. </p>
-        </div>
-        <div className="space-y-6">
-          <div className="flex max-w-[800px] mx-auto">
-            <BlogPreview
-              title={blogData.title}
-              content={blogData.content}
-              coverImage={blogData.coverImage}
-              previewImage={previewImage}
-              isPublished={blogData.isPublished}
-            />
+      <Authenticate >
+        <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
+          <div className="py-4 text-center">
+            <h1 className="mb-4 text-2xl font-semibold">Blog Details</h1>
+            <p className="mb-6 text-gray-600"> This page displays the details of a specific blog post. </p>
           </div>
-        </div>
-      </>
+          <div className="space-y-6">
+            <div className="flex max-w-[800px] mx-auto">
+              <BlogPreview
+                title={blogData.title}
+                content={blogData.content}
+                coverImage={blogData.coverImage}
+                previewImage={previewImage}
+                isPublished={blogData.isPublished}
+              />
+            </div>
+          </div>
+        </Authorize>
+      </Authenticate>
     );
   } catch (error) {
     throw new Error("Failed to load blog data");

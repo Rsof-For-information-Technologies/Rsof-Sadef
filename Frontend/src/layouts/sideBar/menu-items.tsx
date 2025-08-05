@@ -70,7 +70,7 @@ export function MenuItems(user: User): MenuItem[] {
             name: "Create Blog",
             href: `${routes.blog.create}`,
             badge: '',
-            allowedRoles: [UserRole.Admin],
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           }
         ]
       },
@@ -95,13 +95,13 @@ export function MenuItems(user: User): MenuItem[] {
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
         dropdownItems: [
           {
-            name: "Maintenance Request list",
+            name: "Maintenance List",
             href: `${routes.maintenanceRequest.list}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           },
           {
-            name: "Create Maintenance Request",
+            name: "Create Request",
             href: `${routes.maintenanceRequest.create}`,
             badge: '',
             allowedRoles: [UserRole.Admin],

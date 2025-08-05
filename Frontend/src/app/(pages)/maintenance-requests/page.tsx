@@ -4,6 +4,9 @@ import { getAllMaintenanceRequests } from "@/utils/api";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import NavigateCreateRequest from "./(components)/navigateCreateRequest.tsx";
+import { UserRole } from "@/types/userRoles";
+import Authenticate from "@/components/auth/authenticate";
+import Authorize from "@/components/auth/authorize";
 
 export const metadata: Metadata = {
   title: "Maintenance Request",
@@ -29,26 +32,28 @@ export default async function SearchTablePage() {
   const activemaintenanceRequest = maintenanceRequest.data.items.filter((item) => item.isActive) || [];
 
   return (
-    <>
-      <div className="flex justify-between items-center py-6">
-        <div>
-          <h1 className="mb-4 text-2xl font-semibold">Maintenance Request List Page</h1>
-          <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+    <Authenticate >
+      <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
+        <div className="flex justify-between items-center py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">Maintenance Request List Page</h1>
+            <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+          </div>
+          <div>
+            <NavigateCreateRequest/>
+          </div>
         </div>
-        <div>
-          <NavigateCreateRequest/>
-        </div>
-      </div>
-      <BasicTableWidget
-        title="Search Table"
-        variant="minimal"
-        data={activemaintenanceRequest}
-        // @ts-ignore
-        getColumns={getMaintenanceRequestColumns}
-        enablePagination
-        searchPlaceholder="Search order..."
-        className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
-      />
-    </>
+        <BasicTableWidget
+          title="Search Table"
+          variant="minimal"
+          data={activemaintenanceRequest}
+          // @ts-ignore
+          getColumns={getMaintenanceRequestColumns}
+          enablePagination
+          searchPlaceholder="Search order..."
+          className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
+        />
+      </Authorize>
+    </Authenticate>
   );
 }

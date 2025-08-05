@@ -103,7 +103,7 @@ export default function CreatePropertyPage() {
 
   return (
     <Authenticate>
-      <Authorize allowedRoles={[UserRole.Admin, UserRole.SuperAdmin]} navigate={true}>
+      <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
         <div className="container">
           <div className="py-4 text-center">
             <h1 className="mb-4 text-2xl font-semibold">Create New Property</h1>
