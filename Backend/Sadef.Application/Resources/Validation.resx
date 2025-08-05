@@ -195,4 +195,13 @@
   <data name="Blog_SlugInvalid" xml:space="preserve">
     <value>Slug must be URL-friendly (lowercase letters, numbers, and dashes only).</value>
   </data>
+  <data name="Property_MaxImages" xml:space="preserve">
+    <value>A maximum of {0} images are allowed.</value>
+  </data>
+  <data name="Property_ImageMaxSizeMB" xml:space="preserve">
+    <value>Each image must be smaller than {0} MB.</value>
+  </data>
+  <data name="Property_ImageInvalidType" xml:space="preserve">
+    <value>Only image files are allowed (e.g., jpg, jpeg, png, webp).</value>
+  </data>
 </root> 
