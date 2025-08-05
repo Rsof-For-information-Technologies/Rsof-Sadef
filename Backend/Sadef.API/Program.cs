@@ -31,6 +31,7 @@ using Sadef.Common.RestTemplate;
 using Sadef.Common.RestTemplate.Db;
 using Sadef.Infrastructure.DBContext;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -293,5 +294,11 @@ if (locOptions != null)
     app.UseRequestLocalization(locOptions);
 }
 app.UseCors("AllowFrontend");
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(@"E:\Media\Sadef\uploads"),
+    RequestPath = "/uploads"
+});
 app.UseCustomTemplate();
 app.Run();

@@ -5,7 +5,7 @@ namespace Sadef.Application.Utils
     public static class FileUploadHelper
     {
         public static async Task<List<(string Url, string ContentType)>> SaveFilesAsync(
-            IEnumerable<IFormFile> files, string uploadRoot, string filePrefix, string virtualPathBase = "")
+        IEnumerable<IFormFile> files, string uploadRoot, string filePrefix, string virtualPathBase = "")
         {
             var savedFiles = new List<(string Url, string ContentType)>();
             Directory.CreateDirectory(uploadRoot);
@@ -20,7 +20,7 @@ namespace Sadef.Application.Utils
                 await file.CopyToAsync(stream);
 
                 var virtualPath = Path.Combine(virtualPathBase, fileName).Replace("\\", "/");
-                savedFiles.Add(($"/{virtualPath.TrimStart('/')}", file.ContentType));
+                savedFiles.Add(($"{virtualPath.TrimStart('/')}", file.ContentType));
             }
 
             return savedFiles;
