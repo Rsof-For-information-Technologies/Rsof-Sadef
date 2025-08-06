@@ -9,7 +9,8 @@ namespace Sadef.Application.Services.PropertyListing
         public CreatePropertyValidator(IStringLocalizer localizer)
         {
             RuleFor(x => x.Price)
-                .GreaterThan(0).WithMessage(localizer["Property_PriceGreaterThanZero"]);
+                .GreaterThan(0).WithMessage(localizer["Property_PriceGreaterThanZero"])
+                .Must(price => price > 0).WithMessage(localizer["Property_PriceGreaterThanZero"]);
 
             RuleFor(x => x.City)
                 .NotEmpty().WithMessage(localizer["Property_CityRequired"]);
@@ -18,7 +19,8 @@ namespace Sadef.Application.Services.PropertyListing
                 .NotEmpty().WithMessage(localizer["Property_LocationRequired"]);
 
             RuleFor(x => x.AreaSize)
-                .GreaterThan(0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"]);
+                .GreaterThan(0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"])
+                .Must(areaSize => areaSize > 0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"]);
 
             RuleFor(x => x.Bedrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bedrooms.HasValue)
@@ -27,6 +29,22 @@ namespace Sadef.Application.Services.PropertyListing
             RuleFor(x => x.Bathrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bathrooms.HasValue)
                 .WithMessage(localizer["Property_BathroomsZeroOrMore"]);
+
+            RuleFor(x => x.ProjectedResaleValue)
+                .GreaterThan(0).When(x => x.ProjectedResaleValue.HasValue)
+                .WithMessage(localizer["Property_ProjectedResaleValueGreaterThanZero"]);
+
+            RuleFor(x => x.ExpectedAnnualRent)
+                .GreaterThan(0).When(x => x.ExpectedAnnualRent.HasValue)
+                .WithMessage(localizer["Property_ExpectedAnnualRentGreaterThanZero"]);
+
+            RuleFor(x => x.Latitude)
+                .InclusiveBetween(-90, 90).When(x => x.Latitude.HasValue)
+                .WithMessage(localizer["Property_LatitudeRange"]);
+
+            RuleFor(x => x.Longitude)
+                .InclusiveBetween(-180, 180).When(x => x.Longitude.HasValue)
+                .WithMessage(localizer["Property_LongitudeRange"]);
 
             RuleFor(x => x.Videos)
                 .Must(v => v == null || v.Count <= 3)
@@ -61,13 +79,15 @@ namespace Sadef.Application.Services.PropertyListing
                 .GreaterThan(0).WithMessage(localizer["Property_InvalidId"]);
 
             RuleFor(x => x.Price)
-                .GreaterThan(0).WithMessage(localizer["Property_PriceGreaterThanZero"]);
+                .GreaterThan(0).WithMessage(localizer["Property_PriceGreaterThanZero"])
+                .Must(price => price > 0).WithMessage(localizer["Property_PriceGreaterThanZero"]);
 
             RuleFor(x => x.Location)
                 .NotEmpty().WithMessage(localizer["Property_LocationRequired"]);
 
             RuleFor(x => x.AreaSize)
-                .GreaterThan(0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"]);
+                .GreaterThan(0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"])
+                .Must(areaSize => areaSize > 0).WithMessage(localizer["Property_AreaSizeGreaterThanZero"]);
 
             RuleFor(x => x.Bedrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bedrooms.HasValue)
@@ -76,6 +96,22 @@ namespace Sadef.Application.Services.PropertyListing
             RuleFor(x => x.Bathrooms)
                 .GreaterThanOrEqualTo(0).When(x => x.Bathrooms.HasValue)
                 .WithMessage(localizer["Property_BathroomsZeroOrMore"]);
+
+            RuleFor(x => x.ProjectedResaleValue)
+                .GreaterThan(0).When(x => x.ProjectedResaleValue.HasValue)
+                .WithMessage(localizer["Property_ProjectedResaleValueGreaterThanZero"]);
+
+            RuleFor(x => x.ExpectedAnnualRent)
+                .GreaterThan(0).When(x => x.ExpectedAnnualRent.HasValue)
+                .WithMessage(localizer["Property_ExpectedAnnualRentGreaterThanZero"]);
+
+            RuleFor(x => x.Latitude)
+                .InclusiveBetween(-90, 90).When(x => x.Latitude.HasValue)
+                .WithMessage(localizer["Property_LatitudeRange"]);
+
+            RuleFor(x => x.Longitude)
+                .InclusiveBetween(-180, 180).When(x => x.Longitude.HasValue)
+                .WithMessage(localizer["Property_LongitudeRange"]);
 
             RuleFor(x => x.Videos)
                  .Must(v => v == null || v.Count <= 3)
