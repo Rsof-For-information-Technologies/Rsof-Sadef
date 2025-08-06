@@ -63,6 +63,18 @@
   <data name="Property_DashboardLoadedFromCache" xml:space="preserve">
     <value>Dashboard stats loaded (from cache).</value>
   </data>
+  <data name="Property_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>At least one translation is required.</value>
+  </data>
+  <data name="Property_TitleRequiredForLanguage" xml:space="preserve">
+    <value>Title is required for language '{0}'.</value>
+  </data>
+  <data name="Property_DescriptionRequiredForLanguage" xml:space="preserve">
+    <value>Description is required for language '{0}'.</value>
+  </data>
+  <data name="Property_InvalidLanguageCode" xml:space="preserve">
+    <value>Invalid language code '{0}'. Only 'en' and 'ar' are supported.</value>
+  </data>
   <data name="Lead_Created" xml:space="preserve">
     <value>Inquiry submitted successfully.</value>
   </data>

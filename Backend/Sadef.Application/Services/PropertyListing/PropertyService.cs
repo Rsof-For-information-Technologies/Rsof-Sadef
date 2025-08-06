@@ -34,6 +34,9 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly SadefDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEnumLocalizationService _enumLocalizationService;
+        private const string PROPERTY_CACHE_PREFIX = "property";
+        private const string PROPERTY_DASHBOARD_CACHE_KEY = "property:dashboard:stats";
+        private const int CACHE_DURATION_MINUTES = 10;
 
         public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService)
         {
@@ -59,7 +62,7 @@ namespace Sadef.Application.Services.PropertyListing
                 return new Response<PropertyDto>(errorMessage);
             }
 
-            // Handle translations from form-data JSON string
+            // Parse translations JSON if provided
             if (!string.IsNullOrEmpty(dto.TranslationsJson))
             {
                 try
@@ -75,15 +78,24 @@ namespace Sadef.Application.Services.PropertyListing
                     return new Response<PropertyDto>($"Invalid translations JSON format: {ex.Message}. Received: {dto.TranslationsJson}");
                 }
             }
-            // Validate that translations are provided
+
+            // Validate that at least one translation is provided
             if (dto.Translations == null || !dto.Translations.Any())
             {
-                return new Response<PropertyDto>("At least one translation is required");
+                return new Response<PropertyDto>(_localizer["Property_AtLeastOneTranslationRequired"]);
+            }
+
+            // Validate translation content
+            var translationValidation = ValidateTranslations(dto.Translations);
+            if (!translationValidation.IsValid)
+            {
+                return new Response<PropertyDto>(translationValidation.ErrorMessage);
             }
 
             var property = _mapper.Map<Property>(dto);
             property.Images = new List<PropertyImage>();
 
+            // Handle image uploads
             if (dto.Images != null)
             {
                 foreach (var file in dto.Images)
@@ -98,6 +110,8 @@ namespace Sadef.Application.Services.PropertyListing
                     property.Images.Add(image);
                 }
             }
+
+            // Handle video uploads
             property.Videos = new List<PropertyVideo>();
             if (dto.Videos != null)
             {
@@ -114,20 +128,18 @@ namespace Sadef.Application.Services.PropertyListing
                 }
             }
 
-            // Set ContentLanguage based on available translations
+            // Determine content language based on available translations
             property.ContentLanguage = DetermineContentLanguage(dto.Translations);
 
-            // Save property using the same context as translations
             _context.Properties.Add(property);
             await _context.SaveChangesAsync();
 
-            // Handle multilingual translations
+            // Save translations
             await SavePropertyTranslationsInternalAsync(property.Id, dto.Translations);
 
-            // Clear all language-specific caches for properties
-            await _cache.RemoveAsync("property:page=1&size=10&lang=en");
-            await _cache.RemoveAsync("property:page=1&size=10&lang=ar");
-            
+            // Clear relevant caches
+            await ClearPropertyCaches();
+
             var createdDto = _mapper.Map<PropertyDto>(property);
             createdDto.ImageBase64Strings = property.Images?
                 .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
@@ -136,27 +148,32 @@ namespace Sadef.Application.Services.PropertyListing
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
             
-            // Apply localization to the created DTO
             var currentLanguage = GetCurrentLanguage();
-            // For now, let's force English to test
-            await ApplyLocalizationToDtoAsync(createdDto, property.Id, "en");
+            await ApplyLocalizationToDtoAsync(createdDto, property.Id, currentLanguage);
             
             return new Response<PropertyDto>(createdDto, _localizer["Property_Created"]);
         }
 
-
         public async Task<Response<PaginatedResponse<PropertyDto>>> GetAllPropertiesAsync(PaginationRequest request)
         {
             var currentLanguage = GetCurrentLanguage();
-            string cacheKey = $"property:page={request.PageNumber}&size={request.PageSize}&lang={currentLanguage}";
+            string cacheKey = $"{PROPERTY_CACHE_PREFIX}:page={request.PageNumber}&size={request.PageSize}&lang={currentLanguage}";
+            
+            // Try to get from cache first
             var cached = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cached))
             {
                 var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
                 return new Response<PaginatedResponse<PropertyDto>>(cachedResult, _localizer["Property_ListedFromCache"]);
             }
+
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
-            var query = queryRepo.Queryable().Include(p => p.Images).Include(p => p.Videos);
+            
+            // Optimize query with eager loading for translations
+            var query = queryRepo.Queryable()
+                .Include(p => p.Images)
+                .Include(p => p.Videos)
+                .Include(p => p.Translations); // Include translations for better performance
 
             var totalCount = await query.CountAsync();
             var items = await query.Where(p => !p.ExpiryDate.HasValue || p.ExpiryDate > DateTime.UtcNow)
@@ -165,7 +182,9 @@ namespace Sadef.Application.Services.PropertyListing
                 .Take(request.PageSize)
                 .ToListAsync();
 
-            var result = items.Select(async p =>
+            // Process items with optimized localization
+            var resultList = new List<PropertyDto>();
+            foreach (var p in items)
             {
                 var dto = _mapper.Map<PropertyDto>(p);
                 dto.ImageBase64Strings = p.Images?.Select(img =>
@@ -176,27 +195,20 @@ namespace Sadef.Application.Services.PropertyListing
                 // Apply localization to DTO
                 await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
                 
-                                 // Set localized enum values as strings
-                 dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
-                 dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
-                 dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
+                // Set localized enum values
+                dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
+                dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
+                dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
                 
-                return dto;
-            }).ToList();
-
-            // Wait for all async operations to complete
-            var resultList = new List<PropertyDto>();
-            foreach (var task in result)
-            {
-                resultList.Add(await task);
+                resultList.Add(dto);
             }
 
             var paged = new PaginatedResponse<PropertyDto>(resultList, totalCount, request.PageNumber, request.PageSize);
 
-            // cache for 10 minutes
+            // Cache for specified duration
             var cacheOptions = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CACHE_DURATION_MINUTES)
             };
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), cacheOptions);
 
@@ -210,6 +222,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .Queryable()
                 .Include(p => p.Images!)
                 .Include(p => p.Videos)
+                .Include(p => p.Translations) // Include translations for better performance
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
@@ -225,10 +238,10 @@ namespace Sadef.Application.Services.PropertyListing
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(dto, property.Id, currentLanguage);
 
-                         // Set localized enum values as strings
-             dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(property.PropertyType, currentLanguage);
-             dto.UnitCategory = property.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(property.UnitCategory.Value, currentLanguage) : null;
-             dto.Status = _enumLocalizationService.GetLocalizedEnumValue(property.Status, currentLanguage);
+            // Set localized enum values
+            dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(property.PropertyType, currentLanguage);
+            dto.UnitCategory = property.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(property.UnitCategory.Value, currentLanguage) : null;
+            dto.Status = _enumLocalizationService.GetLocalizedEnumValue(property.Status, currentLanguage);
 
             return new Response<PropertyDto>(dto, _localizer["Property_Found"]);
         }
@@ -243,14 +256,15 @@ namespace Sadef.Application.Services.PropertyListing
 
             if (property == null)
                 return new Response<string>(_localizer["Property_NotFound"]);
+            
             property.IsActive = false; // Soft delete
-
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            
             // Clear all language-specific caches for properties
-            await _cache.RemoveAsync("property:page=1&size=10&lang=en");
-            await _cache.RemoveAsync("property:page=1&size=10&lang=ar");
+            await ClearPropertyCaches();
+            
             return new Response<string>(_localizer["Property_Deleted"]);
         }
 
@@ -279,6 +293,7 @@ namespace Sadef.Application.Services.PropertyListing
                     return new Response<PropertyDto>($"Invalid translations JSON format: {ex.Message}. Received: {dto.TranslationsJson}");
                 }
             }
+
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
             var existing = await queryRepo
                 .Queryable()
@@ -290,6 +305,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             _mapper.Map(dto, existing);
 
+            // Handle image uploads
             if (dto.Images != null && dto.Images.Any())
             {
                 existing.Images = new List<PropertyImage>();
@@ -305,6 +321,8 @@ namespace Sadef.Application.Services.PropertyListing
                     existing.Images.Add(image);
                 }
             }
+
+            // Handle video uploads
             existing.Videos = new List<PropertyVideo>();
             if (dto.Videos != null)
             {
@@ -331,13 +349,22 @@ namespace Sadef.Application.Services.PropertyListing
             }
 
             // Clear all language-specific caches for properties
-            await _cache.RemoveAsync("property:page=1&size=10&lang=en");
-            await _cache.RemoveAsync("property:page=1&size=10&lang=ar");
+            await ClearPropertyCaches();
+            
             var updatedDto = _mapper.Map<PropertyDto>(existing);
             updatedDto.ImageBase64Strings = existing.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
             updatedDto.VideoUrls = existing.Videos?
                 .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
                 .ToList() ?? new();
+
+            // Apply localization to DTO
+            var currentLanguage = GetCurrentLanguage();
+            await ApplyLocalizationToDtoAsync(updatedDto, existing.Id, currentLanguage);
+
+            // Set localized enum values
+            updatedDto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(existing.PropertyType, currentLanguage);
+            updatedDto.UnitCategory = existing.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(existing.UnitCategory.Value, currentLanguage) : null;
+            updatedDto.Status = _enumLocalizationService.GetLocalizedEnumValue(existing.Status, currentLanguage);
 
             return new Response<PropertyDto>(updatedDto, _localizer["Property_Updated"]);
         }
@@ -374,15 +401,17 @@ namespace Sadef.Application.Services.PropertyListing
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var updatedDto = _mapper.Map<PropertyDto>(property);
+            
             // Clear all language-specific caches for properties
-            await _cache.RemoveAsync("property:page=1&size=10&lang=en");
-            await _cache.RemoveAsync("property:page=1&size=10&lang=ar");
+            await ClearPropertyCaches();
+            
             return new Response<PropertyDto>(updatedDto, string.Format(_localizer["Property_StatusUpdated"], currentStatus, property.Status));
         }
 
         public async Task<Response<PaginatedResponse<PropertyDto>>> GetFilteredPropertiesAsync(PropertyFilterRequest request)
         {
-            string cacheKey = $"property:page={request.PageNumber}&size={request.PageSize}&city={request.City}&type={request.PropertyType}&status={request.Status}&min={request.MinPrice}&max={request.MaxPrice}";
+            var currentLanguage = GetCurrentLanguage();
+            string cacheKey = $"{PROPERTY_CACHE_PREFIX}:filtered:page={request.PageNumber}&size={request.PageSize}&city={request.City}&type={request.PropertyType}&status={request.Status}&min={request.MinPrice}&max={request.MaxPrice}&lang={currentLanguage}";
 
             var cached = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cached))
@@ -394,6 +423,7 @@ namespace Sadef.Application.Services.PropertyListing
             var query = _queryRepositoryFactory.QueryRepository<Property>()
                 .Queryable()
                 .Include(p => p.Images)
+                .Include(p => p.Translations) // Include translations for better performance
                 .AsQueryable()
                 .ApplyFilters(request);
 
@@ -405,23 +435,34 @@ namespace Sadef.Application.Services.PropertyListing
                 .Take(request.PageSize)
                 .ToListAsync();
 
-            var result = items.Select(p =>
+            var result = new List<PropertyDto>();
+            foreach (var p in items)
             {
                 var dto = _mapper.Map<PropertyDto>(p);
                 dto.ImageBase64Strings = p.Images?.Select(img =>
                     $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
-               return dto;
-            }).ToList();
+                
+                // Apply localization
+                await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
+                
+                // Set localized enum values
+                dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
+                dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
+                dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
+                
+                result.Add(dto);
+            }
 
             var paged = new PaginatedResponse<PropertyDto>(result, total, request.PageNumber, request.PageSize);
 
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CACHE_DURATION_MINUTES)
             });
 
             return new Response<PaginatedResponse<PropertyDto>>(paged, _localizer["Property_Filtered"]);
         }
+
         public async Task<Response<PropertyDto>> UpdateExpiryAsync(PropertyExpiryUpdateDto dto)
         {
             var validationResult = await _expireValidator.ValidateAsync(dto);
@@ -430,6 +471,7 @@ namespace Sadef.Application.Services.PropertyListing
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<PropertyDto>(errorMessage);
             }
+            
             var repo = _uow.RepositoryAsync<Property>();
             var property = await _queryRepositoryFactory.QueryRepository<Property>()
                 .Queryable()
@@ -441,21 +483,24 @@ namespace Sadef.Application.Services.PropertyListing
             property.ExpiryDate = dto.ExpiryDate;
             await repo.UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            
             // Clear all language-specific caches for properties
-            await _cache.RemoveAsync("property:page=1&size=10&lang=en");
-            await _cache.RemoveAsync("property:page=1&size=10&lang=ar");
+            await ClearPropertyCaches();
+            
             var result = _mapper.Map<PropertyDto>(property);
             return new Response<PropertyDto>(result, string.Format(_localizer["Property_ExpirySet"], dto.ExpiryDate.ToString("yyyy-MM-dd")));
         }
+
         public async Task<Response<PropertyDashboardStatsDto>> GetPropertyDashboardStatsAsync()
         {
-            string cacheKey = "property:dashboard:stats";
+            string cacheKey = PROPERTY_DASHBOARD_CACHE_KEY;
             var cached = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cached))
             {
                 var dtoData = JsonConvert.DeserializeObject<PropertyDashboardStatsDto>(cached);
                 return new Response<PropertyDashboardStatsDto>(dtoData, _localizer["Property_DashboardLoadedFromCache"]);
             }
+            
             var query = _queryRepositoryFactory.QueryRepository<Property>().Queryable();
 
             var now = DateTime.UtcNow;
@@ -488,6 +533,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .GroupBy(p => p.UnitCategory)
                 .Select(g => new { Category = g.Key.ToString(), Count = g.Count() })
                 .ToDictionaryAsync(g => g.Category ?? "Unknown", g => g.Count);
+            
             var activeProperties = await query
                 .Where(p => p.IsActive.HasValue && p.IsActive.Value)
                 .CountAsync();
@@ -528,7 +574,7 @@ namespace Sadef.Application.Services.PropertyListing
                 var languageCode = translation.Key;
                 var translationDto = translation.Value;
         
-                // Debug: Check if translationDto has content
+                // Validate translation content
                 if (string.IsNullOrEmpty(translationDto.Title))
                 {
                     throw new Exception($"Translation for language '{languageCode}' has empty Title. PropertyId: {propertyId}");
@@ -574,9 +620,6 @@ namespace Sadef.Application.Services.PropertyListing
             await _context.SaveChangesAsync();
         }
         
-        // Removed ApplyLocalizationAsync method as it's no longer needed
-        // We now use ApplyLocalizationToDtoAsync instead
-
         private string GetCurrentLanguage()
         {
             try
@@ -616,7 +659,6 @@ namespace Sadef.Application.Services.PropertyListing
             return "en"; // Default to English
         }
 
-        // New helper methods for the restructured approach
         private ContentLanguage DetermineContentLanguage(Dictionary<string, PropertyTranslationDto> translations)
         {
             if (translations.ContainsKey("en") && translations.ContainsKey("ar"))
@@ -627,11 +669,11 @@ namespace Sadef.Application.Services.PropertyListing
                 return ContentLanguage.English;
         }
 
-        private async Task ApplyLocalizationToDtoAsync(PropertyDto dto, int propertyId, string languageCode = "en")
+        private async Task ApplyLocalizationToDtoAsync(PropertyDto dto, int propertyId, string languageCode)
         {
             if (_context == null) return;
 
-            // Debug: Check if translations exist for this property
+            // Get all translations for this property in a single query
             var allTranslations = await _context.PropertyTranslations
                 .Where(t => t.PropertyId == propertyId)
                 .ToListAsync();
@@ -642,32 +684,15 @@ namespace Sadef.Application.Services.PropertyListing
             if (translation != null)
             {
                 // Apply translation to DTO
-                dto.Title = translation.Title;
-                dto.Description = translation.Description;
-                dto.UnitName = translation.UnitName;
-                dto.WarrantyInfo = translation.WarrantyInfo;
-                dto.MetaTitle = translation.MetaTitle;
-                dto.MetaDescription = translation.MetaDescription;
-                dto.MetaKeywords = translation.MetaKeywords;
-                dto.Slug = translation.Slug;
-                dto.CanonicalUrl = translation.CanonicalUrl;
+                ApplyTranslationToDto(dto, translation);
             }
             else if (languageCode != "en")
             {
                 // Fallback to English if requested language not found
                 var englishTranslation = allTranslations.FirstOrDefault(t => t.LanguageCode == "en");
-
                 if (englishTranslation != null)
                 {
-                    dto.Title = englishTranslation.Title;
-                    dto.Description = englishTranslation.Description;
-                    dto.UnitName = englishTranslation.UnitName;
-                    dto.WarrantyInfo = englishTranslation.WarrantyInfo;
-                    dto.MetaTitle = englishTranslation.MetaTitle;
-                    dto.MetaDescription = englishTranslation.MetaDescription;
-                    dto.MetaKeywords = englishTranslation.MetaKeywords;
-                    dto.Slug = englishTranslation.Slug;
-                    dto.CanonicalUrl = englishTranslation.CanonicalUrl;
+                    ApplyTranslationToDto(dto, englishTranslation);
                 }
             }
             else
@@ -675,46 +700,72 @@ namespace Sadef.Application.Services.PropertyListing
                 // If no translation found for the requested language and it's not English,
                 // try to get any available translation
                 var anyTranslation = allTranslations.FirstOrDefault();
-
                 if (anyTranslation != null)
                 {
-                    dto.Title = anyTranslation.Title;
-                    dto.Description = anyTranslation.Description;
-                    dto.UnitName = anyTranslation.UnitName;
-                    dto.WarrantyInfo = anyTranslation.WarrantyInfo;
-                    dto.MetaTitle = anyTranslation.MetaTitle;
-                    dto.MetaDescription = anyTranslation.MetaDescription;
-                    dto.MetaKeywords = anyTranslation.MetaKeywords;
-                    dto.Slug = anyTranslation.Slug;
-                    dto.CanonicalUrl = anyTranslation.CanonicalUrl;
+                    ApplyTranslationToDto(dto, anyTranslation);
                 }
             }
         }
 
-        // Multilingual method implementations
-        public async Task<Response<PropertyDto>> GetMultilingualPropertyByIdAsync(int id, string languageCode)
+        private void ApplyTranslationToDto(PropertyDto dto, PropertyTranslation translation)
         {
-            // This method will be implemented later when we integrate the multilingual service
-            throw new NotImplementedException("Multilingual functionality not yet implemented in PropertyService");
+            dto.Title = translation.Title;
+            dto.Description = translation.Description;
+            dto.UnitName = translation.UnitName;
+            dto.WarrantyInfo = translation.WarrantyInfo;
+            dto.MetaTitle = translation.MetaTitle;
+            dto.MetaDescription = translation.MetaDescription;
+            dto.MetaKeywords = translation.MetaKeywords;
+            dto.Slug = translation.Slug;
+            dto.CanonicalUrl = translation.CanonicalUrl;
         }
 
-        public async Task<Response<PaginatedResponse<PropertyDto>>> GetLocalizedPropertiesAsync(PaginationRequest request, string languageCode)
+        private (bool IsValid, string ErrorMessage) ValidateTranslations(Dictionary<string, PropertyTranslationDto> translations)
         {
-            // This method will be implemented later when we integrate the multilingual service
-            throw new NotImplementedException("Multilingual functionality not yet implemented in PropertyService");
-        }
-
-        public async Task<Response<bool>> SavePropertyTranslationsAsync(int propertyId, Dictionary<string, PropertyTranslationDto> translations)
-        {
-            try
+            if (translations == null || !translations.Any())
             {
-                await SavePropertyTranslationsInternalAsync(propertyId, translations);
-                return new Response<bool>(true, "Translations saved successfully");
+                return (false, _localizer["Property_AtLeastOneTranslationRequired"]);
             }
-            catch (Exception ex)
+
+            foreach (var translation in translations)
             {
-                return new Response<bool>($"Error saving translations: {ex.Message}");
+                var languageCode = translation.Key;
+                var translationDto = translation.Value;
+
+                if (string.IsNullOrWhiteSpace(translationDto.Title))
+                {
+                    return (false, _localizer["Property_TitleRequiredForLanguage", languageCode]);
+                }
+
+                if (string.IsNullOrWhiteSpace(translationDto.Description))
+                {
+                    return (false, _localizer["Property_DescriptionRequiredForLanguage", languageCode]);
+                }
+
+                // Validate language code
+                if (languageCode != "en" && languageCode != "ar")
+                {
+                    return (false, _localizer["Property_InvalidLanguageCode", languageCode]);
+                }
+            }
+
+            return (true, string.Empty);
+        }
+
+        private async Task ClearPropertyCaches()
+        {
+            // Clear all language-specific caches for properties
+            var cacheKeys = new[]
+            {
+                $"{PROPERTY_CACHE_PREFIX}:page=1&size=10&lang=en",
+                $"{PROPERTY_CACHE_PREFIX}:page=1&size=10&lang=ar"
+            };
+
+            foreach (var key in cacheKeys)
+            {
+                await _cache.RemoveAsync(key);
             }
         }
     }
 }
+
