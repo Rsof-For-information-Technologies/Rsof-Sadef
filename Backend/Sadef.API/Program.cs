@@ -256,10 +256,9 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var updateValidator = provider.GetRequiredService<IValidator<UpdateContactDto>>();
                        var updateStatusValidator = provider.GetRequiredService<IValidator<UpdateContactStatusDto>>();
                        var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
-                       var cache = provider.GetRequiredService<IDistributedCache>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-                       return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, cache, localizerFactory, contextAccessor);
+                       return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, localizerFactory, contextAccessor);
                    });
                    
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();

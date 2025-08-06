@@ -2,7 +2,6 @@ using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.ContactDtos;
@@ -25,7 +24,6 @@ namespace Sadef.Application.Services.Contact
         private readonly IValidator<UpdateContactDto> _updateContactValidator;
         private readonly IValidator<UpdateContactStatusDto> _updateContactStatusValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
-        private readonly IDistributedCache _cache;
         private readonly IStringLocalizer _localizer;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -36,7 +34,6 @@ namespace Sadef.Application.Services.Contact
             IValidator<UpdateContactDto> updateContactValidator,
             IValidator<UpdateContactStatusDto> updateContactStatusValidator,
             IQueryRepositoryFactory queryRepositoryFactory,
-            IDistributedCache cache,
             IStringLocalizerFactory localizerFactory,
             IHttpContextAccessor httpContextAccessor)
         {
@@ -46,7 +43,6 @@ namespace Sadef.Application.Services.Contact
             _updateContactValidator = updateContactValidator;
             _updateContactStatusValidator = updateContactStatusValidator;
             _queryRepositoryFactory = queryRepositoryFactory;
-            _cache = cache;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
             _httpContextAccessor = httpContextAccessor;
         }
@@ -71,8 +67,6 @@ namespace Sadef.Application.Services.Contact
                     return new Response<ContactDto>(_localizer["Contact_InvalidPropertyReference"]);
             }
 
-
-
             var contact = _mapper.Map<Sadef.Domain.ContactEntity.Contact>(dto);
             contact.Status = ContactStatus.New;
             contact.CreatedAt = DateTime.UtcNow;
@@ -80,41 +74,11 @@ namespace Sadef.Application.Services.Contact
             await _uow.RepositoryAsync<Sadef.Domain.ContactEntity.Contact>().AddAsync(contact);
             await _uow.SaveChangesAsync(CancellationToken.None);
 
-            // Invalidate cache
-            await _cache.RemoveAsync("contact:dashboard:stats");
-
             var responseDto = _mapper.Map<ContactDto>(contact);
             return new Response<ContactDto>(responseDto, _localizer["Contact_Created"]);
         }
 
         public async Task<Response<PaginatedResponse<ContactDto>>> GetPaginatedAsync(int pageNumber, int pageSize, ContactFilterDto filters, bool isExport)
-        {
-            if (isExport)
-            {
-                return await GetFreshPaginatedContactsAsync(pageNumber, pageSize, filters, true);
-            }
-
-            var cacheKey = $"contacts:page:{pageNumber}:size:{pageSize}:filters:{System.Text.Json.JsonSerializer.Serialize(filters)}";
-            var cached = await _cache.GetStringAsync(cacheKey);
-            if (cached != null)
-            {
-                var result = System.Text.Json.JsonSerializer.Deserialize<PaginatedResponse<ContactDto>>(cached);
-                return new Response<PaginatedResponse<ContactDto>>(result);
-            }
-
-            var freshResult = await GetFreshPaginatedContactsAsync(pageNumber, pageSize, filters, false);
-            if (freshResult.Succeeded)
-            {
-                await _cache.SetStringAsync(cacheKey, System.Text.Json.JsonSerializer.Serialize(freshResult.Data), new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
-                });
-            }
-
-            return freshResult;
-        }
-
-        private async Task<Response<PaginatedResponse<ContactDto>>> GetFreshPaginatedContactsAsync(int pageNumber, int pageSize, ContactFilterDto filters, bool isExport)
         {
             var queryRepo = _queryRepositoryFactory.QueryRepository<Sadef.Domain.ContactEntity.Contact>();
             var query = queryRepo.Queryable()
@@ -165,11 +129,8 @@ namespace Sadef.Application.Services.Contact
             if (filters.PropertyId.HasValue)
                 query = query.Where(x => x.PropertyId == filters.PropertyId.Value);
 
-
-
             if (filters.IsUrgent.HasValue)
                 query = query.Where(x => x.IsUrgent == filters.IsUrgent.Value);
-
 
             if (filters.CreatedAtFrom.HasValue)
                 query = query.Where(x => x.CreatedAt >= filters.CreatedAtFrom.Value);
@@ -233,8 +194,6 @@ namespace Sadef.Application.Services.Contact
             if (dto.PropertyId.HasValue)
                 contact.PropertyId = dto.PropertyId.Value;
 
-
-
             if (dto.PreferredContactMethod != null)
                 contact.PreferredContactMethod = dto.PreferredContactMethod;
 
@@ -256,9 +215,6 @@ namespace Sadef.Application.Services.Contact
             contact.UpdatedAt = DateTime.UtcNow;
 
             await _uow.SaveChangesAsync(CancellationToken.None);
-
-            // Invalidate cache
-            await _cache.RemoveAsync("contact:dashboard:stats");
 
             var contactDto = _mapper.Map<ContactDto>(contact);
             return new Response<ContactDto>(contactDto, _localizer["Contact_Updated"]);
@@ -283,23 +239,12 @@ namespace Sadef.Application.Services.Contact
 
             await _uow.SaveChangesAsync(CancellationToken.None);
 
-            // Invalidate cache
-            await _cache.RemoveAsync("contact:dashboard:stats");
-
             var contactDto = _mapper.Map<ContactDto>(contact);
             return new Response<ContactDto>(contactDto, _localizer["Contact_StatusUpdated"]);
         }
 
         public async Task<Response<ContactDashboardStatsDto>> GetContactDashboardStatsAsync()
         {
-            var cacheKey = "contact:dashboard:stats";
-            var cached = await _cache.GetStringAsync(cacheKey);
-            if (cached != null)
-            {
-                var result = System.Text.Json.JsonSerializer.Deserialize<ContactDashboardStatsDto>(cached);
-                return new Response<ContactDashboardStatsDto>(result);
-            }
-
             var queryRepo = _queryRepositoryFactory.QueryRepository<Sadef.Domain.ContactEntity.Contact>();
             var query = queryRepo.Queryable();
 
@@ -334,7 +279,6 @@ namespace Sadef.Application.Services.Contact
                 stats.ContactsByStatus[item.Status] = item.Count;
             }
 
-
             // Get recent contacts
             var recentContacts = await query
                 .Include(c => c.Property)
@@ -344,15 +288,8 @@ namespace Sadef.Application.Services.Contact
 
             stats.RecentContacts = _mapper.Map<List<ContactDto>>(recentContacts);
 
-            await _cache.SetStringAsync(cacheKey, System.Text.Json.JsonSerializer.Serialize(stats), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });
-
             return new Response<ContactDashboardStatsDto>(stats);
         }
-
-
 
         public async Task<Response<List<ContactDto>>> GetContactsByPropertyAsync(int propertyId)
         {
@@ -376,9 +313,6 @@ namespace Sadef.Application.Services.Contact
 
             await _uow.RepositoryAsync<Sadef.Domain.ContactEntity.Contact>().DeleteAsync(contact);
             await _uow.SaveChangesAsync(CancellationToken.None);
-
-            // Invalidate cache
-            await _cache.RemoveAsync("contact:dashboard:stats");
 
             return new Response<string>(_localizer["Contact_Deleted"]);
         }
