@@ -63,6 +63,18 @@
   <data name="Property_DashboardLoadedFromCache" xml:space="preserve">
     <value>تم تحميل إحصائيات لوحة المعلومات (من الكاش).</value>
   </data>
+  <data name="Property_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>مطلوب ترجمة واحدة على الأقل.</value>
+  </data>
+  <data name="Property_TitleRequiredForLanguage" xml:space="preserve">
+    <value>العنوان مطلوب للغة '{0}'.</value>
+  </data>
+  <data name="Property_DescriptionRequiredForLanguage" xml:space="preserve">
+    <value>الوصف مطلوب للغة '{0}'.</value>
+  </data>
+  <data name="Property_InvalidLanguageCode" xml:space="preserve">
+    <value>رمز اللغة '{0}' غير صالح. يدعم فقط 'en' و 'ar'.</value>
+  </data>
   <data name="Lead_Created" xml:space="preserve">
     <value>تم إرسال الاستفسار بنجاح.</value>
   </data>

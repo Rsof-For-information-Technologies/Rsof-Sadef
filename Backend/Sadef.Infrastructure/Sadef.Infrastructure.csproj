@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sadef.Common\Sadef.Common.csproj" />
     <ProjectReference Include="..\Sadef.Domain\Sadef.Domain.csproj" />
   </ItemGroup>
 

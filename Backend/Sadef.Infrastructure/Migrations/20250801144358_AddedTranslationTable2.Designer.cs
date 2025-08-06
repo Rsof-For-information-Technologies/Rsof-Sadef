@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sadef.Infrastructure.DBContext;
 
@@ -11,9 +12,11 @@ using Sadef.Infrastructure.DBContext;
 namespace Sadef.Infrastructure.Migrations
 {
     [DbContext(typeof(SadefDbContext))]
-    partial class SadefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250801144358_AddedTranslationTable2")]
+    partial class AddedTranslationTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -628,16 +631,20 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<int?>("Bedrooms")
                         .HasColumnType("int");
 
-                    b.Property<int?>("City")
-                        .HasColumnType("int");
+                    b.Property<string>("CanonicalUrl")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ContentLanguage")
-                        .HasColumnType("int");
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("ExpectedAnnualRent")
@@ -668,6 +675,15 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
+                    b.Property<string>("MetaDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKeywords")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -677,8 +693,15 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<int>("PropertyType")
                         .HasColumnType("int");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TotalFloors")
                         .HasColumnType("int");
@@ -686,10 +709,16 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<int?>("UnitCategory")
                         .HasColumnType("int");
 
+                    b.Property<string>("UnitName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WarrantyInfo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WhatsAppNumber")

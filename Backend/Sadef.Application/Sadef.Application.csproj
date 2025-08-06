@@ -12,6 +12,14 @@
 		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.14.0" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\Sadef.Common\Sadef.Common.csproj" />
+	  <ProjectReference Include="..\Sadef.Domain\Sadef.Domain.csproj" />
 	  <ProjectReference Include="..\Sadef.Infrastructure\Sadef.Infrastructure.csproj" />
+	</ItemGroup>
+	<PropertyGroup>
+		<EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+	</PropertyGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\*.resx" />
 	</ItemGroup>
 </Project>
