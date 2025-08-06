@@ -1,49 +1,80 @@
 using Microsoft.AspNetCore.Mvc;
 using Sadef.Domain.Constants;
+using Sadef.Application.Services.Multilingual;
+using Sadef.Common.Infrastructure.Wrappers;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Sadef.API.Controllers
 {
     public class StaticDataController : ApiBaseController
     {
-        [HttpGet("property-statuses")]
-        public IActionResult GetPropertyStatuses()
+        private readonly IEnumLocalizationService _enumLocalizationService;
+
+        public StaticDataController(IEnumLocalizationService enumLocalizationService)
         {
-            var list = Enum.GetValues(typeof(PropertyStatus))
-                .Cast<PropertyStatus>()
-                .Select(x => new { value = (int)x, name = x.ToString() })
-                .ToList();
-            return Ok(list);
+            _enumLocalizationService = enumLocalizationService;
+        }
+
+        [HttpGet("property-statuses")]
+        public ActionResult<Response<List<EnumLocalizationDto>>> GetPropertyStatuses()
+        {
+            var languageCode = GetCurrentLanguage();
+            var propertyStatuses = _enumLocalizationService.GetAllLocalizedEnumValues<PropertyStatus>(languageCode);
+            return Ok(new Response<List<EnumLocalizationDto>>(propertyStatuses, "Property statuses retrieved successfully"));
         }
 
         [HttpGet("property-types")]
-        public IActionResult GetPropertyTypes()
+        public ActionResult<Response<List<EnumLocalizationDto>>> GetPropertyTypes()
         {
-            var list = Enum.GetValues(typeof(PropertyType))
-                .Cast<PropertyType>()
-                .Select(x => new { value = (int)x, name = x.ToString() })
-                .ToList();
-            return Ok(list);
+            var languageCode = GetCurrentLanguage();
+            var propertyTypes = _enumLocalizationService.GetAllLocalizedEnumValues<PropertyType>(languageCode);
+            return Ok(new Response<List<EnumLocalizationDto>>(propertyTypes, "Property types retrieved successfully"));
         }
 
         [HttpGet("unit-categories")]
-        public IActionResult GetUnitCategories()
+        public ActionResult<Response<List<EnumLocalizationDto>>> GetUnitCategories()
         {
-            var list = Enum.GetValues(typeof(UnitCategory))
-                .Cast<UnitCategory>()
-                .Select(x => new { value = (int)x, name = x.ToString() })
-                .ToList();
-            return Ok(list);
+            var languageCode = GetCurrentLanguage();
+            var unitCategories = _enumLocalizationService.GetAllLocalizedEnumValues<UnitCategory>(languageCode);
+            return Ok(new Response<List<EnumLocalizationDto>>(unitCategories, "Unit categories retrieved successfully"));
         }
 
         [HttpGet("features")]
-        public IActionResult GetFeatures()
+        public ActionResult<Response<List<EnumLocalizationDto>>> GetFeatures()
         {
-            var features = Enum.GetValues(typeof(FeatureList))
-                .Cast<FeatureList>()
-                .Select(x => new { value = (int)x, name = x.ToString() }).ToList();
-            return Ok(features);
+            var languageCode = GetCurrentLanguage();
+            var features = _enumLocalizationService.GetAllLocalizedEnumValues<FeatureList>(languageCode);
+            return Ok(new Response<List<EnumLocalizationDto>>(features, "Features retrieved successfully"));
+        }
+
+        [HttpGet("cities")]
+        public ActionResult<Response<List<EnumLocalizationDto>>> GetCities()
+        {
+            var languageCode = GetCurrentLanguage();
+            var cities = _enumLocalizationService.GetAllLocalizedEnumValues<City>(languageCode);
+            return Ok(new Response<List<EnumLocalizationDto>>(cities, "Cities retrieved successfully"));
+        }
+
+        private string GetCurrentLanguage()
+        {
+            var acceptLanguage = Request.Headers["Accept-Language"].FirstOrDefault();
+            
+            if (!string.IsNullOrEmpty(acceptLanguage))
+            {
+                var languages = acceptLanguage.Split(',')
+                    .Select(lang => lang.Trim().Split(';')[0].ToLower())
+                    .ToList();
+                
+                if (languages.Any(lang => lang.StartsWith("ar")))
+                    return "ar";
+                
+                if (languages.Any(lang => lang.StartsWith("en")))
+                    return "en";
+            }
+            
+            return "en"; // Default to English
         }
     }
 } 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sadef.Infrastructure.DBContext;
 
@@ -11,9 +12,11 @@ using Sadef.Infrastructure.DBContext;
 namespace Sadef.Infrastructure.Migrations
 {
     [DbContext(typeof(SadefDbContext))]
-    partial class SadefDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250801101723_AddedTranslationTable")]
+    partial class AddedTranslationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -341,6 +344,63 @@ namespace Sadef.Infrastructure.Migrations
                     b.ToTable("Blogs", (string)null);
                 });
 
+            modelBuilder.Entity("Sadef.Domain.BlogsEntity.BlogTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlogId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CanonicalUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKeywords")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogId");
+
+                    b.ToTable("BlogTranslations", (string)null);
+                });
+
             modelBuilder.Entity("Sadef.Domain.ContactEntity.Contact", b =>
                 {
                     b.Property<int>("Id")
@@ -479,9 +539,9 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<byte[]>("ImageData")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("MaintenanceRequestId")
                         .HasColumnType("int");
@@ -539,6 +599,47 @@ namespace Sadef.Infrastructure.Migrations
                     b.ToTable("MaintenanceRequests", (string)null);
                 });
 
+            modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequestTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdminResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaintenanceRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaintenanceRequestId");
+
+                    b.ToTable("MaintenanceRequestTranslations", (string)null);
+                });
+
             modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceVideo", b =>
                 {
                     b.Property<int>("Id")
@@ -566,9 +667,9 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VideoUrl")
+                    b.Property<byte[]>("VideoData")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
 
@@ -628,16 +729,20 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<int?>("Bedrooms")
                         .HasColumnType("int");
 
-                    b.Property<int?>("City")
-                        .HasColumnType("int");
+                    b.Property<string>("CanonicalUrl")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ContentLanguage")
-                        .HasColumnType("int");
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("ExpectedAnnualRent")
@@ -668,6 +773,15 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
+                    b.Property<string>("MetaDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKeywords")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -677,8 +791,15 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<int>("PropertyType")
                         .HasColumnType("int");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TotalFloors")
                         .HasColumnType("int");
@@ -686,10 +807,16 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<int?>("UnitCategory")
                         .HasColumnType("int");
 
+                    b.Property<string>("UnitName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WarrantyInfo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WhatsAppNumber")
@@ -718,9 +845,9 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<byte[]>("ImageData")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("PropertyId")
                         .HasColumnType("int");
@@ -828,9 +955,9 @@ namespace Sadef.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VideoUrl")
+                    b.Property<byte[]>("VideoData")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
 
@@ -1014,6 +1141,17 @@ namespace Sadef.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sadef.Domain.BlogsEntity.BlogTranslation", b =>
+                {
+                    b.HasOne("Sadef.Domain.BlogsEntity.Blog", "Blog")
+                        .WithMany("Translations")
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+                });
+
             modelBuilder.Entity("Sadef.Domain.ContactEntity.Contact", b =>
                 {
                     b.HasOne("Sadef.Domain.PropertyEntity.Property", "Property")
@@ -1036,6 +1174,17 @@ namespace Sadef.Infrastructure.Migrations
                 {
                     b.HasOne("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequest", "MaintenanceRequest")
                         .WithMany("Images")
+                        .HasForeignKey("MaintenanceRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MaintenanceRequest");
+                });
+
+            modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequestTranslation", b =>
+                {
+                    b.HasOne("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequest", "MaintenanceRequest")
+                        .WithMany("Translations")
                         .HasForeignKey("MaintenanceRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1107,9 +1256,16 @@ namespace Sadef.Infrastructure.Migrations
                     b.Navigation("UserInfo");
                 });
 
+            modelBuilder.Entity("Sadef.Domain.BlogsEntity.Blog", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
             modelBuilder.Entity("Sadef.Domain.MaintenanceRequestEntity.MaintenanceRequest", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("Translations");
 
                     b.Navigation("Videos");
                 });

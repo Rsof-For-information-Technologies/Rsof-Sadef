@@ -24,6 +24,8 @@ using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
 using Sadef.Application.Services.Whatsapp;
 using Sadef.Application.Services.Contact;
+using Sadef.Application.Services.Multilingual;
+using Sadef.Application.Services.PropertyListing;
 using Sadef.Common.Domain;
 using Sadef.Common.EFCore.Middleware;
 using Sadef.Common.Infrastructure.EfCore.Db;
@@ -33,10 +35,14 @@ using Sadef.Infrastructure.DBContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using Sadef.Common.Infrastructure.EFCore.Identity;
+using Sadef.Common.Infrastructure.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+// Add HTTP context accessor
+builder.Services.AddHttpContextAccessor();
 
 // Configure supported cultures
 var supportedCultures = new[] { "en", "ar" };
@@ -176,19 +182,22 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizer = factory.Create("Validation", typeof(UpdateBlogValidator).Assembly.GetName().Name);
                        return new UpdateBlogValidator(localizer);
                    });
-                   svc.AddScoped<IPropertyService>(provider =>
-                   {
-                       var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
-                       var mapper = provider.GetRequiredService<IMapper>();
-                       var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
-                       var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
-                       var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
-                       var cache = provider.GetRequiredService<IDistributedCache>();
-                       var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
-                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       var configuration = provider.GetRequiredService<IConfiguration>();
-                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, configuration);
-                   });
+                                       svc.AddScoped<IPropertyService>(provider =>
+                    {
+                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+                        var mapper = provider.GetRequiredService<IMapper>();
+                        var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+                        var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
+                        var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
+                        var cache = provider.GetRequiredService<IDistributedCache>();
+                        var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
+                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                        var context = provider.GetRequiredService<SadefDbContext>();
+                        var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                        var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
+                        var configuration = provider.GetRequiredService<IConfiguration>();
+                        return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration);
+                    });
                    svc.AddScoped<IBlogService>(provider =>
                    {
                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
@@ -251,19 +260,20 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var updateValidator = provider.GetRequiredService<IValidator<UpdateContactDto>>();
                        var updateStatusValidator = provider.GetRequiredService<IValidator<UpdateContactStatusDto>>();
                        var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
-                       var cache = provider.GetRequiredService<IDistributedCache>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-                       return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, cache, localizerFactory, contextAccessor);
+                       return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, localizerFactory, contextAccessor);
                    });
                    
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
+                   
+                    svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
                    svc.AddCors(options =>
                    {
                        options.AddPolicy("AllowFrontend", policy =>
                        {
-                           policy.WithOrigins("http://localhost:5173", "https://highly-welcomed-gecko.ngrok-free.app", "https://rsof-dev.com", "https://lemon.rsof-dev.com", "https://lemon-rsoffed1-rsofs-projects.vercel.app", "https://lemon-tawny.vercel.app", "https://lemon-rsofs-projects.vercel.app", "https://lemon-pharmacy.vercel.app", "https://stellular-marigold-36ab45.netlify.app", "https://insync-rsof.web.app", "https://lucid-motors-poc.vercel.app")
+                           policy.WithOrigins("https://highly-welcomed-gecko.ngrok-free.app", "https://rsof-dev.com", "https://lemon.rsof-dev.com", "https://lemon-rsoffed1-rsofs-projects.vercel.app", "https://lemon-tawny.vercel.app", "https://lemon-rsofs-projects.vercel.app", "http://localhost:3010", "http://localhost:3001", "http://localhost:3000", "https://sadef-property.vercel.app", "http://localhost:3020", "http://localhost:5173", "https://lemon-tawny.vercel.app", "https://lemon-rsofs-projects.vercel.app", "https://lemon-pharmacy.vercel.app", "https://stellular-marigold-36ab45.netlify.app", "https://insync-rsof.web.app", "https://lucid-motors-poc.vercel.app")
                                  .AllowAnyHeader()
                                  .AllowAnyMethod()
                                  .AllowCredentials();
@@ -293,6 +303,7 @@ if (locOptions != null)
 {
     app.UseRequestLocalization(locOptions);
 }
+
 app.UseCors("AllowFrontend");
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions

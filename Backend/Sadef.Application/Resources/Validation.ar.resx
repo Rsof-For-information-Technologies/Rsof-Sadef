@@ -195,13 +195,34 @@
   <data name="Blog_SlugInvalid" xml:space="preserve">
     <value>يجب أن يكون السلاق مناسبًا للرابط (أحرف صغيرة، أرقام، وشرطات فقط).</value>
   </data>
+  <data name="Property_ProjectedResaleValueGreaterThanZero" xml:space="preserve">
+    <value>يجب أن تكون القيمة المتوقعة لإعادة البيع أكبر من صفر.</value>
+  </data>
+  <data name="Property_ExpectedAnnualRentGreaterThanZero" xml:space="preserve">
+    <value>يجب أن يكون الإيجار السنوي المتوقع أكبر من صفر.</value>
+  </data>
+  <data name="Property_LatitudeRange" xml:space="preserve">
+    <value>يجب أن تكون خط العرض بين -90 و 90 درجة.</value>
+  </data>
+  <data name="Property_LongitudeRange" xml:space="preserve">
+    <value>يجب أن يكون خط الطول بين -180 و 180 درجة.</value>
+  </data>
+  <data name="Property_TranslationsRequired" xml:space="preserve">
+    <value>مطلوب ترجمة واحدة على الأقل.</value>
+  </data>
+  <data name="Property_LanguageCodeRequired" xml:space="preserve">
+    <value>رمز اللغة مطلوب.</value>
+  </data>
+  <data name="Property_InvalidLanguageCode" xml:space="preserve">
+    <value>رمز اللغة غير صالح. يدعم فقط 'en' و 'ar'.</value>
+  </data>
   <data name="Property_MaxImages" xml:space="preserve">
     <value>يُسمح بحد أقصى {0} من الصور.</value>
   </data>
-  <data name="Property_ImageMaxSizeMB" xml:space="preserve">
+	<data name="Property_ImageMaxSizeMB" xml:space="preserve">
     <value>يجب ألا يتجاوز حجم كل صورة {0} ميجابايت.</value>
   </data>
-  <data name="Property_ImageInvalidType" xml:space="preserve">
+	<data name="Property_ImageInvalidType" xml:space="preserve">
     <value>يُسمح فقط بملفات الصور (مثل: jpg، jpeg، png، webp).</value>
   </data>
 </root> 

@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <ProjectReference Include="..\Sadef.Common\Sadef.Common.csproj" />
+	  <ProjectReference Include="..\Sadef.Domain\Sadef.Domain.csproj" />
+	  <ProjectReference Include="..\Sadef.Infrastructure\Sadef.Infrastructure.csproj" />
 	  <ProjectReference Include="..\Sadef.Application\Sadef.Application.csproj" />
 	</ItemGroup>
 

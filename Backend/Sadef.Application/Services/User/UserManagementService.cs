@@ -293,19 +293,19 @@ namespace Sadef.Application.Services.User
 
             return new Response<List<UserResultDTO>>(userDtos);
         }
-
-        public async Task<Response<bool>> UpdateUserAsync(UpdateUserDto request)
+        public async Task<Response<UserResultDTO>> UpdateUserAsync(UpdateUserDto request)
         {
             var validationResult = await _updateUserValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<bool>(errorMessage);
+                return new Response<UserResultDTO>(errorMessage);
             }
+
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
-                return new Response<bool>(_localizer["User_NotFound"]);
+                return new Response<UserResultDTO>(_localizer["User_NotFound"]);
             }
 
             if (!string.Equals(user.Email, request.Email, StringComparison.OrdinalIgnoreCase))
@@ -313,7 +313,7 @@ namespace Sadef.Application.Services.User
                 var existingUser = await _userManager.FindByEmailAsync(request.Email);
                 if (existingUser != null && existingUser.Id != request.UserId)
                 {
-                    return new Response<bool>(_localizer["User_EmailAlreadyInUse"]);
+                    return new Response<UserResultDTO>(_localizer["User_EmailAlreadyInUse"]);
                 }
 
                 user.Email = request.Email;
@@ -327,7 +327,7 @@ namespace Sadef.Application.Services.User
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
-                return new Response<bool>(_localizer["User_FailedToUpdate"]);
+                return new Response<UserResultDTO>(_localizer["User_FailedToUpdate"]);
             }
 
             var currentRoles = await _userManager.GetRolesAsync(user);
@@ -335,7 +335,7 @@ namespace Sadef.Application.Services.User
             {
                 if (!await _roleManager.RoleExistsAsync(request.Role))
                 {
-                    return new Response<bool>(string.Format(_localizer["User_RoleDoesNotExist"], request.Role));
+                    return new Response<UserResultDTO>(string.Format(_localizer["User_RoleDoesNotExist"], request.Role));
                 }
 
                 if (currentRoles.Count > 0)
@@ -346,12 +346,23 @@ namespace Sadef.Application.Services.User
                 var roleResult = await _userManager.AddToRoleAsync(user, request.Role);
                 if (!roleResult.Succeeded)
                 {
-                    return new Response<bool>(_localizer["User_FailedToUpdateRole"]);
+                    return new Response<UserResultDTO>(_localizer["User_FailedToUpdateRole"]);
                 }
             }
 
-            return new Response<bool>(true, _localizer["User_Updated"]);
+            var updatedUserDto = new UserResultDTO
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = user.Role,
+                IsActive = user.IsActive
+            };
+
+            return new Response<UserResultDTO>(updatedUserDto, _localizer["User_FailedToUpdateRole"]);
         }
+
         public async Task<Response<UserResultDTO>> GetUserByIdAsync(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());

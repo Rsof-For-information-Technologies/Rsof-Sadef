@@ -195,13 +195,34 @@
   <data name="Blog_SlugInvalid" xml:space="preserve">
     <value>Slug must be URL-friendly (lowercase letters, numbers, and dashes only).</value>
   </data>
+  <data name="Property_ProjectedResaleValueGreaterThanZero" xml:space="preserve">
+    <value>Projected resale value must be greater than zero.</value>
+  </data>
+  <data name="Property_ExpectedAnnualRentGreaterThanZero" xml:space="preserve">
+    <value>Expected annual rent must be greater than zero.</value>
+  </data>
+  <data name="Property_LatitudeRange" xml:space="preserve">
+    <value>Latitude must be between -90 and 90 degrees.</value>
+  </data>
+  <data name="Property_LongitudeRange" xml:space="preserve">
+    <value>Longitude must be between -180 and 180 degrees.</value>
+  </data>
+  <data name="Property_TranslationsRequired" xml:space="preserve">
+    <value>At least one translation is required.</value>
+  </data>
+  <data name="Property_LanguageCodeRequired" xml:space="preserve">
+    <value>Language code is required.</value>
+  </data>
+  <data name="Property_InvalidLanguageCode" xml:space="preserve">
+    <value>Invalid language code. Only 'en' and 'ar' are supported.</value>
+  </data>
   <data name="Property_MaxImages" xml:space="preserve">
     <value>A maximum of {0} images are allowed.</value>
   </data>
-  <data name="Property_ImageMaxSizeMB" xml:space="preserve">
+	<data name="Property_ImageMaxSizeMB" xml:space="preserve">
     <value>Each image must be smaller than {0} MB.</value>
   </data>
-  <data name="Property_ImageInvalidType" xml:space="preserve">
+	<data name="Property_ImageInvalidType" xml:space="preserve">
     <value>Only image files are allowed (e.g., jpg, jpeg, png, webp).</value>
   </data>
 </root> 

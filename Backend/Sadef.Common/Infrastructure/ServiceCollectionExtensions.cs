@@ -93,7 +93,10 @@ namespace Sadef.Common.Infrastructure.AspNetCore.All
         public static IMvcBuilder AddMvcCore(this IServiceCollection services, IConfiguration config,
             bool withDapr = false)
         {
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            });
             var mvcBuilder = services.AddMvc();
 
             if (config.LoadFullAssemblies() != null && config.LoadFullAssemblies().Any())

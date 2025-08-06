@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="PropertyStatus_Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="PropertyStatus_Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="PropertyStatus_Sold" xml:space="preserve">
+    <value>Sold</value>
+  </data>
+  <data name="PropertyStatus_Rejected" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="PropertyStatus_Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="PropertyType_Apartment" xml:space="preserve">
+    <value>Apartment</value>
+  </data>
+  <data name="PropertyType_Villa" xml:space="preserve">
+    <value>Villa</value>
+  </data>
+  <data name="PropertyType_House" xml:space="preserve">
+    <value>House</value>
+  </data>
+  <data name="PropertyType_Office" xml:space="preserve">
+    <value>Office</value>
+  </data>
+  <data name="PropertyType_Shop" xml:space="preserve">
+    <value>Shop</value>
+  </data>
+  <data name="PropertyType_Plot" xml:space="preserve">
+    <value>Plot</value>
+  </data>
+  <data name="PropertyType_Warehouse" xml:space="preserve">
+    <value>Warehouse</value>
+  </data>
+  <data name="PropertyType_Building" xml:space="preserve">
+    <value>Building</value>
+  </data>
+  <data name="PropertyType_Farmhouse" xml:space="preserve">
+    <value>Farmhouse</value>
+  </data>
+  <data name="PropertyType_Penthouse" xml:space="preserve">
+    <value>Penthouse</value>
+  </data>
+  <data name="PropertyType_Studio" xml:space="preserve">
+    <value>Studio</value>
+  </data>
+  <data name="PropertyType_Commercial" xml:space="preserve">
+    <value>Commercial</value>
+  </data>
+  <data name="PropertyType_Industrial" xml:space="preserve">
+    <value>Industrial</value>
+  </data>
+  <data name="PropertyType_MixedUse" xml:space="preserve">
+    <value>Mixed Use</value>
+  </data>
+  <data name="PropertyType_Hotel" xml:space="preserve">
+    <value>Hotel</value>
+  </data>
+  <data name="PropertyType_Mall" xml:space="preserve">
+    <value>Mall</value>
+  </data>
+  <data name="UnitCategory_ResidentialApartment" xml:space="preserve">
+    <value>Residential Apartment</value>
+  </data>
+  <data name="UnitCategory_RooftopUnit" xml:space="preserve">
+    <value>Rooftop Unit</value>
+  </data>
+  <data name="UnitCategory_Duplex" xml:space="preserve">
+    <value>Duplex</value>
+  </data>
+  <data name="UnitCategory_Studio" xml:space="preserve">
+    <value>Studio</value>
+  </data>
+  <data name="UnitCategory_Penthouse" xml:space="preserve">
+    <value>Penthouse</value>
+  </data>
+  <data name="UnitCategory_GroundFloorUnit" xml:space="preserve">
+    <value>Ground Floor Unit</value>
+  </data>
+  <data name="UnitCategory_Loft" xml:space="preserve">
+    <value>Loft</value>
+  </data>
+  <data name="UnitCategory_CommercialSuite" xml:space="preserve">
+    <value>Commercial Suite</value>
+  </data>
+  <data name="UnitCategory_ExecutiveOffice" xml:space="preserve">
+    <value>Executive Office</value>
+  </data>
+  <data name="UnitCategory_RetailShop" xml:space="preserve">
+    <value>Retail Shop</value>
+  </data>
+  <data name="UnitCategory_WarehouseUnit" xml:space="preserve">
+    <value>Warehouse Unit</value>
+  </data>
+  <data name="UnitCategory_HotelRoom" xml:space="preserve">
+    <value>Hotel Room</value>
+  </data>
+  <data name="UnitCategory_SharedUnit" xml:space="preserve">
+    <value>Shared Unit</value>
+  </data>
+  <data name="City_Riyadh" xml:space="preserve">
+    <value>Riyadh</value>
+  </data>
+  <data name="City_Jeddah" xml:space="preserve">
+    <value>Jeddah</value>
+  </data>
+  <data name="City_Dammam" xml:space="preserve">
+    <value>Dammam</value>
+  </data>
+  <data name="City_Mecca" xml:space="preserve">
+    <value>Mecca</value>
+  </data>
+  <data name="City_Medina" xml:space="preserve">
+    <value>Medina</value>
+  </data>
+  <data name="City_Khobar" xml:space="preserve">
+    <value>Khobar</value>
+  </data>
+  <data name="City_Tabuk" xml:space="preserve">
+    <value>Tabuk</value>
+  </data>
+  <data name="City_Abha" xml:space="preserve">
+    <value>Abha</value>
+  </data>
+  <data name="City_Buraidah" xml:space="preserve">
+    <value>Buraidah</value>
+  </data>
+  <data name="City_Hail" xml:space="preserve">
+    <value>Hail</value>
+  </data>
+  <data name="City_Jazan" xml:space="preserve">
+    <value>Jazan</value>
+  </data>
+  <data name="City_Najran" xml:space="preserve">
+    <value>Najran</value>
+  </data>
+  <data name="City_AlQassim" xml:space="preserve">
+    <value>Al Qassim</value>
+  </data>
+  <data name="City_AlAhsa" xml:space="preserve">
+    <value>Al Ahsa</value>
+  </data>
+  <data name="City_AlJouf" xml:space="preserve">
+    <value>Al Jouf</value>
+  </data>
+  <data name="City_Yanbu" xml:space="preserve">
+    <value>Yanbu</value>
+  </data>
+  <data name="City_Taif" xml:space="preserve">
+    <value>Taif</value>
+  </data>
+  <data name="City_AlBaha" xml:space="preserve">
+    <value>Al Baha</value>
+  </data>
+  <data name="FeatureList_AirConditioning" xml:space="preserve">
+    <value>Air Conditioning</value>
+  </data>
+  <data name="FeatureList_Balcony" xml:space="preserve">
+    <value>Balcony</value>
+  </data>
+  <data name="FeatureList_BuiltInWardrobes" xml:space="preserve">
+    <value>Built-in Wardrobes</value>
+  </data>
+  <data name="FeatureList_CentralHeating" xml:space="preserve">
+    <value>Central Heating</value>
+  </data>
+  <data name="FeatureList_CoveredParking" xml:space="preserve">
+    <value>Covered Parking</value>
+  </data>
+  <data name="FeatureList_Elevator" xml:space="preserve">
+    <value>Elevator</value>
+  </data>
+  <data name="FeatureList_Garden" xml:space="preserve">
+    <value>Garden</value>
+  </data>
+  <data name="FeatureList_FitnessCenter" xml:space="preserve">
+    <value>Fitness Center</value>
+  </data>
+  <data name="FeatureList_MaidsRoom" xml:space="preserve">
+    <value>Maids Room</value>
+  </data>
+  <data name="FeatureList_PetsAllowed" xml:space="preserve">
+    <value>Pets Allowed</value>
+  </data>
+  <data name="FeatureList_PrivateGarage" xml:space="preserve">
+    <value>Private Garage</value>
+  </data>
+  <data name="FeatureList_PrivatePool" xml:space="preserve">
+    <value>Private Pool</value>
+  </data>
+  <data name="FeatureList_SecuritySystem" xml:space="preserve">
+    <value>Security System</value>
+  </data>
+  <data name="FeatureList_SharedPool" xml:space="preserve">
+    <value>Shared Pool</value>
+  </data>
+  <data name="FeatureList_SmartHomeSystem" xml:space="preserve">
+    <value>Smart Home System</value>
+  </data>
+  <data name="FeatureList_StorageRoom" xml:space="preserve">
+    <value>Storage Room</value>
+  </data>
+  <data name="FeatureList_StudyOrOffice" xml:space="preserve">
+    <value>Study/Office</value>
+  </data>
+  <data name="FeatureList_ViewofLandmark" xml:space="preserve">
+    <value>View of Landmark</value>
+  </data>
+  <data name="FeatureList_ViewofWater" xml:space="preserve">
+    <value>View of Water</value>
+  </data>
+  <data name="FeatureList_WalkinCloset" xml:space="preserve">
+    <value>Walk-in Closet</value>
+  </data>
+  <data name="FeatureList_WheelchairAccess" xml:space="preserve">
+    <value>Wheelchair Access</value>
+  </data>
+  <data name="FeatureList_ChildrenPlayArea" xml:space="preserve">
+    <value>Children Play Area</value>
+  </data>
+  <data name="FeatureList_BarbecueArea" xml:space="preserve">
+    <value>Barbecue Area</value>
+  </data>
+  <data name="FeatureList_LaundryRoom" xml:space="preserve">
+    <value>Laundry Room</value>
+  </data>
+  <data name="FeatureList_HighFloor" xml:space="preserve">
+    <value>High Floor</value>
+  </data>
+  <data name="FeatureList_LowFloor" xml:space="preserve">
+    <value>Low Floor</value>
+  </data>
+  <data name="FeatureList_NearPublicTransport" xml:space="preserve">
+    <value>Near Public Transport</value>
+  </data>
+  <data name="FeatureList_NearSchool" xml:space="preserve">
+    <value>Near School</value>
+  </data>
+  <data name="FeatureList_NearSupermarket" xml:space="preserve">
+    <value>Near Supermarket</value>
+  </data>
+  <data name="FeatureList_ConciergeService" xml:space="preserve">
+    <value>Concierge Service</value>
+  </data>
+  <data name="FeatureList_InternetOrWiFiReady" xml:space="preserve">
+    <value>Internet/WiFi Ready</value>
+  </data>
+</root> 
