@@ -265,7 +265,6 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
                    
-                    //svc.AddScoped<ILanguageService, LanguageService>();
                     svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
                    svc.AddCors(options =>
                    {
