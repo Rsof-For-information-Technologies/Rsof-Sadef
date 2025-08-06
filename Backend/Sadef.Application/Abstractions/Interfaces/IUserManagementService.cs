@@ -9,7 +9,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<Response<UserLoginResultDTO>> LoginUserAsync(LoginUserDto dto);
         Task<Response<List<UserResultDTO>>> GetUsersListAsync();
         Task<Response<UserResultDTO>> GetUserByIdAsync(Guid id);
-        Task<Response<bool>> UpdateUserAsync(UpdateUserDto dto);
+        Task<Response<UserResultDTO>> UpdateUserAsync(UpdateUserDto dto);
         Task<Response<bool>> UpdatePasswordAsync(UpdateUserPasswordDto dto);
         Task<Response<bool>> ToggleUserStatusAsync(Guid id);
         Task<Response<bool>> ForgotPasswordAsync(ForgotPasswordDto dto);
