@@ -1,98 +1,97 @@
 using Microsoft.Extensions.Localization;
+using System.Reflection;
 using Sadef.Domain.Constants;
-using System.Globalization;
 
 namespace Sadef.Application.Services.Multilingual
 {
     public class EnumLocalizationService : IEnumLocalizationService
     {
-        private readonly IStringLocalizerFactory _localizerFactory;
+        private readonly IStringLocalizer _localizer;
 
         public EnumLocalizationService(IStringLocalizerFactory localizerFactory)
         {
-            _localizerFactory = localizerFactory;
+            _localizer = localizerFactory.Create("EnumResources", "Sadef.Application");
         }
 
-        public string GetLocalizedEnumValue<T>(T enumValue, string languageCode) where T : Enum
+        /// <summary>
+        /// Generic method to get localized enum value for any enum type
+        /// </summary>
+        public string GetLocalizedEnumValue<T>(T enumValue, string languageCode = "en") where T : Enum
         {
-            var enumName = typeof(T).Name;
+            var enumType = typeof(T);
+            var enumName = enumType.Name;
             var enumValueName = enumValue.ToString();
             var resourceKey = $"{enumName}_{enumValueName}";
 
-            try
+            var localizedValue = _localizer[resourceKey];
+            
+            // If no localized value found, return the enum name
+            return string.IsNullOrEmpty(localizedValue) ? enumValueName : localizedValue;
+        }
+
+        /// <summary>
+        /// Get all localized enum values for dropdowns or listings
+        /// </summary>
+        public List<EnumLocalizationDto> GetAllLocalizedEnumValues<T>(string languageCode = "en") where T : Enum
+        {
+            var enumType = typeof(T);
+            var enumName = enumType.Name;
+            var result = new List<EnumLocalizationDto>();
+
+            foreach (T enumValue in Enum.GetValues(enumType))
             {
-                // Try different approaches to create the localizer
-                var localizer = _localizerFactory.Create("Enums", "Sadef.Application");
-                
-                // Set the culture for the current thread
-                var originalCulture = Thread.CurrentThread.CurrentUICulture;
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
-                
-                var localizedValue = localizer[resourceKey];
-                
-                // Restore original culture
-                Thread.CurrentThread.CurrentUICulture = originalCulture;
-                
-                // Debug: Log the resource key and result
-                Console.WriteLine($"Debug: ResourceKey={resourceKey}, LanguageCode={languageCode}, Result={localizedValue}, ResourceNotFound={localizedValue.ResourceNotFound}");
-                
-                // If no translation found, return the original enum value
-                if (localizedValue.ResourceNotFound)
+                var enumValueName = enumValue.ToString();
+                var resourceKey = $"{enumName}_{enumValueName}";
+                var localizedValue = _localizer[resourceKey];
+
+                result.Add(new EnumLocalizationDto
                 {
-                    Console.WriteLine($"Debug: Resource not found for key {resourceKey}, returning enum value {enumValueName}");
-                    return enumValueName;
-                }
-
-                Console.WriteLine($"Debug: Found localized value: {localizedValue}");
-                return localizedValue;
+                    Value = Convert.ToInt32(enumValue),
+                    Name = enumValueName,
+                    DisplayName = string.IsNullOrEmpty(localizedValue) ? enumValueName : localizedValue
+                });
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Debug: Exception in GetLocalizedEnumValue: {ex.Message}");
-                return enumValueName;
-            }
+
+            return result;
         }
 
-        public string GetLocalizedPropertyStatus(PropertyStatus status, string languageCode)
+        #region Specific Enum Methods for Backward Compatibility
+
+        public string GetLocalizedPropertyType(PropertyType propertyType, string languageCode = "en")
         {
-            return GetLocalizedEnumValue(status, languageCode);
+            return GetLocalizedEnumValue(propertyType, languageCode);
         }
 
-        public string GetLocalizedPropertyType(PropertyType type, string languageCode)
+        public string GetLocalizedUnitCategory(UnitCategory unitCategory, string languageCode = "en")
         {
-            return GetLocalizedEnumValue(type, languageCode);
+            return GetLocalizedEnumValue(unitCategory, languageCode);
         }
 
-        public string GetLocalizedUnitCategory(UnitCategory category, string languageCode)
+        public string GetLocalizedPropertyStatus(PropertyStatus propertyStatus, string languageCode = "en")
         {
-            return GetLocalizedEnumValue(category, languageCode);
+            return GetLocalizedEnumValue(propertyStatus, languageCode);
         }
 
-        public string GetLocalizedFeatureList(FeatureList feature, string languageCode)
+        public string GetLocalizedCity(City city, string languageCode = "en")
+        {
+            return GetLocalizedEnumValue(city, languageCode);
+        }
+
+        public string GetLocalizedFeatureList(FeatureList feature, string languageCode = "en")
         {
             return GetLocalizedEnumValue(feature, languageCode);
         }
 
-        // Test method to verify localization is working
-        public void TestLocalization()
-        {
-            Console.WriteLine("Testing localization...");
-            
-            // Test English
-            var englishVilla = GetLocalizedPropertyType(PropertyType.Villa, "en");
-            Console.WriteLine($"English Villa: {englishVilla}");
-            
-            // Test Arabic
-            var arabicVilla = GetLocalizedPropertyType(PropertyType.Villa, "ar");
-            Console.WriteLine($"Arabic Villa: {arabicVilla}");
-            
-            // Test English Status
-            var englishApproved = GetLocalizedPropertyStatus(PropertyStatus.Approved, "en");
-            Console.WriteLine($"English Approved: {englishApproved}");
-            
-            // Test Arabic Status
-            var arabicApproved = GetLocalizedPropertyStatus(PropertyStatus.Approved, "ar");
-            Console.WriteLine($"Arabic Approved: {arabicApproved}");
-        }
+        #endregion
+    }
+
+    /// <summary>
+    /// DTO for enum localization responses
+    /// </summary>
+    public class EnumLocalizationDto
+    {
+        public int Value { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
     }
 } 

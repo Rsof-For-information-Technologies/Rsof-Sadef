@@ -1,5 +1,6 @@
 ﻿using Sadef.Domain.PropertyEntity;
 using Sadef.Application.DTOs.PropertyDtos;
+using Sadef.Domain.Constants;
 namespace Sadef.Application.Utils
 {
     public static class PropertyQueryUtils
@@ -10,8 +11,8 @@ namespace Sadef.Application.Utils
         {
             query = query.Where(p => !p.ExpiryDate.HasValue || p.ExpiryDate > DateTime.UtcNow);
 
-            if (!string.IsNullOrWhiteSpace(request.City))
-                query = query.Where(p => p.City == request.City);
+            if (!string.IsNullOrWhiteSpace(request.City) && Enum.TryParse<City>(request.City, out var cityEnum))
+                query = query.Where(p => p.City == cityEnum);
 
             if (request.PropertyType.HasValue)
                 query = query.Where(p => p.PropertyType == request.PropertyType);

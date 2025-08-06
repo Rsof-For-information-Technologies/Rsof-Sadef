@@ -10,6 +10,7 @@ using Sadef.Domain.MaintenanceRequestEntity;
 using Sadef.Domain.Users;
 using Sadef.Common.Domain;
 using Sadef.Domain;
+using Sadef.Domain.Constants;
 namespace Sadef.Infrastructure.DBContext
 {
     public class SadefDbContext : AppDbContextIdentity
@@ -33,12 +34,14 @@ namespace Sadef.Infrastructure.DBContext
         {
             base.OnModelCreating(modelBuilder);
 
-            //Value conversion for List<string> Features
+            //Value conversion for List<FeatureList> Features
             modelBuilder.Entity<Property>()
                 .Property(p => p.Features)
                 .HasConversion(
-                    v => string.Join(';', v),
-                    v => v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList());
+                    v => string.Join(';', v.Select(f => f.ToString())),
+                    v => v.Split(';', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => Enum.Parse<FeatureList>(s))
+                        .ToList());
         }
 
         public DbSet<Blog> Blogs { get; set; }

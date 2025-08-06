@@ -47,7 +47,7 @@ namespace Sadef.Application.MappingProfile
             //Lead
             CreateMap<CreateLeadDto, Lead>();
             CreateMap<Lead, LeadDto>()
-                .ForMember(dest => dest.PropertyName, opt => opt.MapFrom(src => src.Property.Title));
+                .ForMember(dest => dest.PropertyName, opt => opt.Ignore()); // Title is now in translations
             CreateMap<UpdateLeadDto, Lead>()
             .ForAllMembers(opts =>
                 opts.Condition((src, dest, srcMember) => srcMember != null));
@@ -68,7 +68,7 @@ namespace Sadef.Application.MappingProfile
             // Contact
             CreateMap<CreateContactDto, Sadef.Domain.ContactEntity.Contact>();
             CreateMap<Sadef.Domain.ContactEntity.Contact, ContactDto>()
-                .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.Property.Title));
+                .ForMember(dest => dest.PropertyTitle, opt => opt.Ignore()); // Title is now in translations
             CreateMap<UpdateContactDto, Sadef.Domain.ContactEntity.Contact>()
                 .ForAllMembers(opts =>
                     opts.Condition((src, dest, srcMember) => srcMember != null));
