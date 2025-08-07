@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
@@ -25,6 +26,9 @@ namespace Sadef.Application.Services.MaintenanceRequest
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IDistributedCache _cache;
         private readonly IStringLocalizer _localizer;
+        private readonly IConfiguration _configuration;
+        private const string MaintenanceCacheVersionKey = "maintenance:version";
+        private const string MaintenanceDashboardcacheKey = "maintenancerequest:dashboard:stats";
 
         public MaintenanceRequestService(
             IUnitOfWorkAsync uow,
@@ -33,7 +37,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             IValidator<UpdateMaintenanceRequestDto> updateMaintenanceRequestStatusValidator,
             IQueryRepositoryFactory queryRepositoryFactory,
             IDistributedCache cache,
-            IStringLocalizerFactory localizerFactory
+            IStringLocalizerFactory localizerFactory,
+            IConfiguration configuration
         )
         {
             _uow = uow;
@@ -43,6 +48,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             _updateMaintenanceRequestStatusValidator = updateMaintenanceRequestStatusValidator;
             _cache = cache;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
+            _configuration = configuration;
         }
 
         public async Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto)
@@ -51,7 +57,6 @@ namespace Sadef.Application.Services.MaintenanceRequest
             if (!validation.IsValid)
             {
                 var errorMessage = validation.Errors.First().ErrorMessage;
-
                 return new Response<MaintenanceRequestDto>
                 {
                     Succeeded = false,
@@ -61,9 +66,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             }
 
             var leadQuery = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
-            var lead = await leadQuery.Queryable()
-                .FirstOrDefaultAsync(l => l.Id == dto.LeadId);
-
+            var lead = await leadQuery.Queryable().FirstOrDefaultAsync(l => l.Id == dto.LeadId);
             if (lead == null)
                 return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotFound", dto.LeadId].ToString());
 
@@ -71,58 +74,53 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotConverted"].ToString());
 
             var request = _mapper.Map<Domain.MaintenanceRequestEntity.MaintenanceRequest>(dto);
-            request.Images = new List<MaintenanceImage>();
-            if (dto.Images != null)
-            {
-                foreach (var file in dto.Images)
-                {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var image = new MaintenanceImage
-                    {
-                        ImageData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    request.Images.Add(image);
-                }
-            }
-
-            request.Videos = new List<MaintenanceVideo>();
-            if (dto.Videos != null)
-            {
-                foreach (var file in dto.Videos)
-                {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var video = new MaintenanceVideo
-                    {
-                        VideoData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    request.Videos.Add(video);
-                }
-            }
-
             request.Status = MaintenanceRequestStatus.Pending;
             request.CreatedAt = DateTime.UtcNow;
             request.CreatedBy = "system";
+            request.Images = new List<MaintenanceImage>();
+            request.Videos = new List<MaintenanceVideo>();
+
+            var basePath = _configuration["UploadSettings:Paths:MaintenanceRequestMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:MaintenanceRequestMedia"] ?? "/uploads/maintenance";
+
+            if (dto.Images != null)
+            {
+                var imageResults = await FileUploadHelper.SaveFilesAsync(dto.Images, basePath, "img", virtualPathBase);
+                request.Images = imageResults.Select(x => new MaintenanceImage
+                {
+                    ContentType = x.ContentType,
+                    ImageUrl = x.Url
+                }).ToList();
+            }
+
+            if (dto.Videos != null)
+            {
+                var videoResults = await FileUploadHelper.SaveFilesAsync(dto.Videos, basePath, "vid", virtualPathBase);
+                request.Videos = videoResults.Select(x => new MaintenanceVideo
+                {
+                    ContentType = x.ContentType,
+                    VideoUrl = x.Url
+                }).ToList();
+            }
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().AddAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
-            responseDto.ImageBase64Strings = request.Images?
-                .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
-                .ToList() ?? new();
-            responseDto.VideoUrls = request.Videos?
-                .Select(video => $"data:{video.ContentType};base64,{Convert.ToBase64String(video.VideoData)}")
-                .ToList() ?? new();
-
             return new Response<MaintenanceRequestDto>(responseDto, _localizer["MaintenanceRequest_Created"]);
         }
         public async Task<Response<PaginatedResponse<MaintenanceRequestDto>>> GetPaginatedAsync(int pageNumber, int pageSize, MaintenanceRequestFilterDto filters)
         {
+            var cacheKey = await CacheHelper.GeneratePaginatedCacheKey(_cache, MaintenanceCacheVersionKey, "maintenance", pageNumber, pageSize, filters);
+            var cachedData = await _cache.GetStringAsync(cacheKey);
+            if (cachedData != null)
+            {
+                var cachedResult = System.Text.Json.JsonSerializer.Deserialize<PaginatedResponse<MaintenanceRequestDto>>(cachedData);
+                if (cachedResult != null)
+                    return new Response<PaginatedResponse<MaintenanceRequestDto>>(cachedResult);
+            }
             var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
             var query = MaintenanceRequestHelper.ApplyFilters(repo.Queryable(), filters);
 
@@ -135,13 +133,9 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .ToListAsync();
 
             var dtoList = _mapper.Map<List<MaintenanceRequestDto>>(paginatedItems);
-
-            var paginatedResponse = new PaginatedResponse<MaintenanceRequestDto>(
-                dtoList,
-                totalCount,
-                pageNumber,
-                pageSize
-            );
+            var paginatedResponse = new PaginatedResponse<MaintenanceRequestDto>(dtoList, totalCount, pageNumber, pageSize);
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) };
+            await _cache.SetStringAsync(cacheKey, System.Text.Json.JsonSerializer.Serialize(paginatedResponse), options);
 
             return new Response<PaginatedResponse<MaintenanceRequestDto>>(
                 paginatedResponse,
@@ -162,22 +156,15 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_NotFound"]);
 
             var dto = _mapper.Map<MaintenanceRequestDto>(request);
-
-            dto.ImageBase64Strings = request.Images?
-                .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
-                .ToList() ?? new();
-
-            dto.VideoUrls = request.Videos?
-                .Select(vid => $"data:{vid.ContentType};base64,{Convert.ToBase64String(vid.VideoData)}")
-                .ToList() ?? new();
+            dto.ImageUrls = request.Images?.Select(img => img.ImageUrl).ToList() ?? new();
+            dto.VideoUrls = request.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
 
             return new Response<MaintenanceRequestDto>(dto, _localizer["MaintenanceRequest_Found"]);
         }
 
         public async Task<Response<MaintenanceRequestDashboardStatsDto>> GetDashboardStatsAsync()
         {
-            string cacheKey = "maintenancerequest:dashboard:stats";
-            var cached = await _cache.GetStringAsync(cacheKey);
+            var cached = await _cache.GetStringAsync(MaintenanceDashboardcacheKey);
             if (!string.IsNullOrEmpty(cached))
             {
                 var dtoData = JsonConvert.DeserializeObject<MaintenanceRequestDashboardStatsDto>(cached);
@@ -213,7 +200,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
             };
-            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(dto), options);
+            await _cache.SetStringAsync(MaintenanceDashboardcacheKey, JsonConvert.SerializeObject(dto), options);
 
             return new Response<MaintenanceRequestDashboardStatsDto>(dto, _localizer["MaintenanceRequest_DashboardLoaded"]);
         }
@@ -223,7 +210,6 @@ namespace Sadef.Application.Services.MaintenanceRequest
             if (!validationResult.IsValid)
             {
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
-
                 return new Response<MaintenanceRequestDto>
                 {
                     Succeeded = false,
@@ -245,57 +231,48 @@ namespace Sadef.Application.Services.MaintenanceRequest
             request.Description = dto.Description;
             request.UpdatedAt = DateTime.UtcNow;
 
+            var basePath = _configuration["UploadSettings:Paths:MaintenanceRequestMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:MaintenanceRequestMedia"] ?? "/uploads/maintenance";
+
+            // Clear existing images if new ones are uploaded
             if (dto.Images != null && dto.Images.Any())
-                request.Images?.Clear();
-
-            if (dto.Videos != null && dto.Videos.Any())
-                request.Videos?.Clear();
-
-            if (dto.Images != null)
             {
-                request.Images ??= new List<MaintenanceImage>();
-                foreach (var file in dto.Images)
+                if (request.Images != null && request.Images.Any())
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var image = new MaintenanceImage
-                    {
-                        ImageData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    request.Images.Add(image);
+                    var oldImagePaths = request.Images.Select(x => x.ImageUrl);
+                    FileUploadHelper.DeleteFiles(oldImagePaths);
                 }
+
+                var imageResults = await FileUploadHelper.SaveFilesAsync(dto.Images, basePath, "img", virtualPathBase);
+                request.Images = imageResults.Select(x => new MaintenanceImage
+                {
+                    ContentType = x.ContentType,
+                    ImageUrl = x.Url
+                }).ToList();
             }
 
-            if (dto.Videos != null)
+            if (dto.Videos != null && dto.Videos.Any())
             {
-                request.Videos ??= new List<MaintenanceVideo>();
-                foreach (var file in dto.Videos)
+                if (request.Videos != null && request.Videos.Any())
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var video = new MaintenanceVideo
-                    {
-                        VideoData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    request.Videos.Add(video);
+                    var oldVideoPaths = request.Videos.Select(x => x.VideoUrl);
+                    FileUploadHelper.DeleteFiles(oldVideoPaths);
                 }
+
+                var videoResults = await FileUploadHelper.SaveFilesAsync(dto.Videos, basePath, "vid", virtualPathBase);
+                request.Videos = videoResults.Select(x => new MaintenanceVideo
+                {
+                    ContentType = x.ContentType,
+                    VideoUrl = x.Url
+                }).ToList();
             }
 
             await repo.UpdateAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
-            responseDto.ImageBase64Strings = request.Images?
-                .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
-                .ToList() ?? new();
-
-            responseDto.VideoUrls = request.Videos?
-                .Select(video => $"data:{video.ContentType};base64,{Convert.ToBase64String(video.VideoData)}")
-                .ToList() ?? new();
-
             return new Response<MaintenanceRequestDto>(responseDto, _localizer["MaintenanceRequest_Updated"]);
         }
 
@@ -313,7 +290,9 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().UpdateAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
+
             var response = new Response<string>(_localizer["MaintenanceRequest_Deleted"]);
             response.Succeeded = true;
             return response;
@@ -350,7 +329,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var updatedDto = _mapper.Map<MaintenanceRequestDto>(request);
-            await _cache.RemoveAsync("maintenancerequest:dashboard:stats");
+            await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
 
             return new Response<MaintenanceRequestDto>(updatedDto, _localizer["MaintenanceRequest_StatusUpdated", currentStatus, newStatus]);
         }

@@ -33,6 +33,7 @@ using Sadef.Common.RestTemplate;
 using Sadef.Common.RestTemplate.Db;
 using Sadef.Infrastructure.DBContext;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Common.Infrastructure.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
@@ -194,7 +195,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                         var context = provider.GetRequiredService<SadefDbContext>();
                         var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
                         var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
-                        return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService);
+                        var configuration = provider.GetRequiredService<IConfiguration>();
+                        return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration);
                     });
                    svc.AddScoped<IBlogService>(provider =>
                    {
@@ -204,7 +206,9 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var createValidator = provider.GetRequiredService<IValidator<CreateBlogDto>>();
                        var updateValidator = provider.GetRequiredService<IValidator<UpdateBlogDto>>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory);
+                       var configuration = provider.GetRequiredService<IConfiguration>();
+                       var cache = provider.GetRequiredService<IDistributedCache>();
+                       return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory, configuration, cache);
                    });
                    svc.AddScoped<IFavoriteService>(provider =>
                    {
@@ -301,5 +305,11 @@ if (locOptions != null)
 }
 
 app.UseCors("AllowFrontend");
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(@"E:\Media\Sadef\uploads"),
+    RequestPath = "/uploads"
+});
 app.UseCustomTemplate();
 app.Run();

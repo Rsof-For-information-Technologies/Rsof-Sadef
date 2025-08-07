@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
@@ -29,6 +29,7 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IValidator<CreatePropertyDto> _createPropertyValidator;
         private readonly IValidator<UpdatePropertyDto> _updatePropertyValidator;
         private readonly IValidator<PropertyExpiryUpdateDto> _expireValidator;
+        private readonly IConfiguration _configuration;
         private readonly IDistributedCache _cache;
         private readonly IStringLocalizer _localizer;
         private readonly SadefDbContext _context;
@@ -38,7 +39,7 @@ namespace Sadef.Application.Services.PropertyListing
         private const string PROPERTY_DASHBOARD_CACHE_KEY = "property:dashboard:stats";
         private const int CACHE_DURATION_MINUTES = 10;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService, IConfiguration configuration)
         {
             _uow = uow;
             _mapper = mapper;
@@ -46,6 +47,7 @@ namespace Sadef.Application.Services.PropertyListing
             _updatePropertyValidator = updatePropertyValidator;
             _createPropertyValidator = createPropertyDto;
             _cache = cache;
+            _configuration = configuration;
             _expireValidator = expireValidator;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
             _context = context;
@@ -94,38 +96,29 @@ namespace Sadef.Application.Services.PropertyListing
 
             var property = _mapper.Map<Property>(dto);
             property.Images = new List<PropertyImage>();
+            property.Videos = new List<PropertyVideo>();
 
-            // Handle image uploads
+            var basePath = _configuration["UploadSettings:Paths:PropertyMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:PropertyMedia"] ?? "/uploads/property";
+
             if (dto.Images != null)
             {
-                foreach (var file in dto.Images)
+                var imageResults = await FileUploadHelper.SaveFilesAsync(dto.Images, basePath, "img", virtualPathBase);
+                property.Images = imageResults.Select(x => new PropertyImage
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var image = new PropertyImage
-                    {
-                        ImageData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    property.Images.Add(image);
-                }
+                    ContentType = x.ContentType,
+                    ImageUrl = x.Url
+                }).ToList();
             }
 
-            // Handle video uploads
-            property.Videos = new List<PropertyVideo>();
             if (dto.Videos != null)
             {
-                foreach (var file in dto.Videos)
+                var videoResults = await FileUploadHelper.SaveFilesAsync(dto.Videos, basePath, "vid", virtualPathBase);
+                property.Videos = videoResults.Select(x => new PropertyVideo
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var video = new PropertyVideo
-                    {
-                        VideoData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    property.Videos.Add(video);
-                }
+                    ContentType = x.ContentType,
+                    VideoUrl = x.Url
+                }).ToList();
             }
 
             // Determine content language based on available translations
@@ -139,15 +132,9 @@ namespace Sadef.Application.Services.PropertyListing
 
             // Clear relevant caches
             await ClearPropertyCaches();
+            await _cache.RemoveAsync("property:page=1&size=10");
 
             var createdDto = _mapper.Map<PropertyDto>(property);
-            createdDto.ImageBase64Strings = property.Images?
-                .Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}")
-                .ToList() ?? new();
-            createdDto.VideoUrls = property.Videos?
-                .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
-                .ToList() ?? new();
-            
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(createdDto, property.Id, currentLanguage);
             
@@ -164,48 +151,39 @@ namespace Sadef.Application.Services.PropertyListing
             if (!string.IsNullOrEmpty(cached))
             {
                 var cachedResult = JsonConvert.DeserializeObject<PaginatedResponse<PropertyDto>>(cached);
-                return new Response<PaginatedResponse<PropertyDto>>(cachedResult, _localizer["Property_ListedFromCache"]);
+                if (cachedResult != null)
+                    return new Response<PaginatedResponse<PropertyDto>>(cachedResult, _localizer["Property_ListedFromCache"]);
             }
 
             var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
-            
-            // Optimize query with eager loading for translations
-            var query = queryRepo.Queryable()
-                .Include(p => p.Images)
-                .Include(p => p.Videos)
-                .Include(p => p.Translations); // Include translations for better performance
-
+            var query = queryRepo.Queryable().Include(p => p.Images).Include(p => p.Videos).Include(p => p.Translations);
             var totalCount = await query.CountAsync();
             var items = await query.Where(p => !p.ExpiryDate.HasValue || p.ExpiryDate > DateTime.UtcNow)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
+            var result = new List<PropertyDto>();
 
-            // Process items with optimized localization
-            var resultList = new List<PropertyDto>();
             foreach (var p in items)
             {
                 var dto = _mapper.Map<PropertyDto>(p);
-                dto.ImageBase64Strings = p.Images?.Select(img =>
-                    $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
-                dto.VideoUrls = p.Videos?.Select(v =>
-                    $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}").ToList() ?? new();
-                
-                // Apply localization to DTO
+                dto.ImageUrls = p.Images?.Select(img => img.ImageUrl).ToList() ?? new();
+                dto.VideoUrls = p.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
+
                 await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
-                
-                // Set localized enum values
+
                 dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
                 dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
                 dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
-                
-                resultList.Add(dto);
+
+                result.Add(dto);
             }
 
-            var paged = new PaginatedResponse<PropertyDto>(resultList, totalCount, request.PageNumber, request.PageSize);
 
-            // Cache for specified duration
+            var paged = new PaginatedResponse<PropertyDto>(result, totalCount, request.PageNumber, request.PageSize);
+
+            // cache for 10 minutes
             var cacheOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CACHE_DURATION_MINUTES)
@@ -229,11 +207,8 @@ namespace Sadef.Application.Services.PropertyListing
                 return new Response<PropertyDto>(_localizer["Property_NotFound"]);
 
             var dto = _mapper.Map<PropertyDto>(property);
-            dto.ImageBase64Strings = property.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
-            dto.VideoUrls = property.Videos?
-                .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
-                .ToList() ?? new();
-
+            dto.ImageUrls = property.Images?.Select(img => img.ImageUrl).ToList() ?? new();
+            dto.VideoUrls = property.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
             // Apply localization based on user's language preference
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(dto, property.Id, currentLanguage);
@@ -304,39 +279,40 @@ namespace Sadef.Application.Services.PropertyListing
                 return new Response<PropertyDto>(_localizer["Property_NotFound"]);
 
             _mapper.Map(dto, existing);
+            var basePath = _configuration["UploadSettings:Paths:PropertyMedia"] ?? Directory.GetCurrentDirectory();
+            var virtualPathBase = _configuration["UploadSettings:RelativePaths:PropertyMedia"] ?? "/uploads/property";
 
             // Handle image uploads
             if (dto.Images != null && dto.Images.Any())
             {
-                existing.Images = new List<PropertyImage>();
-                foreach (var file in dto.Images)
+                if (existing.Images != null && existing.Images.Any())
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var image = new PropertyImage
-                    {
-                        ImageData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    existing.Images.Add(image);
+                    var oldImagePaths = existing.Images.Select(x => x.ImageUrl);
+                    FileUploadHelper.DeleteFiles(oldImagePaths);
                 }
+
+                var imageResults = await FileUploadHelper.SaveFilesAsync(dto.Images, basePath, "img", virtualPathBase);
+                existing.Images = imageResults.Select(x => new PropertyImage
+                {
+                    ContentType = x.ContentType,
+                    ImageUrl = x.Url
+                }).ToList();
             }
 
-            // Handle video uploads
-            existing.Videos = new List<PropertyVideo>();
             if (dto.Videos != null)
             {
-                foreach (var file in dto.Videos)
+                if (existing.Videos != null && existing.Videos.Any())
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    var video = new PropertyVideo
-                    {
-                        VideoData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    };
-                    existing.Videos.Add(video);
+                    var oldVideoPaths = existing.Videos.Select(x => x.VideoUrl);
+                    FileUploadHelper.DeleteFiles(oldVideoPaths);
                 }
+
+                var videoResults = await FileUploadHelper.SaveFilesAsync(dto.Videos, basePath, "vid", virtualPathBase);
+                existing.Videos = videoResults.Select(x => new PropertyVideo
+                {
+                    ContentType = x.ContentType,
+                    VideoUrl = x.Url
+                }).ToList();
             }
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(existing);
@@ -352,10 +328,6 @@ namespace Sadef.Application.Services.PropertyListing
             await ClearPropertyCaches();
             
             var updatedDto = _mapper.Map<PropertyDto>(existing);
-            updatedDto.ImageBase64Strings = existing.Images?.Select(img => $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
-            updatedDto.VideoUrls = existing.Videos?
-                .Select(v => $"data:{v.ContentType};base64,{Convert.ToBase64String(v.VideoData)}")
-                .ToList() ?? new();
 
             // Apply localization to DTO
             var currentLanguage = GetCurrentLanguage();
@@ -436,20 +408,19 @@ namespace Sadef.Application.Services.PropertyListing
                 .ToListAsync();
 
             var result = new List<PropertyDto>();
+
             foreach (var p in items)
             {
                 var dto = _mapper.Map<PropertyDto>(p);
-                dto.ImageBase64Strings = p.Images?.Select(img =>
-                    $"data:{img.ContentType};base64,{Convert.ToBase64String(img.ImageData)}").ToList() ?? new();
-                
-                // Apply localization
+                dto.ImageUrls = p.Images?.Select(img => img.ImageUrl).ToList() ?? new();
+                dto.VideoUrls = p.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
+
                 await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
-                
-                // Set localized enum values
+
                 dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
                 dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
                 dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
-                
+
                 result.Add(dto);
             }
 

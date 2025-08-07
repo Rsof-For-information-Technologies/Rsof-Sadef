@@ -123,6 +123,18 @@ namespace Sadef.Application.Services.PropertyListing
                 .When(x => x.Videos != null && x.Videos.Any())
                 .WithMessage(localizer["Property_VideoMaxSizeMB", 50]);
 
+            RuleFor(x => x.Images)
+               .Must(i => i == null || i.Count <= 10)
+               .When(x => x.Images != null && x.Images.Any())
+               .WithMessage(localizer["Property_MaxImages", 10]);
+
+            RuleForEach(x => x.Images)
+                .Must(i => i.Length <= 2 * 1024 * 1024) // 2MB
+                .When(x => x.Images != null && x.Images.Any())
+                .WithMessage(localizer["Property_ImageMaxSizeMB", 2])
+                .Must(i => i.ContentType.StartsWith("image/"))
+                .WithMessage(localizer["Property_ImageInvalidType"]);
+
             // Validate translations if provided
             When(x => x.Translations != null && x.Translations.Any(), () =>
             {

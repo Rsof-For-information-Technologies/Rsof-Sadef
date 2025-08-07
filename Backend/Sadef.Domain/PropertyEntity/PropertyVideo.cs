@@ -9,7 +9,7 @@ namespace Sadef.Domain.PropertyEntity
 {
     public class PropertyVideo : AggregateRootBase
     {
-        public byte[] VideoData { get; set; }
+        public string VideoUrl { get; set; }
         public string ContentType { get; set; }
         public int PropertyId { get; set; }
         public Property Property { get; set; }

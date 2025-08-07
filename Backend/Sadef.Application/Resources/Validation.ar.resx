@@ -216,4 +216,13 @@
   <data name="Property_InvalidLanguageCode" xml:space="preserve">
     <value>رمز اللغة غير صالح. يدعم فقط 'en' و 'ar'.</value>
   </data>
+  <data name="Property_MaxImages" xml:space="preserve">
+    <value>يُسمح بحد أقصى {0} من الصور.</value>
+  </data>
+	<data name="Property_ImageMaxSizeMB" xml:space="preserve">
+    <value>يجب ألا يتجاوز حجم كل صورة {0} ميجابايت.</value>
+  </data>
+	<data name="Property_ImageInvalidType" xml:space="preserve">
+    <value>يُسمح فقط بملفات الصور (مثل: jpg، jpeg، png، webp).</value>
+  </data>
 </root> 

@@ -216,4 +216,13 @@
   <data name="Property_InvalidLanguageCode" xml:space="preserve">
     <value>Invalid language code. Only 'en' and 'ar' are supported.</value>
   </data>
+  <data name="Property_MaxImages" xml:space="preserve">
+    <value>A maximum of {0} images are allowed.</value>
+  </data>
+	<data name="Property_ImageMaxSizeMB" xml:space="preserve">
+    <value>Each image must be smaller than {0} MB.</value>
+  </data>
+	<data name="Property_ImageInvalidType" xml:space="preserve">
+    <value>Only image files are allowed (e.g., jpg, jpeg, png, webp).</value>
+  </data>
 </root> 

@@ -9,7 +9,7 @@ namespace Sadef.Domain.MaintenanceRequestEntity
 {
     public class MaintenanceVideo : AggregateRootBase
     {
-        public byte[] VideoData { get; set; }
+        public string VideoUrl { get; set; }
         public string ContentType { get; set; }
         public int MaintenanceRequestId { get; set; }
         public MaintenanceRequest MaintenanceRequest { get; set; }

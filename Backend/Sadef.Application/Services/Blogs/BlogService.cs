@@ -6,10 +6,12 @@ using Sadef.Common.Domain;
 using Sadef.Domain.BlogsEntity;
 using Microsoft.EntityFrameworkCore;
 using Sadef.Application.DTOs.PropertyDtos;
-using Azure.Core;
 using FluentValidation;
-using Sadef.Application.Services.PropertyListing;
+using Sadef.Application.Utils;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace Sadef.Application.Services.Blogs
 {
@@ -18,36 +20,71 @@ namespace Sadef.Application.Services.Blogs
         private readonly IUnitOfWorkAsync _uow;
         private readonly IQueryRepositoryFactory _queryFactory;
         private readonly IMapper _mapper;
+        private const string BlogAllCacheKey = "blogs:all";
+        private const string BlogCacheVersionKey = "blogs:version";
         private readonly IValidator<CreateBlogDto> _createBlogValidator;
         private readonly IValidator<UpdateBlogDto> _updateBlogValidator;
+        private readonly IConfiguration _configuration;
         private readonly IStringLocalizer _localizer;
+        private readonly IDistributedCache _cache;
 
-        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, IStringLocalizerFactory localizerFactory)
+        public BlogService(IUnitOfWorkAsync uow, IQueryRepositoryFactory queryFactory, IMapper mapper , IValidator<CreateBlogDto> createBlogValidator , IValidator<UpdateBlogDto> updateBlogValidator, IStringLocalizerFactory localizerFactory, IConfiguration configuration, IDistributedCache cache)
         {
             _uow = uow;
-            _queryFactory = queryFactory;
+            _cache = cache;
             _mapper = mapper;
+            _queryFactory = queryFactory;
+            _configuration = configuration;
             _createBlogValidator = createBlogValidator;
             _updateBlogValidator = updateBlogValidator;
-            _localizer = localizerFactory.Create("Messages", "Sadef.Application");
+            _localizer = localizerFactory.Create("Messages", "Sadef.Application");      
         }
+
         public async Task<Response<PaginatedResponse<BlogDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
         {
+            int version = await CacheHelper.GetCacheVersionAsync(_cache, BlogCacheVersionKey);
+            string cacheKey = $"blogs:paginated:{pageNumber}:{pageSize}:v{version}";
+            var cachedData = await _cache.GetStringAsync(cacheKey);
+            if (cachedData != null)
+            {
+                var cachedResult = JsonSerializer.Deserialize<PaginatedResponse<BlogDto>>(cachedData);
+                if (cachedResult != null)
+                    return new Response<PaginatedResponse<BlogDto>>(cachedResult);
+            }
+
             var repo = _queryFactory.QueryRepository<Blog>();
-            var query = repo.Queryable().OrderByDescending(b => b.PublishedAt);
+            var query = repo.Queryable().AsNoTracking().OrderByDescending(b => b.PublishedAt);
 
             var total = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             var dtoList = _mapper.Map<List<BlogDto>>(items);
 
-            var paged = new PaginatedResponse<BlogDto>(dtoList, total, pageNumber, pageSize);
-            return new Response<PaginatedResponse<BlogDto>>(paged);
+            var pagedResponse = new PaginatedResponse<BlogDto>(dtoList, total, pageNumber, pageSize);
+
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) };
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(pagedResponse), options);
+
+            return new Response<PaginatedResponse<BlogDto>>(pagedResponse);
         }
+
         public async Task<Response<List<BlogDto>>> GetAllAsync()
         {
+            string cacheKey = BlogAllCacheKey;
+            var cached = await _cache.GetStringAsync(cacheKey);
+            if (cached != null)
+            {
+                var cachedDtoList = JsonSerializer.Deserialize<List<BlogDto>>(cached);
+                if (cachedDtoList != null)
+                    return new Response<List<BlogDto>>(cachedDtoList);
+            }
+
             var repo = _queryFactory.QueryRepository<Blog>();
-            var list = await repo.Queryable().OrderByDescending(b => b.PublishedAt).ToListAsync();
+            var list = await repo.Queryable().AsNoTracking().OrderByDescending(b => b.PublishedAt).ToListAsync();
             var dtoList = _mapper.Map<List<BlogDto>>(list);
+
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(dtoList), options);
+
             return new Response<List<BlogDto>>(dtoList);
         }
 
@@ -67,19 +104,26 @@ namespace Sadef.Application.Services.Blogs
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<BlogDto>(errorMessage);
             }
+
             var blog = _mapper.Map<Blog>(dto);
             if (dto.CoverImage != null)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await dto.CoverImage.CopyToAsync(memoryStream);
-                    var base64Logo = Convert.ToBase64String(memoryStream.ToArray());
+                var basePath = _configuration["UploadSettings:Paths:BlogAttachments"] ?? Directory.GetCurrentDirectory();
+                var virtualPathBase = _configuration["UploadSettings:RelativePaths:BlogMedia"] ?? "/uploads/blog";
+                var savedFiles = await FileUploadHelper.SaveFilesAsync(new[] { dto.CoverImage }, basePath, "cover", virtualPathBase);
 
-                    blog.CoverImage = base64Logo;
+                var coverImageUrl = savedFiles.FirstOrDefault().Url;
+                if (!string.IsNullOrWhiteSpace(coverImageUrl))
+                {
+                    blog.CoverImage = coverImageUrl;
                 }
             }
+
             await _uow.RepositoryAsync<Blog>().AddAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, BlogCacheVersionKey);
+            await CacheHelper.RemoveCacheKeyAsync(_cache, BlogAllCacheKey);
+
             var blogDto = _mapper.Map<BlogDto>(blog);
             return new Response<BlogDto>(blogDto, _localizer["Blog_Created"]);
         }
@@ -92,6 +136,7 @@ namespace Sadef.Application.Services.Blogs
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<BlogDto>(errorMessage);
             }
+
             var repo = _uow.RepositoryAsync<Blog>();
             var blog = await _queryFactory
                 .QueryRepository<Blog>()
@@ -102,16 +147,25 @@ namespace Sadef.Application.Services.Blogs
             _mapper.Map(dto, blog);
             if (dto.CoverImage != null)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await dto.CoverImage.CopyToAsync(memoryStream);
-                    var base64Logo = Convert.ToBase64String(memoryStream.ToArray());
+                if (!string.IsNullOrWhiteSpace(blog.CoverImage))
+                    FileUploadHelper.RemoveFileIfExists(blog.CoverImage);
 
-                    blog.CoverImage = base64Logo;
+                var basePath = _configuration["UploadSettings:Paths:BlogAttachments"] ?? Directory.GetCurrentDirectory();
+                var virtualPathBase = _configuration["UploadSettings:RelativePaths:BlogMedia"] ?? "/uploads/blog";
+                var savedFiles = await FileUploadHelper.SaveFilesAsync(new[] { dto.CoverImage }, basePath, "cover", virtualPathBase);
+
+                var coverImageUrl = savedFiles.FirstOrDefault().Url;
+                if (!string.IsNullOrWhiteSpace(coverImageUrl))
+                {
+                    blog.CoverImage = coverImageUrl;
                 }
             }
+
             await repo.UpdateAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, BlogCacheVersionKey);
+            await CacheHelper.RemoveCacheKeyAsync(_cache, BlogAllCacheKey);
+
             var updatedDto = _mapper.Map<BlogDto>(blog);
             return new Response<BlogDto>(updatedDto, _localizer["Blog_Updated"]);
         }
@@ -126,6 +180,9 @@ namespace Sadef.Application.Services.Blogs
             if (blog == null) return new Response<string>(_localizer["Blog_NotFound"]);
             await repo.DeleteAsync(blog);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await CacheHelper.IncrementCacheVersionAsync(_cache, BlogCacheVersionKey);
+            await CacheHelper.RemoveCacheKeyAsync(_cache, BlogAllCacheKey);
+
             return new Response<string>(_localizer["Blog_Deleted"]);
         }
     }
