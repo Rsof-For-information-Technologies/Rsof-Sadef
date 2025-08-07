@@ -308,7 +308,7 @@ app.UseCors("AllowFrontend");
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(@"E:\Media\Sadef\uploads"),
+    FileProvider = new PhysicalFileProvider(@"D:\app\Sadef\uploads"),
     RequestPath = "/uploads"
 });
 app.UseCustomTemplate();
