@@ -132,9 +132,6 @@ namespace Sadef.Application.Services.PropertyListing
 
             // Clear relevant caches
             await ClearPropertyCaches();
-
-            await _uow.RepositoryAsync<Property>().AddAsync(property);
-            await _uow.SaveChangesAsync(CancellationToken.None);
             await _cache.RemoveAsync("property:page=1&size=10");
 
             var createdDto = _mapper.Map<PropertyDto>(property);
@@ -166,21 +163,23 @@ namespace Sadef.Application.Services.PropertyListing
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
-            var result = items.Select(p =>
+            var result = new List<PropertyDto>();
+
+            foreach (var p in items)
             {
                 var dto = _mapper.Map<PropertyDto>(p);
                 dto.ImageUrls = p.Images?.Select(img => img.ImageUrl).ToList() ?? new();
                 dto.VideoUrls = p.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
-                // Apply localization to DTO
+
                 await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
 
-                // Set localized enum values
                 dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
                 dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
                 dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
 
-                return dto;
-            }).ToList();
+                result.Add(dto);
+            }
+
 
             var paged = new PaginatedResponse<PropertyDto>(result, totalCount, request.PageNumber, request.PageSize);
 
@@ -407,20 +406,24 @@ namespace Sadef.Application.Services.PropertyListing
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();
-            var result = items.Select(p =>
+
+            var result = new List<PropertyDto>();
+
+            foreach (var p in items)
             {
                 var dto = _mapper.Map<PropertyDto>(p);
                 dto.ImageUrls = p.Images?.Select(img => img.ImageUrl).ToList() ?? new();
-                // Apply localization
+                dto.VideoUrls = p.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
+
                 await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
 
-                // Set localized enum values
                 dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
                 dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
                 dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
 
-                return dto;
-            }).ToList();
+                result.Add(dto);
+            }
+
             var paged = new PaginatedResponse<PropertyDto>(result, total, request.PageNumber, request.PageSize);
 
             await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(paged), new DistributedCacheEntryOptions
