@@ -114,6 +114,30 @@
   <data name="Blog_NotFound" xml:space="preserve">
     <value>Blog not found.</value>
   </data>
+  <data name="Blog_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>At least one translation is required.</value>
+  </data>
+  <data name="Blog_TitleRequiredForLanguage" xml:space="preserve">
+    <value>Title is required for language {0}.</value>
+  </data>
+  <data name="Blog_ContentRequiredForLanguage" xml:space="preserve">
+    <value>Content is required for language {0}.</value>
+  </data>
+  <data name="Blog_InvalidLanguageCode" xml:space="preserve">
+    <value>Invalid language code: {0}. Only 'en' and 'ar' are supported.</value>
+  </data>
+  <data name="Blog_LanguageCodeRequired" xml:space="preserve">
+    <value>Language code is required.</value>
+  </data>
+  <data name="Blog_ListedFromCache" xml:space="preserve">
+    <value>Blogs retrieved from cache.</value>
+  </data>
+  <data name="Blog_Listed" xml:space="preserve">
+    <value>Blogs retrieved successfully.</value>
+  </data>
+  <data name="Blog_Found" xml:space="preserve">
+    <value>Blog found successfully.</value>
+  </data>
   <data name="MaintenanceRequest_LeadNotFound" xml:space="preserve">
     <value>No lead found with the provided LeadId: {0}. Please enter a valid LeadId.</value>
   </data>

@@ -1,41 +1,37 @@
 using System.Globalization;
 using AutoMapper;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Quartz;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.BlogDtos;
+using Sadef.Application.DTOs.ContactDtos;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
-using Sadef.Application.DTOs.ContactDtos;
 using Sadef.Application.Services.AuditLog;
 using Sadef.Application.Services.Blogs;
+using Sadef.Application.Services.Contact;
 using Sadef.Application.Services.Email;
 using Sadef.Application.Services.Favorites;
 using Sadef.Application.Services.Lead;
 using Sadef.Application.Services.MaintenanceRequest;
+using Sadef.Application.Services.Multilingual;
 using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.Services.User;
 using Sadef.Application.Services.Whatsapp;
-using Sadef.Application.Services.Contact;
-using Sadef.Application.Services.Multilingual;
-using Sadef.Application.Services.PropertyListing;
 using Sadef.Common.Domain;
 using Sadef.Common.EFCore.Middleware;
 using Sadef.Common.Infrastructure.EfCore.Db;
 using Sadef.Common.RestTemplate;
 using Sadef.Common.RestTemplate.Db;
 using Sadef.Infrastructure.DBContext;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.FileProviders;
-using Sadef.Common.Infrastructure.EFCore.Identity;
-using Sadef.Common.Infrastructure.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add localization services
@@ -173,31 +169,31 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<IValidator<CreateBlogDto>>(provider =>
                    {
                        var factory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       var localizer = factory.Create("Validation", typeof(CreateBlogValidator).Assembly.GetName().Name);
+                       var localizer = factory.Create("Validation", "Sadef.Application");
                        return new CreateBlogValidator(localizer);
                    });
                    svc.AddScoped<IValidator<UpdateBlogDto>>(provider =>
                    {
                        var factory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       var localizer = factory.Create("Validation", typeof(UpdateBlogValidator).Assembly.GetName().Name);
+                       var localizer = factory.Create("Validation", "Sadef.Application");
                        return new UpdateBlogValidator(localizer);
                    });
-                                       svc.AddScoped<IPropertyService>(provider =>
-                    {
-                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
-                        var mapper = provider.GetRequiredService<IMapper>();
-                        var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
-                        var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
-                        var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
-                        var cache = provider.GetRequiredService<IDistributedCache>();
-                        var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
-                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                        var context = provider.GetRequiredService<SadefDbContext>();
-                        var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-                        var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
-                        var configuration = provider.GetRequiredService<IConfiguration>();
-                        return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration);
-                    });
+                   svc.AddScoped<IPropertyService>(provider =>
+{
+    var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+    var mapper = provider.GetRequiredService<IMapper>();
+    var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+    var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
+    var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
+    var cache = provider.GetRequiredService<IDistributedCache>();
+    var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
+    var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+    var context = provider.GetRequiredService<SadefDbContext>();
+    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+    var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration);
+});
                    svc.AddScoped<IBlogService>(provider =>
                    {
                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
@@ -208,7 +204,10 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var configuration = provider.GetRequiredService<IConfiguration>();
                        var cache = provider.GetRequiredService<IDistributedCache>();
-                       return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory, configuration, cache);
+                       var context = provider.GetRequiredService<SadefDbContext>();
+                       var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                       var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
+                       return new BlogService(uow, queryFactory, mapper, createValidator, updateValidator, localizerFactory, configuration, cache, context, httpContextAccessor, enumLocalizationService);
                    });
                    svc.AddScoped<IFavoriteService>(provider =>
                    {
@@ -228,9 +227,9 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var cache = provider.GetRequiredService<IDistributedCache>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory , contextAccessor);
+                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory, contextAccessor);
                    });
-                   
+
                    // Contact validators
                    svc.AddScoped<IValidator<CreateContactDto>>(provider =>
                    {
@@ -250,7 +249,7 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizer = factory.Create("Validation", typeof(UpdateContactStatusValidator).Assembly.GetName().Name);
                        return new UpdateContactStatusValidator(localizer);
                    });
-                   
+
                    // Contact service
                    svc.AddScoped<IContactService>(provider =>
                    {
@@ -264,11 +263,11 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
                        return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, localizerFactory, contextAccessor);
                    });
-                   
+
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
-                   
-                    svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
+
+                   svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
                    svc.AddCors(options =>
                    {
                        options.AddPolicy("AllowFrontend", policy =>

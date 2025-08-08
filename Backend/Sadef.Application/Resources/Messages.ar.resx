@@ -114,6 +114,30 @@
   <data name="Blog_NotFound" xml:space="preserve">
     <value>لم يتم العثور على المدونة.</value>
   </data>
+  <data name="Blog_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>مطلوب ترجمة واحدة على الأقل.</value>
+  </data>
+  <data name="Blog_TitleRequiredForLanguage" xml:space="preserve">
+    <value>العنوان مطلوب للغة {0}.</value>
+  </data>
+  <data name="Blog_ContentRequiredForLanguage" xml:space="preserve">
+    <value>المحتوى مطلوب للغة {0}.</value>
+  </data>
+  <data name="Blog_InvalidLanguageCode" xml:space="preserve">
+    <value>رمز اللغة غير صحيح: {0}. يدعم فقط 'en' و 'ar'.</value>
+  </data>
+  <data name="Blog_LanguageCodeRequired" xml:space="preserve">
+    <value>رمز اللغة مطلوب.</value>
+  </data>
+  <data name="Blog_ListedFromCache" xml:space="preserve">
+    <value>تم استرجاع المدونات من التخزين المؤقت.</value>
+  </data>
+  <data name="Blog_Listed" xml:space="preserve">
+    <value>تم استرجاع المدونات بنجاح.</value>
+  </data>
+  <data name="Blog_Found" xml:space="preserve">
+    <value>تم العثور على المدونة بنجاح.</value>
+  </data>
   <data name="MaintenanceRequest_LeadNotFound" xml:space="preserve">
     <value>لم يتم العثور على عميل بالمعرف المدخل: {0}. يرجى إدخال معرف صحيح.</value>
   </data>
