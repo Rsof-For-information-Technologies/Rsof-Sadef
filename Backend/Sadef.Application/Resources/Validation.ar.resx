@@ -195,6 +195,24 @@
   <data name="Blog_SlugInvalid" xml:space="preserve">
     <value>يجب أن يكون السلاق مناسبًا للرابط (أحرف صغيرة، أرقام، وشرطات فقط).</value>
   </data>
+  <data name="Blog_InvalidTranslationsJson" xml:space="preserve">
+    <value>تنسيق JSON للترجمات غير صحيح.</value>
+  </data>
+  <data name="Blog_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>مطلوب ترجمة واحدة على الأقل.</value>
+  </data>
+  <data name="Blog_TitleRequiredForLanguage" xml:space="preserve">
+    <value>العنوان مطلوب للغة {0}.</value>
+  </data>
+  <data name="Blog_ContentRequiredForLanguage" xml:space="preserve">
+    <value>المحتوى مطلوب للغة {0}.</value>
+  </data>
+  <data name="Blog_InvalidLanguageCode" xml:space="preserve">
+    <value>رمز اللغة غير صحيح: {0}. يدعم فقط 'en' و 'ar'.</value>
+  </data>
+  <data name="Blog_LanguageCodeRequired" xml:space="preserve">
+    <value>رمز اللغة مطلوب.</value>
+  </data>
   <data name="Property_ProjectedResaleValueGreaterThanZero" xml:space="preserve">
     <value>يجب أن تكون القيمة المتوقعة لإعادة البيع أكبر من صفر.</value>
   </data>

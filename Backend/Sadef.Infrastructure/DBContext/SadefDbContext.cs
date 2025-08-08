@@ -45,6 +45,7 @@ namespace Sadef.Infrastructure.DBContext
         }
 
         public DbSet<Blog> Blogs { get; set; }
+        public DbSet<BlogTranslation> BlogTranslations { get; set; }
         public DbSet<Property> Properties { get; set; }
         public DbSet<PropertyTranslation> PropertyTranslations { get; set; }
         public DbSet<FavoriteProperty> FavoriteProperties { get; set; }

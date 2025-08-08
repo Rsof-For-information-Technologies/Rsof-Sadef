@@ -41,14 +41,27 @@ namespace Sadef.Application.MappingProfile
                 .ForMember(dest => dest.ImageUrls, opt => opt.Ignore());
 
             //Blogs
-            CreateMap<CreateBlogDto, Blog>();
-            CreateMap<UpdateBlogDto, Blog>();
-            CreateMap<Blog, BlogDto>();
+            CreateMap<CreateBlogDto, Blog>()
+                .ForMember(dest => dest.Translations, opt => opt.Ignore());
+
+            CreateMap<UpdateBlogDto, Blog>()
+                .ForMember(dest => dest.Translations, opt => opt.Ignore());
+
+            CreateMap<Blog, BlogDto>()
+                .ForMember(dest => dest.Title, opt => opt.Ignore()) 
+                .ForMember(dest => dest.Content, opt => opt.Ignore())
+                .ForMember(dest => dest.MetaTitle, opt => opt.Ignore()) 
+                .ForMember(dest => dest.MetaDescription, opt => opt.Ignore()) 
+                .ForMember(dest => dest.MetaKeywords, opt => opt.Ignore()) 
+                .ForMember(dest => dest.Slug, opt => opt.Ignore()) 
+                .ForMember(dest => dest.CanonicalUrl, opt => opt.Ignore()) 
+                .ForMember(dest => dest.Translations, opt => opt.Ignore())
+                .ForMember(dest => dest.TranslationsJson, opt => opt.Ignore()); 
 
             //Lead
             CreateMap<CreateLeadDto, Lead>();
             CreateMap<Lead, LeadDto>()
-                .ForMember(dest => dest.PropertyName, opt => opt.Ignore()); // Title is now in translations
+                .ForMember(dest => dest.PropertyName, opt => opt.Ignore()); 
             CreateMap<UpdateLeadDto, Lead>()
             .ForAllMembers(opts =>
                 opts.Condition((src, dest, srcMember) => srcMember != null));
@@ -69,7 +82,7 @@ namespace Sadef.Application.MappingProfile
             // Contact
             CreateMap<CreateContactDto, Sadef.Domain.ContactEntity.Contact>();
             CreateMap<Sadef.Domain.ContactEntity.Contact, ContactDto>()
-                .ForMember(dest => dest.PropertyTitle, opt => opt.Ignore()); // Title is now in translations
+                .ForMember(dest => dest.PropertyTitle, opt => opt.Ignore()); 
             CreateMap<UpdateContactDto, Sadef.Domain.ContactEntity.Contact>()
                 .ForAllMembers(opts =>
                     opts.Condition((src, dest, srcMember) => srcMember != null));

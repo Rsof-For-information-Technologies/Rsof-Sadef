@@ -195,6 +195,24 @@
   <data name="Blog_SlugInvalid" xml:space="preserve">
     <value>Slug must be URL-friendly (lowercase letters, numbers, and dashes only).</value>
   </data>
+  <data name="Blog_InvalidTranslationsJson" xml:space="preserve">
+    <value>Invalid translations JSON format.</value>
+  </data>
+  <data name="Blog_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>At least one translation is required.</value>
+  </data>
+  <data name="Blog_TitleRequiredForLanguage" xml:space="preserve">
+    <value>Title is required for language {0}.</value>
+  </data>
+  <data name="Blog_ContentRequiredForLanguage" xml:space="preserve">
+    <value>Content is required for language {0}.</value>
+  </data>
+  <data name="Blog_InvalidLanguageCode" xml:space="preserve">
+    <value>Invalid language code: {0}. Only 'en' and 'ar' are supported.</value>
+  </data>
+  <data name="Blog_LanguageCodeRequired" xml:space="preserve">
+    <value>Language code is required.</value>
+  </data>
   <data name="Property_ProjectedResaleValueGreaterThanZero" xml:space="preserve">
     <value>Projected resale value must be greater than zero.</value>
   </data>
