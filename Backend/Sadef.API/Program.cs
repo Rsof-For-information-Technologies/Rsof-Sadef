@@ -261,7 +261,10 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-                       return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, localizerFactory, contextAccessor);
+                       var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
+                       var cache = provider.GetRequiredService<IDistributedCache>();
+                       var context = provider.GetRequiredService<SadefDbContext>();
+                       return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, localizerFactory, contextAccessor, enumLocalizationService, cache, context);
                    });
 
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();

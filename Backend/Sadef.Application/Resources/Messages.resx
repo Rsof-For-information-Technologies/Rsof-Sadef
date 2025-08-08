@@ -99,11 +99,17 @@
   <data name="Lead_InvalidStatusTransition" xml:space="preserve">
     <value>Invalid status transition from {0} to {1}.</value>
   </data>
-  <data name="Lead_StatusUpdated" xml:space="preserve">
-    <value>Status updated successfully from {0} to {1}.</value>
-  </data>
   <data name="Blog_Created" xml:space="preserve">
     <value>Blog created successfully.</value>
+  </data>
+  <data name="Blog_Listed" xml:space="preserve">
+    <value>Blogs retrieved successfully.</value>
+  </data>
+  <data name="Blog_NotFound" xml:space="preserve">
+    <value>Blog not found.</value>
+  </data>
+  <data name="Blog_Found" xml:space="preserve">
+    <value>Blog found successfully.</value>
   </data>
   <data name="Blog_Updated" xml:space="preserve">
     <value>Blog updated successfully.</value>
@@ -111,128 +117,95 @@
   <data name="Blog_Deleted" xml:space="preserve">
     <value>Blog deleted successfully.</value>
   </data>
-  <data name="Blog_NotFound" xml:space="preserve">
-    <value>Blog not found.</value>
+  <data name="Blog_ListedFromCache" xml:space="preserve">
+    <value>Blogs retrieved successfully (from cache).</value>
   </data>
   <data name="Blog_AtLeastOneTranslationRequired" xml:space="preserve">
     <value>At least one translation is required.</value>
   </data>
   <data name="Blog_TitleRequiredForLanguage" xml:space="preserve">
-    <value>Title is required for language {0}.</value>
+    <value>Title is required for language '{0}'.</value>
   </data>
   <data name="Blog_ContentRequiredForLanguage" xml:space="preserve">
-    <value>Content is required for language {0}.</value>
+    <value>Content is required for language '{0}'.</value>
   </data>
   <data name="Blog_InvalidLanguageCode" xml:space="preserve">
-    <value>Invalid language code: {0}. Only 'en' and 'ar' are supported.</value>
+    <value>Invalid language code '{0}'. Only 'en' and 'ar' are supported.</value>
   </data>
-  <data name="Blog_LanguageCodeRequired" xml:space="preserve">
-    <value>Language code is required.</value>
+  <data name="Contact_Created" xml:space="preserve">
+    <value>Contact created successfully.</value>
   </data>
-  <data name="Blog_ListedFromCache" xml:space="preserve">
-    <value>Blogs retrieved from cache.</value>
+  <data name="Contact_Listed" xml:space="preserve">
+    <value>Contacts retrieved successfully.</value>
   </data>
-  <data name="Blog_Listed" xml:space="preserve">
-    <value>Blogs retrieved successfully.</value>
+  <data name="Contact_NotFound" xml:space="preserve">
+    <value>Contact not found.</value>
   </data>
-  <data name="Blog_Found" xml:space="preserve">
-    <value>Blog found successfully.</value>
+  <data name="Contact_Found" xml:space="preserve">
+    <value>Contact found successfully.</value>
   </data>
-  <data name="MaintenanceRequest_LeadNotFound" xml:space="preserve">
-    <value>No lead found with the provided LeadId: {0}. Please enter a valid LeadId.</value>
+  <data name="Contact_Updated" xml:space="preserve">
+    <value>Contact updated successfully.</value>
   </data>
-  <data name="MaintenanceRequest_LeadNotConverted" xml:space="preserve">
-    <value>Only converted leads can submit maintenance requests.</value>
+  <data name="Contact_Deleted" xml:space="preserve">
+    <value>Contact deleted successfully.</value>
   </data>
-  <data name="MaintenanceRequest_Created" xml:space="preserve">
-    <value>Maintenance request submitted successfully.</value>
+  <data name="Contact_StatusUpdated" xml:space="preserve">
+    <value>Contact status updated successfully.</value>
   </data>
-  <data name="MaintenanceRequest_Listed" xml:space="preserve">
-    <value>Maintenance requests retrieved successfully.</value>
+  <data name="Contact_ListedFromCache" xml:space="preserve">
+    <value>Contacts retrieved successfully (from cache).</value>
   </data>
-  <data name="MaintenanceRequest_NotFound" xml:space="preserve">
-    <value>Maintenance request not found.</value>
+  <data name="Contact_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>At least one translation is required.</value>
   </data>
-  <data name="MaintenanceRequest_Found" xml:space="preserve">
-    <value>Maintenance request found successfully.</value>
+  <data name="Contact_SubjectRequiredForLanguage" xml:space="preserve">
+    <value>Subject is required for language '{0}'.</value>
   </data>
-  <data name="MaintenanceRequest_DashboardLoaded" xml:space="preserve">
-    <value>Maintenance dashboard stats loaded.</value>
+  <data name="Contact_MessageRequiredForLanguage" xml:space="preserve">
+    <value>Message is required for language '{0}'.</value>
   </data>
-  <data name="MaintenanceRequest_Updated" xml:space="preserve">
-    <value>Maintenance request updated successfully.</value>
+  <data name="Contact_InvalidLanguageCode" xml:space="preserve">
+    <value>Invalid language code '{0}'. Only 'en' and 'ar' are supported.</value>
   </data>
-  <data name="MaintenanceRequest_Deleted" xml:space="preserve">
-    <value>Request deleted successfully.</value>
+  <data name="Contact_InvalidPropertyReference" xml:space="preserve">
+    <value>Invalid property reference. The specified property does not exist.</value>
   </data>
-  <data name="MaintenanceRequest_StatusNotSet" xml:space="preserve">
-    <value>Current status is not set for this request.</value>
+  <data name="User_Created" xml:space="preserve">
+    <value>User created successfully.</value>
   </data>
-  <data name="MaintenanceRequest_StatusRequired" xml:space="preserve">
-    <value>New status cannot be null.</value>
-  </data>
-  <data name="MaintenanceRequest_StatusUpdated" xml:space="preserve">
-    <value>Status updated from {0} to {1}.</value>
-  </data>
-  <data name="MaintenanceRequest_AdminResponseUpdated" xml:space="preserve">
-    <value>Admin response updated successfully.</value>
-  </data>
-  <data name="MaintenanceRequest_LeadIdRequired" xml:space="preserve">
-    <value>Lead ID is required. Please enter a valid ID.</value>
-  </data>
-  <data name="MaintenanceRequest_DescriptionRequired" xml:space="preserve">
-    <value>Description is required and must be less than 1000 characters.</value>
-  </data>
-  <data name="MaintenanceRequest_MaxVideos" xml:space="preserve">
-    <value>You can upload up to {0} videos only.</value>
-  </data>
-  <data name="MaintenanceRequest_VideoMaxSizeMB" xml:space="preserve">
-    <value>Each video must be {0}MB or smaller.</value>
-  </data>
-  <data name="MaintenanceRequest_IdPositive" xml:space="preserve">
-    <value>Maintenance request ID must be a positive number.</value>
-  </data>
-  <data name="User_FailedAutoVerifyAdminEmail" xml:space="preserve">
-    <value>Failed to auto-verify Admin/SuperAdmin email.</value>
-  </data>
-  <data name="User_Registered" xml:space="preserve">
-    <value>User registered successfully.</value>
-  </data>
-  <data name="User_RegisteredAndVerificationSent" xml:space="preserve">
-    <value>User registered successfully and a verification email sent.</value>
+  <data name="User_Listed" xml:space="preserve">
+    <value>Users retrieved successfully.</value>
   </data>
   <data name="User_NotFound" xml:space="preserve">
     <value>User not found.</value>
   </data>
-  <data name="User_EmailVerified" xml:space="preserve">
-    <value>Email verified successfully.</value>
+  <data name="User_Found" xml:space="preserve">
+    <value>User found successfully.</value>
   </data>
-  <data name="User_EmailVerificationFailed" xml:space="preserve">
-    <value>Email verification failed.</value>
-  </data>
-  <data name="User_InvalidEmailOrPassword" xml:space="preserve">
-    <value>Invalid email or password.</value>
-  </data>
-  <data name="User_EmailNotVerified" xml:space="preserve">
-    <value>Email not verified. Please verify your email before logging in.</value>
-  </data>
-  <data name="User_AccountLocked" xml:space="preserve">
-    <value>User account is locked due to multiple failed login attempts.</value>
+  <data name="User_Deleted" xml:space="preserve">
+    <value>User deleted successfully.</value>
   </data>
   <data name="User_LoginSuccessful" xml:space="preserve">
     <value>Login successful.</value>
   </data>
-  <data name="User_ClientUrlNotConfigured" xml:space="preserve">
-    <value>Client URL is not configured.</value>
+  <data name="User_LoginFailed" xml:space="preserve">
+    <value>Login failed. Please check your credentials.</value>
   </data>
-  <data name="User_FailedToSendRecoveryEmail" xml:space="preserve">
-    <value>Failed to send recovery email.</value>
+  <data name="User_LogoutSuccessful" xml:space="preserve">
+    <value>Logout successful.</value>
   </data>
-  <data name="User_RecoveryEmailSent" xml:space="preserve">
-    <value>Recovery email sent successfully.</value>
+  <data name="User_RegistrationSuccessful" xml:space="preserve">
+    <value>Registration successful.</value>
   </data>
-  <data name="User_FailedToResetPassword" xml:space="preserve">
-    <value>Failed to reset password: {0}</value>
+  <data name="User_RegistrationFailed" xml:space="preserve">
+    <value>Registration failed.</value>
+  </data>
+  <data name="User_PasswordResetEmailSent" xml:space="preserve">
+    <value>Password reset email sent successfully.</value>
+  </data>
+  <data name="User_PasswordResetEmailFailed" xml:space="preserve">
+    <value>Failed to send password reset email: {0}</value>
   </data>
   <data name="User_PasswordResetButEmailFailed" xml:space="preserve">
     <value>Password reset was successful, but confirmation email failed to send.</value>

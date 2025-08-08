@@ -51,6 +51,7 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<FavoriteProperty> FavoriteProperties { get; set; }
         public DbSet<Lead> Lead { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<ContactTranslation> ContactTranslations { get; set; }
         public DbSet<Timeslot> Timeslots { get; set; }
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }

@@ -13,13 +13,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
   </resheader>
   <data name="Success_OperationCompleted" xml:space="preserve">
-    <value>تمت العملية بنجاح.</value>
+    <value>تم إكمال العملية بنجاح.</value>
   </data>
   <data name="Error_Unexpected" xml:space="preserve">
     <value>حدث خطأ غير متوقع.</value>
   </data>
   <data name="Notification_Welcome" xml:space="preserve">
-    <value>مرحبًا بك في سدف!</value>
+    <value>مرحباً بك في صدف!</value>
   </data>
   <data name="Property_Created" xml:space="preserve">
     <value>تم إنشاء العقار بنجاح.</value>
@@ -28,7 +28,7 @@
     <value>تم استرجاع العقارات بنجاح.</value>
   </data>
   <data name="Property_NotFound" xml:space="preserve">
-    <value>لم يتم العثور على العقار.</value>
+    <value>العقار غير موجود.</value>
   </data>
   <data name="Property_Found" xml:space="preserve">
     <value>تم العثور على العقار بنجاح.</value>
@@ -49,19 +49,19 @@
     <value>تم تعيين تاريخ الانتهاء إلى {0}.</value>
   </data>
   <data name="Property_DashboardLoaded" xml:space="preserve">
-    <value>تم تحميل إحصائيات لوحة المعلومات.</value>
+    <value>تم تحميل إحصائيات لوحة التحكم.</value>
   </data>
   <data name="Property_ListedFromCache" xml:space="preserve">
-    <value>تم استرجاع العقارات بنجاح (من الكاش).</value>
+    <value>تم استرجاع العقارات بنجاح (من التخزين المؤقت).</value>
   </data>
   <data name="Property_InvalidStatusTransition" xml:space="preserve">
     <value>انتقال حالة غير صالح من {0} إلى {1}.</value>
   </data>
   <data name="Property_FilteredFromCache" xml:space="preserve">
-    <value>تم الجلب من الكاش.</value>
+    <value>تم الجلب من التخزين المؤقت.</value>
   </data>
   <data name="Property_DashboardLoadedFromCache" xml:space="preserve">
-    <value>تم تحميل إحصائيات لوحة المعلومات (من الكاش).</value>
+    <value>تم تحميل إحصائيات لوحة التحكم (من التخزين المؤقت).</value>
   </data>
   <data name="Property_AtLeastOneTranslationRequired" xml:space="preserve">
     <value>مطلوب ترجمة واحدة على الأقل.</value>
@@ -73,25 +73,25 @@
     <value>الوصف مطلوب للغة '{0}'.</value>
   </data>
   <data name="Property_InvalidLanguageCode" xml:space="preserve">
-    <value>رمز اللغة '{0}' غير صالح. يدعم فقط 'en' و 'ar'.</value>
+    <value>رمز لغة غير صالح '{0}'. يدعم فقط 'en' و 'ar'.</value>
   </data>
   <data name="Lead_Created" xml:space="preserve">
     <value>تم إرسال الاستفسار بنجاح.</value>
   </data>
   <data name="Lead_InvalidPropertyReference" xml:space="preserve">
-    <value>مرجع العقار غير صالح. العقار المحدد غير موجود.</value>
+    <value>مرجع عقار غير صالح. العقار المحدد غير موجود.</value>
   </data>
   <data name="Lead_Listed" xml:space="preserve">
-    <value>تم استرجاع العملاء المحتملين بنجاح.</value>
+    <value>تم استرجاع الاستفسارات بنجاح.</value>
   </data>
   <data name="Lead_NotFound" xml:space="preserve">
-    <value>لم يتم العثور على العميل المحتمل.</value>
+    <value>الاستفسار غير موجود.</value>
   </data>
   <data name="Lead_Updated" xml:space="preserve">
-    <value>تم تحديث العميل المحتمل بنجاح.</value>
+    <value>تم تحديث الاستفسار بنجاح.</value>
   </data>
   <data name="Lead_DashboardLoaded" xml:space="preserve">
-    <value>تم تحميل إحصائيات لوحة معلومات العملاء المحتملين.</value>
+    <value>تم تحميل إحصائيات لوحة تحكم الاستفسارات.</value>
   </data>
   <data name="Lead_StatusRequired" xml:space="preserve">
     <value>الحالة لا يمكن أن تكون فارغة.</value>
@@ -99,11 +99,17 @@
   <data name="Lead_InvalidStatusTransition" xml:space="preserve">
     <value>انتقال حالة غير صالح من {0} إلى {1}.</value>
   </data>
-  <data name="Lead_StatusUpdated" xml:space="preserve">
-    <value>تم تحديث الحالة بنجاح من {0} إلى {1}.</value>
-  </data>
   <data name="Blog_Created" xml:space="preserve">
     <value>تم إنشاء المدونة بنجاح.</value>
+  </data>
+  <data name="Blog_Listed" xml:space="preserve">
+    <value>تم استرجاع المدونات بنجاح.</value>
+  </data>
+  <data name="Blog_NotFound" xml:space="preserve">
+    <value>المدونة غير موجودة.</value>
+  </data>
+  <data name="Blog_Found" xml:space="preserve">
+    <value>تم العثور على المدونة بنجاح.</value>
   </data>
   <data name="Blog_Updated" xml:space="preserve">
     <value>تم تحديث المدونة بنجاح.</value>
@@ -111,134 +117,101 @@
   <data name="Blog_Deleted" xml:space="preserve">
     <value>تم حذف المدونة بنجاح.</value>
   </data>
-  <data name="Blog_NotFound" xml:space="preserve">
-    <value>لم يتم العثور على المدونة.</value>
+  <data name="Blog_ListedFromCache" xml:space="preserve">
+    <value>تم استرجاع المدونات بنجاح (من التخزين المؤقت).</value>
   </data>
   <data name="Blog_AtLeastOneTranslationRequired" xml:space="preserve">
     <value>مطلوب ترجمة واحدة على الأقل.</value>
   </data>
   <data name="Blog_TitleRequiredForLanguage" xml:space="preserve">
-    <value>العنوان مطلوب للغة {0}.</value>
+    <value>العنوان مطلوب للغة '{0}'.</value>
   </data>
   <data name="Blog_ContentRequiredForLanguage" xml:space="preserve">
-    <value>المحتوى مطلوب للغة {0}.</value>
+    <value>المحتوى مطلوب للغة '{0}'.</value>
   </data>
   <data name="Blog_InvalidLanguageCode" xml:space="preserve">
-    <value>رمز اللغة غير صحيح: {0}. يدعم فقط 'en' و 'ar'.</value>
+    <value>رمز لغة غير صالح '{0}'. يدعم فقط 'en' و 'ar'.</value>
   </data>
-  <data name="Blog_LanguageCodeRequired" xml:space="preserve">
-    <value>رمز اللغة مطلوب.</value>
+  <data name="Contact_Created" xml:space="preserve">
+    <value>تم إنشاء الاتصال بنجاح.</value>
   </data>
-  <data name="Blog_ListedFromCache" xml:space="preserve">
-    <value>تم استرجاع المدونات من التخزين المؤقت.</value>
+  <data name="Contact_Listed" xml:space="preserve">
+    <value>تم استرجاع الاتصالات بنجاح.</value>
   </data>
-  <data name="Blog_Listed" xml:space="preserve">
-    <value>تم استرجاع المدونات بنجاح.</value>
+  <data name="Contact_NotFound" xml:space="preserve">
+    <value>الاتصال غير موجود.</value>
   </data>
-  <data name="Blog_Found" xml:space="preserve">
-    <value>تم العثور على المدونة بنجاح.</value>
+  <data name="Contact_Found" xml:space="preserve">
+    <value>تم العثور على الاتصال بنجاح.</value>
   </data>
-  <data name="MaintenanceRequest_LeadNotFound" xml:space="preserve">
-    <value>لم يتم العثور على عميل بالمعرف المدخل: {0}. يرجى إدخال معرف صحيح.</value>
+  <data name="Contact_Updated" xml:space="preserve">
+    <value>تم تحديث الاتصال بنجاح.</value>
   </data>
-  <data name="MaintenanceRequest_LeadNotConverted" xml:space="preserve">
-    <value>فقط العملاء المحولون يمكنهم تقديم طلبات الصيانة.</value>
+  <data name="Contact_Deleted" xml:space="preserve">
+    <value>تم حذف الاتصال بنجاح.</value>
   </data>
-  <data name="MaintenanceRequest_Created" xml:space="preserve">
-    <value>تم إرسال طلب الصيانة بنجاح.</value>
+  <data name="Contact_StatusUpdated" xml:space="preserve">
+    <value>تم تحديث حالة الاتصال بنجاح.</value>
   </data>
-  <data name="MaintenanceRequest_Listed" xml:space="preserve">
-    <value>تم استرجاع طلبات الصيانة بنجاح.</value>
+  <data name="Contact_ListedFromCache" xml:space="preserve">
+    <value>تم استرجاع الاتصالات بنجاح (من التخزين المؤقت).</value>
   </data>
-  <data name="MaintenanceRequest_NotFound" xml:space="preserve">
-    <value>لم يتم العثور على طلب الصيانة.</value>
+  <data name="Contact_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>مطلوب ترجمة واحدة على الأقل.</value>
   </data>
-  <data name="MaintenanceRequest_Found" xml:space="preserve">
-    <value>تم العثور على طلب الصيانة بنجاح.</value>
+  <data name="Contact_SubjectRequiredForLanguage" xml:space="preserve">
+    <value>الموضوع مطلوب للغة '{0}'.</value>
   </data>
-  <data name="MaintenanceRequest_DashboardLoaded" xml:space="preserve">
-    <value>تم تحميل إحصائيات لوحة معلومات الصيانة.</value>
+  <data name="Contact_MessageRequiredForLanguage" xml:space="preserve">
+    <value>الرسالة مطلوبة للغة '{0}'.</value>
   </data>
-  <data name="MaintenanceRequest_Updated" xml:space="preserve">
-    <value>تم تحديث طلب الصيانة بنجاح.</value>
+  <data name="Contact_InvalidLanguageCode" xml:space="preserve">
+    <value>رمز لغة غير صالح '{0}'. يدعم فقط 'en' و 'ar'.</value>
   </data>
-  <data name="MaintenanceRequest_Deleted" xml:space="preserve">
-    <value>تم حذف الطلب بنجاح.</value>
+  <data name="Contact_InvalidPropertyReference" xml:space="preserve">
+    <value>مرجع عقار غير صالح. العقار المحدد غير موجود.</value>
   </data>
-  <data name="MaintenanceRequest_StatusNotSet" xml:space="preserve">
-    <value>لم يتم تعيين الحالة الحالية لهذا الطلب.</value>
+  <data name="User_Created" xml:space="preserve">
+    <value>تم إنشاء المستخدم بنجاح.</value>
   </data>
-  <data name="MaintenanceRequest_StatusRequired" xml:space="preserve">
-    <value>لا يمكن أن تكون الحالة الجديدة فارغة.</value>
-  </data>
-  <data name="MaintenanceRequest_StatusUpdated" xml:space="preserve">
-    <value>تم تحديث الحالة من {0} إلى {1}.</value>
-  </data>
-  <data name="MaintenanceRequest_AdminResponseUpdated" xml:space="preserve">
-    <value>تم تحديث رد المسؤول بنجاح.</value>
-  </data>
-  <data name="MaintenanceRequest_LeadIdRequired" xml:space="preserve">
-    <value>معرف العميل مطلوب. يرجى إدخال معرف صحيح.</value>
-  </data>
-  <data name="MaintenanceRequest_DescriptionRequired" xml:space="preserve">
-    <value>الوصف مطلوب ويجب ألا يزيد عن 1000 حرف.</value>
-  </data>
-  <data name="MaintenanceRequest_MaxVideos" xml:space="preserve">
-    <value>يمكنك رفع حتى {0} مقاطع فيديو فقط.</value>
-  </data>
-  <data name="MaintenanceRequest_VideoMaxSizeMB" xml:space="preserve">
-    <value>يجب ألا يزيد حجم كل فيديو عن {0} ميجابايت.</value>
-  </data>
-  <data name="MaintenanceRequest_IdPositive" xml:space="preserve">
-    <value>يجب أن يكون معرف طلب الصيانة رقمًا موجبًا.</value>
-  </data>
-  <data name="User_FailedAutoVerifyAdminEmail" xml:space="preserve">
-    <value>فشل التحقق التلقائي من بريد المشرف/المشرف الأعلى.</value>
-  </data>
-  <data name="User_Registered" xml:space="preserve">
-    <value>تم تسجيل المستخدم بنجاح.</value>
-  </data>
-  <data name="User_RegisteredAndVerificationSent" xml:space="preserve">
-    <value>تم تسجيل المستخدم بنجاح وتم إرسال بريد التحقق.</value>
+  <data name="User_Listed" xml:space="preserve">
+    <value>تم استرجاع المستخدمين بنجاح.</value>
   </data>
   <data name="User_NotFound" xml:space="preserve">
     <value>المستخدم غير موجود.</value>
   </data>
-  <data name="User_EmailVerified" xml:space="preserve">
-    <value>تم التحقق من البريد الإلكتروني بنجاح.</value>
+  <data name="User_Found" xml:space="preserve">
+    <value>تم العثور على المستخدم بنجاح.</value>
   </data>
-  <data name="User_EmailVerificationFailed" xml:space="preserve">
-    <value>فشل التحقق من البريد الإلكتروني.</value>
-  </data>
-  <data name="User_InvalidEmailOrPassword" xml:space="preserve">
-    <value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value>
-  </data>
-  <data name="User_EmailNotVerified" xml:space="preserve">
-    <value>لم يتم التحقق من البريد الإلكتروني. يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول.</value>
-  </data>
-  <data name="User_AccountLocked" xml:space="preserve">
-    <value>تم قفل حساب المستخدم بسبب محاولات تسجيل دخول فاشلة متعددة.</value>
+  <data name="User_Deleted" xml:space="preserve">
+    <value>تم حذف المستخدم بنجاح.</value>
   </data>
   <data name="User_LoginSuccessful" xml:space="preserve">
     <value>تم تسجيل الدخول بنجاح.</value>
   </data>
-  <data name="User_ClientUrlNotConfigured" xml:space="preserve">
-    <value>رابط العميل غير مهيأ.</value>
+  <data name="User_LoginFailed" xml:space="preserve">
+    <value>فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.</value>
   </data>
-  <data name="User_FailedToSendRecoveryEmail" xml:space="preserve">
-    <value>فشل في إرسال بريد الاستعادة.</value>
+  <data name="User_LogoutSuccessful" xml:space="preserve">
+    <value>تم تسجيل الخروج بنجاح.</value>
   </data>
-  <data name="User_RecoveryEmailSent" xml:space="preserve">
-    <value>تم إرسال بريد الاستعادة بنجاح.</value>
+  <data name="User_RegistrationSuccessful" xml:space="preserve">
+    <value>تم التسجيل بنجاح.</value>
   </data>
-  <data name="User_FailedToResetPassword" xml:space="preserve">
-    <value>فشل في إعادة تعيين كلمة المرور: {0}</value>
+  <data name="User_RegistrationFailed" xml:space="preserve">
+    <value>فشل التسجيل.</value>
+  </data>
+  <data name="User_PasswordResetEmailSent" xml:space="preserve">
+    <value>تم إرسال بريد إعادة تعيين كلمة المرور بنجاح.</value>
+  </data>
+  <data name="User_PasswordResetEmailFailed" xml:space="preserve">
+    <value>فشل في إرسال بريد إعادة تعيين كلمة المرور: {0}</value>
   </data>
   <data name="User_PasswordResetButEmailFailed" xml:space="preserve">
-    <value>تمت إعادة تعيين كلمة المرور بنجاح، لكن فشل إرسال بريد التأكيد.</value>
+    <value>تم إعادة تعيين كلمة المرور بنجاح، لكن فشل في إرسال بريد التأكيد.</value>
   </data>
   <data name="User_PasswordResetAndEmailSent" xml:space="preserve">
-    <value>تمت إعادة تعيين كلمة المرور بنجاح. تم إرسال بريد التأكيد.</value>
+    <value>تم إعادة تعيين كلمة المرور بنجاح. تم إرسال بريد تأكيد.</value>
   </data>
   <data name="User_NoUsersFound" xml:space="preserve">
     <value>لم يتم العثور على مستخدمين.</value>
@@ -259,10 +232,10 @@
     <value>تم تحديث المستخدم بنجاح.</value>
   </data>
   <data name="User_UnauthorizedAccess" xml:space="preserve">
-    <value>دخول غير مصرح به.</value>
+    <value>وصول غير مصرح.</value>
   </data>
   <data name="User_NotAuthorizedToUpdatePassword" xml:space="preserve">
-    <value>غير مصرح لك بتحديث كلمة مرور هذا المستخدم.</value>
+    <value>أنت غير مصرح لك بتحديث كلمة مرور هذا المستخدم.</value>
   </data>
   <data name="User_OldPasswordIncorrect" xml:space="preserve">
     <value>كلمة المرور القديمة غير صحيحة.</value>
@@ -274,7 +247,7 @@
     <value>تم تغيير كلمة المرور بنجاح.</value>
   </data>
   <data name="User_InvalidEmail" xml:space="preserve">
-    <value>البريد الإلكتروني غير صالح.</value>
+    <value>بريد إلكتروني غير صالح.</value>
   </data>
   <data name="User_InvalidRefreshToken" xml:space="preserve">
     <value>رمز التحديث غير صالح.</value>
@@ -286,19 +259,19 @@
     <value>تم تحديث الرمز بنجاح.</value>
   </data>
   <data name="Identity_PasswordRequiresNonAlphanumeric" xml:space="preserve">
-    <value>يجب أن تحتوي كلمة المرور على حرف واحد غير أبجدي رقمي على الأقل.</value>
+    <value>يجب أن تحتوي كلمات المرور على حرف واحد غير أبجدي رقمي على الأقل.</value>
   </data>
   <data name="Identity_PasswordRequiresDigit" xml:space="preserve">
-    <value>يجب أن تحتوي كلمة المرور على رقم واحد على الأقل ('0'-'9').</value>
+    <value>يجب أن تحتوي كلمات المرور على رقم واحد على الأقل ('0'-'9').</value>
   </data>
   <data name="Identity_PasswordRequiresLower" xml:space="preserve">
-    <value>يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل ('a'-'z').</value>
+    <value>يجب أن تحتوي كلمات المرور على حرف صغير واحد على الأقل ('a'-'z').</value>
   </data>
   <data name="Identity_PasswordRequiresUpper" xml:space="preserve">
-    <value>يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل ('A'-'Z').</value>
+    <value>يجب أن تحتوي كلمات المرور على حرف كبير واحد على الأقل ('A'-'Z').</value>
   </data>
   <data name="Identity_PasswordTooShort" xml:space="preserve">
-    <value>يجب أن تكون كلمة المرور {0} أحرف على الأقل.</value>
+    <value>يجب أن تكون كلمات المرور '{0}' أحرف على الأقل.</value>
   </data>
   <data name="Identity_DuplicateUserName" xml:space="preserve">
     <value>اسم المستخدم '{0}' مستخدم بالفعل.</value>
@@ -317,10 +290,10 @@
   </data>
 
   <data name="Favorite_AlreadyExists" xml:space="preserve">
-    <value>العقار مضاف للمفضلة بالفعل.</value>
+    <value>العقار مفضل بالفعل.</value>
   </data>
   <data name="Favorite_Added" xml:space="preserve">
-    <value>تم إضافة العقار للمفضلة.</value>
+    <value>تم إضافة العقار إلى المفضلة.</value>
   </data>
   <data name="Favorite_NotFound" xml:space="preserve">
     <value>المفضلة غير موجودة.</value>
