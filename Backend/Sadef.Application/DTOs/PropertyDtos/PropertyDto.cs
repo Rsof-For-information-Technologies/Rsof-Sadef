@@ -15,16 +15,16 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public string? Slug { get; set; }
         public string? CanonicalUrl { get; set; }
         public decimal Price { get; set; }
-        public string PropertyType { get; set; } = string.Empty;
-        public string? UnitCategory { get; set; }
-        public City City { get; set; }
+        public int PropertyType { get; set; }
+        public int? UnitCategory { get; set; }
+        public int City { get; set; }
         public string Location { get; set; } = string.Empty;
         public double AreaSize { get; set; }
         public int? Bedrooms { get; set; }
         public int? Bathrooms { get; set; }
         public int? TotalFloors { get; set; }
         public List<string> ImageUrls { get; set; } = new();
-        public string Status { get; set; } = string.Empty;
+        public int Status { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public bool IsExpired => ExpiryDate.HasValue && ExpiryDate.Value <= DateTime.UtcNow;
         public List<string> VideoUrls { get; set; } = new();
@@ -35,8 +35,8 @@ namespace Sadef.Application.DTOs.PropertyDtos
         public string? WhatsAppNumber { get; set; }
         public DateTime? ExpectedDeliveryDate { get; set; }
         public bool IsInvestorOnly { get; set; } = false;
-        public List<string>? Features { get; set; }
+        public List<int>? Features { get; set; }
         public bool? IsActive { get; set; } = true;
-        public ContentLanguage ContentLanguage { get; set; }
+        public int ContentLanguage { get; set; }
     }
 }

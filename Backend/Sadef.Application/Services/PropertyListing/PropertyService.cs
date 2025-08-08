@@ -39,7 +39,7 @@ namespace Sadef.Application.Services.PropertyListing
         private const string PROPERTY_DASHBOARD_CACHE_KEY = "property:dashboard:stats";
         private const int CACHE_DURATION_MINUTES = 10;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto , IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService, IConfiguration configuration)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto, IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService, IConfiguration configuration)
         {
             _uow = uow;
             _mapper = mapper;
@@ -137,7 +137,7 @@ namespace Sadef.Application.Services.PropertyListing
             var createdDto = _mapper.Map<PropertyDto>(property);
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(createdDto, property.Id, currentLanguage);
-            
+
             return new Response<PropertyDto>(createdDto, _localizer["Property_Created"]);
         }
 
@@ -145,7 +145,7 @@ namespace Sadef.Application.Services.PropertyListing
         {
             var currentLanguage = GetCurrentLanguage();
             string cacheKey = $"{PROPERTY_CACHE_PREFIX}:page={request.PageNumber}&size={request.PageSize}&lang={currentLanguage}";
-            
+
             // Try to get from cache first
             var cached = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cached))
@@ -173,9 +173,10 @@ namespace Sadef.Application.Services.PropertyListing
 
                 await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
 
-                dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
-                dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
-                dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
+                // Set enum values as integers
+                //dto.PropertyType = p.PropertyType;
+                //dto.UnitCategory = p.UnitCategory;
+                //dto.Status = p.Status;
 
                 result.Add(dto);
             }
@@ -213,10 +214,10 @@ namespace Sadef.Application.Services.PropertyListing
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(dto, property.Id, currentLanguage);
 
-            // Set localized enum values
-            dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(property.PropertyType, currentLanguage);
-            dto.UnitCategory = property.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(property.UnitCategory.Value, currentLanguage) : null;
-            dto.Status = _enumLocalizationService.GetLocalizedEnumValue(property.Status, currentLanguage);
+            // Set enum values as integers
+            //dto.PropertyType = property.PropertyType;
+            //dto.UnitCategory = property.UnitCategory;
+            //dto.Status = property.Status;
 
             return new Response<PropertyDto>(dto, _localizer["Property_Found"]);
         }
@@ -231,15 +232,15 @@ namespace Sadef.Application.Services.PropertyListing
 
             if (property == null)
                 return new Response<string>(_localizer["Property_NotFound"]);
-            
+
             property.IsActive = false; // Soft delete
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            
+
             // Clear all language-specific caches for properties
             await ClearPropertyCaches();
-            
+
             return new Response<string>(_localizer["Property_Deleted"]);
         }
 
@@ -326,17 +327,17 @@ namespace Sadef.Application.Services.PropertyListing
 
             // Clear all language-specific caches for properties
             await ClearPropertyCaches();
-            
+
             var updatedDto = _mapper.Map<PropertyDto>(existing);
 
             // Apply localization to DTO
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(updatedDto, existing.Id, currentLanguage);
 
-            // Set localized enum values
-            updatedDto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(existing.PropertyType, currentLanguage);
-            updatedDto.UnitCategory = existing.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(existing.UnitCategory.Value, currentLanguage) : null;
-            updatedDto.Status = _enumLocalizationService.GetLocalizedEnumValue(existing.Status, currentLanguage);
+            // Set enum values as integers
+            //updatedDto.PropertyType = existing.PropertyType;
+            //updatedDto.UnitCategory = existing.UnitCategory;
+            //updatedDto.Status = existing.Status;
 
             return new Response<PropertyDto>(updatedDto, _localizer["Property_Updated"]);
         }
@@ -373,10 +374,10 @@ namespace Sadef.Application.Services.PropertyListing
             await _uow.SaveChangesAsync(CancellationToken.None);
 
             var updatedDto = _mapper.Map<PropertyDto>(property);
-            
+
             // Clear all language-specific caches for properties
             await ClearPropertyCaches();
-            
+
             return new Response<PropertyDto>(updatedDto, string.Format(_localizer["Property_StatusUpdated"], currentStatus, property.Status));
         }
 
@@ -417,9 +418,10 @@ namespace Sadef.Application.Services.PropertyListing
 
                 await ApplyLocalizationToDtoAsync(dto, p.Id, currentLanguage);
 
-                dto.PropertyType = _enumLocalizationService.GetLocalizedEnumValue(p.PropertyType, currentLanguage);
-                dto.UnitCategory = p.UnitCategory.HasValue ? _enumLocalizationService.GetLocalizedEnumValue(p.UnitCategory.Value, currentLanguage) : null;
-                dto.Status = _enumLocalizationService.GetLocalizedEnumValue(p.Status, currentLanguage);
+                // Set enum values as integers
+                //dto.PropertyType = p.PropertyType;
+                //dto.UnitCategory = p.UnitCategory;
+                //dto.Status = p.Status;
 
                 result.Add(dto);
             }
@@ -442,7 +444,7 @@ namespace Sadef.Application.Services.PropertyListing
                 var errorMessage = validationResult.Errors.First().ErrorMessage;
                 return new Response<PropertyDto>(errorMessage);
             }
-            
+
             var repo = _uow.RepositoryAsync<Property>();
             var property = await _queryRepositoryFactory.QueryRepository<Property>()
                 .Queryable()
@@ -454,10 +456,10 @@ namespace Sadef.Application.Services.PropertyListing
             property.ExpiryDate = dto.ExpiryDate;
             await repo.UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
-            
+
             // Clear all language-specific caches for properties
             await ClearPropertyCaches();
-            
+
             var result = _mapper.Map<PropertyDto>(property);
             return new Response<PropertyDto>(result, string.Format(_localizer["Property_ExpirySet"], dto.ExpiryDate.ToString("yyyy-MM-dd")));
         }
@@ -471,7 +473,7 @@ namespace Sadef.Application.Services.PropertyListing
                 var dtoData = JsonConvert.DeserializeObject<PropertyDashboardStatsDto>(cached);
                 return new Response<PropertyDashboardStatsDto>(dtoData, _localizer["Property_DashboardLoadedFromCache"]);
             }
-            
+
             var query = _queryRepositoryFactory.QueryRepository<Property>().Queryable();
 
             var now = DateTime.UtcNow;
@@ -503,7 +505,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .GroupBy(p => p.UnitCategory)
                 .Select(g => new { Category = g.Key.ToString(), Count = g.Count() })
                 .ToDictionaryAsync(g => g.Category ?? "Unknown", g => g.Count);
-            
+
             var activeProperties = await query
                .Where(p =>
                    (p.IsActive.HasValue && p.IsActive.Value) &&
@@ -540,21 +542,21 @@ namespace Sadef.Application.Services.PropertyListing
         private async Task SavePropertyTranslationsInternalAsync(int propertyId, Dictionary<string, PropertyTranslationDto> translations)
         {
             if (_context == null) return;
-        
+
             foreach (var translation in translations)
             {
                 var languageCode = translation.Key;
                 var translationDto = translation.Value;
-        
+
                 // Validate translation content
                 if (string.IsNullOrEmpty(translationDto.Title))
                 {
                     throw new Exception($"Translation for language '{languageCode}' has empty Title. PropertyId: {propertyId}");
                 }
-        
+
                 var existingTranslation = await _context.PropertyTranslations
                     .FirstOrDefaultAsync(t => t.PropertyId == propertyId && t.LanguageCode == languageCode);
-        
+
                 if (existingTranslation != null)
                 {
                     // Update existing translation
@@ -588,35 +590,35 @@ namespace Sadef.Application.Services.PropertyListing
                     _context.PropertyTranslations.Add(newTranslation);
                 }
             }
-        
+
             await _context.SaveChangesAsync();
         }
-        
+
         private string GetCurrentLanguage()
         {
             try
             {
                 var httpContext = _httpContextAccessor?.HttpContext;
-                
+
                 if (httpContext != null)
                 {
                     // First try to get from middleware
                     var currentLanguage = httpContext.Items["CurrentLanguage"] as string;
                     if (!string.IsNullOrEmpty(currentLanguage))
                         return currentLanguage;
-                    
+
                     // Fallback to header parsing
                     var acceptLanguage = httpContext.Request.Headers["Accept-Language"].FirstOrDefault();
-                    
+
                     if (!string.IsNullOrEmpty(acceptLanguage))
                     {
                         var languages = acceptLanguage.Split(',')
                             .Select(lang => lang.Trim().Split(';')[0].ToLower())
                             .ToList();
-                        
+
                         if (languages.Any(lang => lang.StartsWith("ar")))
                             return "ar";
-                        
+
                         if (languages.Any(lang => lang.StartsWith("en")))
                             return "en";
                     }
@@ -627,7 +629,7 @@ namespace Sadef.Application.Services.PropertyListing
                 // Log the exception if needed
                 // For now, just continue with default
             }
-            
+
             return "en"; // Default to English
         }
 
