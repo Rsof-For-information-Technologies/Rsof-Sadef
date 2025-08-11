@@ -128,6 +128,26 @@ export function MenuItems(user: User): MenuItem[] {
           }
         ]
       },
+      {
+        name: "Contact",
+        href: `#`,
+        icon: <FaUser />,
+        allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+        dropdownItems: [
+          {
+            name: "Contact List",
+            href: `${routes.contact.list}`,
+            badge: '',
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+          },
+          {
+            name: "Create Contact",
+            href: `${routes.contact.create}`,
+            badge: '',
+            allowedRoles: [UserRole.Admin],
+          }
+        ]
+      },
       // {
       //   name: "Product List",
       //   href: `/${locale}${routes.productList}`,
