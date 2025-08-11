@@ -1,5 +1,5 @@
 import { routes } from '@/config/routes';
-import { FaBlog, FaFolderOpen, FaHourglassEnd, FaUser } from "react-icons/fa";
+import { FaBlog, FaFolderOpen, FaHourglassEnd, FaUser, FaUsers } from "react-icons/fa";
 import { UserRole } from "@/types/userRoles";
 import { User } from "@/types/user";
 import { JSX } from "react";
@@ -105,6 +105,26 @@ export function MenuItems(user: User): MenuItem[] {
             href: `${routes.maintenanceRequest.create}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+          }
+        ]
+      },
+      {
+        name: "User Management",
+        href: `#`,
+        icon: <FaUsers />,
+        allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+        dropdownItems: [
+          {
+            name: "User List",
+            href: `${routes.user.list}`,
+            badge: '',
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
+          },
+          {
+            name: "Create User",
+            href: `${routes.user.create}`,
+            badge: '',
+            allowedRoles: [UserRole.Admin],
           }
         ]
       },

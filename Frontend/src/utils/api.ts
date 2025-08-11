@@ -4,6 +4,7 @@ import { LoginResponse } from '@/types/login';
 import { MaintenenceRequestDetail, MaintenenceRequestResponse } from '@/types/maintenanceRequest';
 import { PropertyFormData, CreatePropertyResponse, GetProperties, PropertyFilters, GetFilteredProperties } from '@/types/property';
 import { UpdatePasswordResponse } from '@/types/updatePassword';
+import { GetUsers, GetUserById, UpdateUserRequest, UpdateUserResponse } from '@/types/user';
 import { ChangePasswordSchema } from '@/validators/updatePaseword.schema';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -601,3 +602,37 @@ export const getAllPropertyCities = async (): Promise<GetPropertyCities> => {
   }
 };
 
+// getAllUsers api
+
+export const getAllUsers = async (pageNumber = 1, pageSize = 10): Promise<GetUsers> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetUsers>(`/api/v1/user/users?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+  } catch (error) {
+    console.error('Get all users failed:', error);
+    throw error;
+  }
+};
+
+export const getUserById = async (id: string): Promise<GetUserById> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetUserById>(`/api/v1/user/users/${id}`);
+    return data;
+  } catch (error) {
+    console.error('Get user by ID failed:', error);
+    throw error;
+  }
+};
+
+export const updateUser = async (userData: UpdateUserRequest): Promise<UpdateUserResponse> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.put<UpdateUserResponse>('/api/v1/user/update-user', userData);
+    return data;
+  } catch (error) {
+    console.error('Update user failed:', error);
+    throw error;
+  }
+}; 

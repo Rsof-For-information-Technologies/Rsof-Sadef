@@ -749,3 +749,111 @@ export const getMaintenanceRequestColumns = ({
     },
   },
 ];
+
+// user columns
+
+export const getUserColumns = ({
+  sortConfig,
+  onHeaderCellClick,
+}: Columns) => [
+  {
+    title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+    onHeaderCell: () => onHeaderCellClick('id'),
+    dataIndex: 'id',
+    key: 'id',
+    width: 160,
+    render: (value: string) => <Text>#{value}</Text>,
+  },
+  {
+    title: <HeaderCell title="First Name" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'firstName'} />,
+    onHeaderCell: () => onHeaderCellClick('firstName'),
+    dataIndex: 'firstName',
+    key: 'firstName',
+    width: 100,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Last Name" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'lastName'} />,
+    onHeaderCell: () => onHeaderCellClick('lastName'),
+    dataIndex: 'lastName',
+    key: 'lastName',
+    width: 100,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Email" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
+    onHeaderCell: () => onHeaderCellClick('email'),
+    dataIndex: 'email',
+    key: 'email',
+    width: 100,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Role" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'role'} />,
+    onHeaderCell: () => onHeaderCellClick('role'),
+    dataIndex: 'role',
+    key: 'role',
+    width: 80,
+    render: (value: string) => {
+      let color: "warning" | "success" | "info" | "danger" | "secondary" = "secondary";
+      switch (value) {
+        case "SuperAdmin": color = "danger"; break;
+        case "Admin": color = "success"; break;
+        case "Investor": color = "info"; break;
+        case "PublicUser": color = "warning"; break;
+        default: color = "secondary";
+      }
+      return (
+        <Badge color={color} className="min-w-[80px] text-center">
+          {value}
+        </Badge>
+      );
+    },
+  },
+  {
+    title: <HeaderCell title="Active" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isActive'} />,
+    onHeaderCell: () => onHeaderCellClick('isActive'),
+    dataIndex: 'isActive',
+    key: 'isActive',
+    width: 80,
+    render: (value: boolean) => {
+      return (
+        value === true ? (
+          <Badge color="success">Active</Badge>
+        ) : (
+          <Badge color="warning">Inactive</Badge>
+        )
+      );
+    }
+  },
+  {
+    title: <HeaderCell title="Actions" className='flex justify-end'/>,
+    dataIndex: 'action',
+    key: 'action',
+    width: 100,
+    render: (_: string, row: any) => (
+      <div className="flex items-center justify-end gap-3">
+        <Tooltip size="sm" content={'Edit User'} placement="top" color="invert">
+          <Link href={routes.user.editUser(row.id)}>
+            <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
+              <PencilIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+        <Tooltip size="sm" content={'View User'} placement="top" color="invert">
+          <Link href={routes.user.userDetails(row.id)}>
+            <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
+              <EyeIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+      </div>
+    ),
+  },
+];

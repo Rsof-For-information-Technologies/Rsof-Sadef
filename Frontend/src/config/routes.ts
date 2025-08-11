@@ -106,4 +106,10 @@ export const routes = {
     editProfile: "/profile/edit-profile",
     changePassword: "/profile/change-password",
   },
+  user: {
+    list: "/user",
+    create: "/user/create",
+    userDetails: (userId: string) => `/user/${userId}`,
+    editUser: (userId: string) => `/user/${userId}/update`,
+  },
 };
