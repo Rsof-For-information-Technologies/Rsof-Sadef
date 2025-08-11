@@ -16,6 +16,7 @@ using Sadef.Infrastructure.DBContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Sadef.Common.Infrastructure.Validator;
 using Sadef.Application.Services.Multilingual;
 using SystemTextJson = System.Text.Json;
 
@@ -60,8 +61,12 @@ namespace Sadef.Application.Services.PropertyListing
             var validationResult = await _createPropertyValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<PropertyDto>(errorMessage);
+                return new Response<PropertyDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             // Parse translations JSON if provided
@@ -84,14 +89,14 @@ namespace Sadef.Application.Services.PropertyListing
             // Validate that at least one translation is provided
             if (dto.Translations == null || !dto.Translations.Any())
             {
-                return new Response<PropertyDto>(_localizer["Property_AtLeastOneTranslationRequired"]);
+                return new Response<PropertyDto> { Succeeded = false, Message = _localizer["Property_AtLeastOneTranslationRequired"] };
             }
 
             // Validate translation content
             var translationValidation = ValidateTranslations(dto.Translations);
             if (!translationValidation.IsValid)
             {
-                return new Response<PropertyDto>(translationValidation.ErrorMessage);
+                return new Response<PropertyDto> { Succeeded = false, Message = translationValidation.ErrorMessage };
             }
 
             var property = _mapper.Map<Property>(dto);
@@ -205,7 +210,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
-                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
+                return new Response<PropertyDto>{ Succeeded = false, Message = _localizer["Property_NotFound"] };
 
             var dto = _mapper.Map<PropertyDto>(property);
             dto.ImageUrls = property.Images?.Select(img => img.ImageUrl).ToList() ?? new();
@@ -231,7 +236,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (property == null)
-                return new Response<string>(_localizer["Property_NotFound"]);
+                return new Response<string> { Succeeded = false, Message = _localizer["Property_NotFound"] };
 
             property.IsActive = false; // Soft delete
 
@@ -249,8 +254,12 @@ namespace Sadef.Application.Services.PropertyListing
             var validationResult = await _updatePropertyValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<PropertyDto>(errorMessage);
+                return new Response<PropertyDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             // Handle translations from form-data JSON string
@@ -277,7 +286,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
             if (existing == null)
-                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
+                return new Response<PropertyDto>{ Succeeded = false, Message = _localizer["Property_NotFound"] };
 
             _mapper.Map(dto, existing);
             var basePath = _configuration["UploadSettings:Paths:PropertyMedia"] ?? Directory.GetCurrentDirectory();
@@ -350,7 +359,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
             if (property == null)
-                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
+                return new Response<PropertyDto>{ Succeeded = false, Message = _localizer["Property_NotFound"] };
 
             var currentStatus = property.Status;
 
@@ -366,7 +375,8 @@ namespace Sadef.Application.Services.PropertyListing
             if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
                 !validNextStatuses.Contains(dto.status))
             {
-                return new Response<PropertyDto>(string.Format(_localizer["Property_InvalidStatusTransition"], currentStatus, dto.status));
+                var msg = string.Format(_localizer["Property_InvalidStatusTransition"], currentStatus, dto.status);
+                return new Response<PropertyDto> { Succeeded = false, Message = msg };
             }
 
             property.Status = dto.status;
@@ -441,8 +451,12 @@ namespace Sadef.Application.Services.PropertyListing
             var validationResult = await _expireValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<PropertyDto>(errorMessage);
+                return new Response<PropertyDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             var repo = _uow.RepositoryAsync<Property>();
@@ -451,7 +465,7 @@ namespace Sadef.Application.Services.PropertyListing
                 .FirstOrDefaultAsync(p => p.Id == dto.Id);
 
             if (property == null)
-                return new Response<PropertyDto>(_localizer["Property_NotFound"]);
+                return new Response<PropertyDto>{ Succeeded = false, Message = _localizer["Property_NotFound"] };
 
             property.ExpiryDate = dto.ExpiryDate;
             await repo.UpdateAsync(property);

@@ -331,4 +331,25 @@
   <data name="Favorite_Loaded" xml:space="preserve">
     <value>Favorites loaded.</value>
   </data>
+  <data name="Contact_NotFound" xml:space="preserve">
+    <value>Contact not found.</value>
+  </data>
+  <data name="Contact_InvalidPropertyReference" xml:space="preserve">
+    <value>Invalid property reference for contact.</value>
+  </data>
+  <data name="Contact_Created" xml:space="preserve">
+    <value>Contact created successfully.</value>
+  </data>
+  <data name="Contact_Updated" xml:space="preserve">
+    <value>Contact updated successfully.</value>
+  </data>
+  <data name="Contact_StatusUpdated" xml:space="preserve">
+    <value>Contact status updated successfully.</value>
+  </data>
+  <data name="Contact_Deleted" xml:space="preserve">
+    <value>Contact deleted successfully.</value>
+  </data>
+  <data name="Contact_EmailInvalid" xml:space="preserve">
+    <value>Invalid email address for contact.</value>
+  </data>
 </root> 

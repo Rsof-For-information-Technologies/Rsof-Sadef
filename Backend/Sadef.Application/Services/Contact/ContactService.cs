@@ -9,6 +9,7 @@ using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.Services.Contact;
 using Sadef.Common.Domain;
 using Sadef.Common.Infrastructure.Wrappers;
+using Sadef.Common.Infrastructure.Validator;
 using Sadef.Domain.Constants;
 using Sadef.Domain.ContactEntity;
 using Sadef.Domain.PropertyEntity;
@@ -52,8 +53,12 @@ namespace Sadef.Application.Services.Contact
             var validationResult = await _createContactValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<ContactDto>(errorMessage);
+                return new Response<ContactDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             // Validate property reference if provided
@@ -64,7 +69,7 @@ namespace Sadef.Application.Services.Contact
                     .Queryable()
                     .AnyAsync(p => p.Id == dto.PropertyId.Value);
                 if (!propertyExists)
-                    return new Response<ContactDto>(_localizer["Contact_InvalidPropertyReference"]);
+                    return new Response<ContactDto>{ Succeeded = false, Message = _localizer["Contact_InvalidPropertyReference"] };
             }
 
             var contact = _mapper.Map<Sadef.Domain.ContactEntity.Contact>(dto);
@@ -149,7 +154,7 @@ namespace Sadef.Application.Services.Contact
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (contact == null)
-                return new Response<ContactDto>(_localizer["Contact_NotFound"]);
+                return new Response<ContactDto>{ Succeeded = false, Message = _localizer["Contact_NotFound"] };
 
             var contactDto = _mapper.Map<ContactDto>(contact);
             return new Response<ContactDto>(contactDto);
@@ -160,14 +165,18 @@ namespace Sadef.Application.Services.Contact
             var validationResult = await _updateContactValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<ContactDto>(errorMessage);
+                return new Response<ContactDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             var queryRepo = _queryRepositoryFactory.QueryRepository<Sadef.Domain.ContactEntity.Contact>();
             var contact = await queryRepo.Queryable().FirstOrDefaultAsync(c => c.Id == dto.Id);
             if (contact == null)
-                return new Response<ContactDto>(_localizer["Contact_NotFound"]);
+                return new Response<ContactDto>{ Succeeded = false, Message = _localizer["Contact_NotFound"] };
 
             // Update only provided fields
             if (!string.IsNullOrWhiteSpace(dto.FullName))
@@ -225,14 +234,18 @@ namespace Sadef.Application.Services.Contact
             var validationResult = await _updateContactStatusValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<ContactDto>(errorMessage);
+                return new Response<ContactDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             var queryRepo = _queryRepositoryFactory.QueryRepository<Sadef.Domain.ContactEntity.Contact>();
             var contact = await queryRepo.Queryable().FirstOrDefaultAsync(c => c.Id == dto.Id);
             if (contact == null)
-                return new Response<ContactDto>(_localizer["Contact_NotFound"]);
+                return new Response<ContactDto>{ Succeeded = false, Message = _localizer["Contact_NotFound"] };
 
             contact.Status = dto.Status;
             contact.UpdatedAt = DateTime.UtcNow;
@@ -299,6 +312,8 @@ namespace Sadef.Application.Services.Contact
                 .Where(c => c.PropertyId == propertyId)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
+            if (contacts.Count == 0)
+                return new Response<List<ContactDto>> { Succeeded = false, Message = _localizer["Contact_NotFound"] };
 
             var contactDtos = _mapper.Map<List<ContactDto>>(contacts);
             return new Response<List<ContactDto>>(contactDtos);
@@ -309,7 +324,7 @@ namespace Sadef.Application.Services.Contact
             var queryRepo = _queryRepositoryFactory.QueryRepository<Sadef.Domain.ContactEntity.Contact>();
             var contact = await queryRepo.Queryable().FirstOrDefaultAsync(c => c.Id == id);
             if (contact == null)
-                return new Response<string>(_localizer["Contact_NotFound"]);
+                return new Response<string>{ Succeeded = false, Message = _localizer["Contact_NotFound"] };
 
             await _uow.RepositoryAsync<Sadef.Domain.ContactEntity.Contact>().DeleteAsync(contact);
             await _uow.SaveChangesAsync(CancellationToken.None);
