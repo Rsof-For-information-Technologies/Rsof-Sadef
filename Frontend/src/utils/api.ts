@@ -5,6 +5,7 @@ import { MaintenenceRequestDetail, MaintenenceRequestResponse } from '@/types/ma
 import { PropertyFormData, CreatePropertyResponse, GetProperties, PropertyFilters, GetFilteredProperties } from '@/types/property';
 import { UpdatePasswordResponse } from '@/types/updatePassword';
 import { GetUsers, GetUserById, UpdateUserRequest, UpdateUserResponse } from '@/types/user';
+import { GetContacts, GetContactById, UpdateContactStatusResponse, GetContactDashboardStats } from '@/types/contact';
 import { ChangePasswordSchema } from '@/validators/updatePaseword.schema';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -578,4 +579,50 @@ export const updateUser = async (userData: UpdateUserRequest): Promise<UpdateUse
     console.error('Update user failed:', error);
     throw error;
   }
-}; 
+};
+
+// Contact API functions
+
+export const getAllContacts = async (pageNumber = 1, pageSize = 10): Promise<GetContacts> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetContacts>(`/api/v1/contact?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+  } catch (error) {
+    console.error('Get all contacts failed:', error);
+    throw error;
+  }
+};
+
+export const getContactById = async (id: string): Promise<GetContactById> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetContactById>(`/api/v1/contact/${id}`);
+    return data;
+  } catch (error) {
+    console.error('Get contact by ID failed:', error);
+    throw error;
+  }
+};
+
+export const updateContactStatus = async (id: number, status: number): Promise<UpdateContactStatusResponse> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.patch<UpdateContactStatusResponse>('/api/v1/contact/update-status', { id, status, notes: "test" });
+    return data;
+  } catch (error) {
+    console.error('Update contact status failed:', error);
+    throw error;
+  }
+};
+
+export const getContactDashboardStats = async (): Promise<GetContactDashboardStats> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetContactDashboardStats>('/api/v1/contact/dashboard-stats');
+    return data;
+  } catch (error) {
+    console.error('Get contact dashboard stats failed:', error);
+    throw error;
+  }
+};

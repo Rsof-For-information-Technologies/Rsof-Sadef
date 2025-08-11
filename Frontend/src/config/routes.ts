@@ -112,4 +112,10 @@ export const routes = {
     userDetails: (userId: string) => `/user/${userId}`,
     editUser: (userId: string) => `/user/${userId}/update`,
   },
+  contact: {
+    list: "/contact",
+    create: "/contact/create",
+    contactDetails: (contactId: string) => `/contact/${contactId}`,
+    editContact: (contactId: string) => `/contact/${contactId}/update`,
+  },
 };

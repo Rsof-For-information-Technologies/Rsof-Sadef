@@ -23,7 +23,6 @@ function Authenticate({ children, }: T_Authenticate) {
 
     const pathName = usePathname()
 
-    console.log("Authenticate Rendered", { userInfo, searchParams, pathName })
     useEffect(() => {
         setUserInfo(getLocalStorage("user-info") as User)
         // eslint-disable-next-line react-hooks/exhaustive-deps

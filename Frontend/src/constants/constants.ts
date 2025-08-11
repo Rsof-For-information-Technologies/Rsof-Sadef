@@ -119,3 +119,22 @@ export const propertyTypesFilters  = [
   { label: 'Hotel', value: '14' },
   { label: 'Mall', value: '15' },
 ];
+
+export const contactStatuses = [
+  { label: "New", value: 0 },
+  { label: "InProgress", value: 1 },
+  { label: "Contacted", value: 2 },
+  { label: "Responded", value: 3 },
+  { label: "Scheduled", value: 4 },
+  { label: "Completed", value: 5 },
+  { label: "Cancelled", value: 6 },
+  { label: "Spam", value: 7 },
+];
+
+export const leadStatuses = [
+  { label: "Pending", value: 0 },
+  { label: "Approved", value: 1 },
+  { label: "Sold", value: 2 },
+  { label: "Rejected", value: 3 },
+  { label: "Archived", value: 4 },
+];

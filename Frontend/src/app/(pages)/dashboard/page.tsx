@@ -5,6 +5,7 @@ import { Title } from "rizzui";
 import LeadDashboard from "./(components)/LeadDashboard";
 import MaintenanceRequestDashboard from "./(components)/MaintenanceRequestDashboard";
 import PropertyDashboard from "./(components)/PropertyDashboard";
+import ContactDashboard from "./(components)/ContactDashboard";
 
 const Dashboard = () => {
     return (
@@ -37,6 +38,14 @@ const Dashboard = () => {
                             Maintenance Request Analytics
                         </Title>
                         <MaintenanceRequestDashboard />
+                    </div>
+
+                    {/* Contact Dashboard */}
+                    <div>
+                        <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
+                            Contact Analytics
+                        </Title>
+                        <ContactDashboard />
                     </div>
                 </div>
             </Authorize>

@@ -8,12 +8,12 @@ import PencilIcon from '@/components/icons/pencil';
 import DateCell from '@/components/ui/date-cell';
 import DeletePopover from '@/app/shared/delete-popover';
 import { HeaderCell } from '@/components/ui/table';
-import { deleteBlog, deleteMaintenanceRequest, deleteProperty, LeadUpdateStatus, MaintenanceRequestUpdateStatus, PropertyExpireDuration, PropertyUpdateStatus } from '@/utils/api';
+import { deleteBlog, deleteMaintenanceRequest, deleteProperty, LeadUpdateStatus, MaintenanceRequestUpdateStatus, PropertyExpireDuration, PropertyUpdateStatus, updateContactStatus } from '@/utils/api';
 import { toast } from 'sonner';
 import React from 'react';
 import dayjs from 'dayjs';
 import { PropertyItem } from '@/types/property';
-import { propertyOptions, propertyStatuses } from '@/constants/constants';
+import { contactStatuses, leadStatuses, propertyOptions, propertyStatuses } from '@/constants/constants';
 
 type Columns = {
   sortConfig?: any;
@@ -428,15 +428,6 @@ export const getPropertyColumns = ({
 ];
 
 // lead columns
-
-const leadStatuses = [
-  { label: 'New', value: 0 },
-  { label: 'Contacted', value: 1 },
-  { label: 'InDiscussion', value: 2 },
-  { label: 'VisitScheduled', value: 3 },
-  { label: 'Converted', value: 4 },
-  { label: 'Rejected', value: 5 },
-];
 
 export const getLeadColumns = ({
   sortConfig,
@@ -856,5 +847,203 @@ export const getUserColumns = ({
         </Tooltip>
       </div>
     ),
+  },
+];
+
+// contact columns
+
+export const getContactColumns = ({
+  sortConfig,
+  onHeaderCellClick,
+}: Columns) => [
+  {
+    title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+    onHeaderCell: () => onHeaderCellClick('id'),
+    dataIndex: 'id',
+    key: 'id',
+    width: 80,
+    render: (value: number) => <Text>#{value}</Text>,
+  },
+  {
+    title: <HeaderCell title="Full Name" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'fullName'} />,
+    onHeaderCell: () => onHeaderCellClick('fullName'),
+    dataIndex: 'fullName',
+    key: 'fullName',
+    minWidth: 150,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Email" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
+    onHeaderCell: () => onHeaderCellClick('email'),
+    dataIndex: 'email',
+    key: 'email',
+    width: 200,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Phone" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'phone'} />,
+    onHeaderCell: () => onHeaderCellClick('phone'),
+    dataIndex: 'phone',
+    key: 'phone',
+    width: 120,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Subject" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'subject'} />,
+    onHeaderCell: () => onHeaderCellClick('subject'),
+    dataIndex: 'subject',
+    key: 'subject',
+    minWidth: 150,
+    render: (value: string) => (
+      <Text className="text-gray-600">
+        {value}
+      </Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Property Type" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
+    onHeaderCell: () => onHeaderCellClick('propertyType'),
+    dataIndex: 'propertyType',
+    key: 'propertyType',
+    minWidth: 150,
+    render: (value: string) => (
+      <Text className="font-medium text-gray-800">{value}</Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Location" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
+    onHeaderCell: () => onHeaderCellClick('location'),
+    dataIndex: 'location',
+    key: 'location',
+    width: 100,
+    render: (value: string) => (
+      <Text className="truncate text-gray-600" title={value}>
+        {value.length > 20 ? value.slice(0, 20) + '...' : value}
+      </Text>
+    ),
+  },
+  {
+    title: <HeaderCell title="Urgent" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isUrgent'} />,
+    onHeaderCell: () => onHeaderCellClick('isUrgent'),
+    dataIndex: 'isUrgent',
+    key: 'isUrgent',
+    width: 80,
+    render: (value: boolean) => {
+      return (
+        value === true ? (
+          <Badge color="danger">Urgent</Badge>
+        ) : (
+          <Badge color="secondary">Normal</Badge>
+        )
+      );
+    }
+  },
+  {
+    title: ( <HeaderCell title="Status" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} /> ),
+    onHeaderCell: () => onHeaderCellClick('status'),
+    dataIndex: 'status',
+    key: 'status',
+    width: 200,
+    render: (value: number) => {
+      const status = contactStatuses.find((s) => s.value === value);
+      let color: "warning" | "success" | "info" | "danger" | "secondary" = "secondary";
+      switch (value) {
+        case 0: color = "warning"; break;
+        case 1: color = "info"; break;
+        case 2: color = "success"; break;
+        case 3: color = "info"; break;
+        case 4: color = "success"; break;
+        case 5: color = "danger"; break;
+        case 6: color = "secondary"; break;
+        case 7: color = "danger"; break;
+        default: color = "secondary";
+      }
+      return (
+        <Badge color={color} className="min-w-[80px] text-center">
+          {status?.label ?? "Unknown"}
+        </Badge>
+      );
+    },
+  },
+  {
+    title: <HeaderCell title="Created At" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'createdAt'} />,
+    onHeaderCell: () => onHeaderCellClick('createdAt'),
+    dataIndex: 'createdAt',
+    key: 'createdAt',
+    minWidth: 130,
+    render: (value: string) => <DateCell date={new Date(value)} />,
+  },
+  {
+    title: <HeaderCell title="Actions" className='flex justify-end'/>,
+    dataIndex: 'action',
+    key: 'action',
+    width: 180,
+    render: (_: string, row: any) => {
+      const status = contactStatuses.find((s) => s.value === row.status);
+
+      let nextStatusValue: number | undefined;
+      if (row.status === 0) nextStatusValue = 1;
+      else if (row.status === 1) nextStatusValue = 2;
+      else if (row.status === 2) nextStatusValue = 3;
+      else if (row.status === 3) nextStatusValue = 4;
+      else if (row.status === 4) nextStatusValue = 5;
+      else if (row.status === 5) nextStatusValue = 6;
+      else if (row.status === 6) nextStatusValue = 7;
+      else if (row.status === 7) nextStatusValue = undefined;
+
+      const allowedStatuses = typeof nextStatusValue === "number"
+        ? contactStatuses.filter(s => s.value === nextStatusValue)
+        : [];
+
+      return (
+        <div className="flex items-center justify-end gap-3">
+          <div className="relative">
+            <select
+              value={row.status}
+              onChange={async (e) => {
+                const newStatus = Number(e.target.value);
+                try {
+                  const response = await updateContactStatus(row.id, newStatus);
+                  if (response.succeeded) {
+                    toast.success(`Status updated successfully`);
+                  } else {
+                    toast.error(`Failed to update status: ${response.message}`);
+                    console.error('Failed to update status:', response);
+                  }
+                } catch (error) {
+                  console.error('Failed to update status', error);
+                  toast.error('Failed to update status');
+                }
+              }}
+              className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+              <option value={row.status} disabled>
+                {status?.label}
+              </option>
+              {allowedStatuses.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </span>
+          </div>
+          <Tooltip size="sm" content={'View Contact'} placement="top" color="invert">
+          <Link href={routes.contact.contactDetails(row.id)}>
+            <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
+              <EyeIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+        </div>
+      );
+    },
   },
 ];
