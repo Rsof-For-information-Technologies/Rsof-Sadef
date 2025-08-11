@@ -72,7 +72,6 @@ function ExpiryDateDuration({ row }: { row: PropertyItem }) {
     : "";
   const [inputValue, setInputValue] = React.useState(initialValue);
   const [loading, setLoading] = React.useState(false);
-  console.log("1", inputValue);
   const handleSave = async () => {
     setLoading(true);
     try {

@@ -23,7 +23,7 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
 
   const validateImage = (file: File): boolean => {
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 2 * 1024 * 1024; // 2MB
 
     if (!validTypes.includes(file.type)) {
       toast.error(`File ${file.name} must be JPG, JPEG, PNG, or HEIC format`);
@@ -35,7 +35,7 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
     }
 
     if (file.size > maxSize) {
-      toast.error(`File ${file.name} must be less than 5MB`);
+      toast.error(`File ${file.name} must be less than 2MB`);
       setValue('images', [], {
         shouldValidate: true,
         shouldDirty: true

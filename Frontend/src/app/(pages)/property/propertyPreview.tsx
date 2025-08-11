@@ -2,35 +2,35 @@ import React from "react";
 import Image from "next/image";
 
 interface PropertyPreviewProps {
-    title: string;
-    description: string;
-    price: string;
-    propertyType?: string;
-    unitCategory?: string;
-    city: string;
-    location: string;
-    areaSize: string;
-    bedrooms?: string;
-    bathrooms?: string;
-    totalFloors?: string;
-    imageBase64Strings: FileList | null | string;
-    previewImage?: string | null;
-    status?: string;
-    videos?: string[];
-    unitName?: string;
-    projectedResaleValue?: string;
-    expectedAnnualRent?: string;
-    warrantyInfo?: string;
-    latitude?: string;
-    longitude?: string;
-    whatsAppNumber?: string;
-    expectedDeliveryDate?: string;
-    expiryDate?: string;
-    isInvestorOnly?: boolean;
-    features?: string[];
-    createdAt?: string;
-    updatedAt?: string;
-    videoBase64Strings?: string[];
+  title: string;
+  description: string;
+  price: string;
+  propertyType?: string;
+  unitCategory?: string;
+  city: string;
+  location: string;
+  areaSize: string;
+  bedrooms?: string;
+  bathrooms?: string;
+  totalFloors?: string;
+  imageBase64Strings: FileList | null | string;
+  previewImage?: string | null;
+  status?: string;
+  videos?: string[];
+  unitName?: string;
+  projectedResaleValue?: string;
+  expectedAnnualRent?: string;
+  warrantyInfo?: string;
+  latitude?: string;
+  longitude?: string;
+  whatsAppNumber?: string;
+  expectedDeliveryDate?: string;
+  expiryDate?: string;
+  isInvestorOnly: boolean;
+  features?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  videoBase64Strings?: string[];
 }
 
 function PropertyPreview({
@@ -70,16 +70,16 @@ function PropertyPreview({
       <div className="rounded-lg border-2 overflow-hidden">
         <div className="bg-white p-2">
           {previewImage ||
-          (imageBase64Strings &&
-            imageBase64Strings instanceof FileList &&
-            imageBase64Strings.length > 0) ? (
+            (imageBase64Strings &&
+              imageBase64Strings instanceof FileList &&
+              imageBase64Strings.length > 0) ? (
             <div className="mb-4 h-60 relative border-2 rounded-lg overflow-hidden">
               <Image
                 src={
                   previewImage ||
                   (imageBase64Strings instanceof FileList &&
-                  imageBase64Strings.length > 0 &&
-                  imageBase64Strings[0] instanceof File
+                    imageBase64Strings.length > 0 &&
+                    imageBase64Strings[0] instanceof File
                     ? URL.createObjectURL(imageBase64Strings[0])
                     : "")
                 }

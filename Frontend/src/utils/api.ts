@@ -9,6 +9,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { getCookie, removeCookie } from '@/utils/cookieStorage';
 import { convertNumberToLocalFormat } from './convertNumberToLocalFormat';
+import { GetPropertyCities, GetPropertyFeatures, GetPropertyStatuses, GetPropertyTypes, GetPropertyUnitCategories } from '@/types/staticData';
 
 const apiCall = () => {
   const instance = axios.create({
@@ -35,7 +36,6 @@ const apiCall = () => {
     (error) => {
       if (error.response?.status === 401) {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem("authToken");
           localStorage.removeItem("user-info");
           removeCookie("access_token");
           removeCookie("refresh_token");
@@ -234,7 +234,7 @@ export const createProperty = async (data: PropertyFormData) => {
   // Basic Info
   formData.append("Title", data.title);
   formData.append("Price", String(data.price));
-  formData.append("City", data.city);
+  formData.append("City", String(data.city));
   formData.append("Location", data.location);
   formData.append("AreaSize", String(data.areaSize));
 
@@ -307,7 +307,7 @@ export const updateProperty = async (id: string | number, data: PropertyFormData
   // Basic Info
   formData.append("Title", data.title)
   formData.append("Price", String(data.price))
-  formData.append("City", data.city)
+  formData.append("City", String(data.city))
   formData.append("Location", data.location)
   formData.append("AreaSize", String(data.areaSize))
 
@@ -376,7 +376,7 @@ export const getFilteredProperties = async (filters: PropertyFilters): Promise<G
   try {
     const params = new URLSearchParams();
 
-    if (filters.city) params.append('city', filters.city);
+    if (filters.city) params.append('city', String(filters.city));
     if (filters.location) params.append('location', filters.location);
     if (filters.status !== undefined) params.append('status', String(filters.status));
     if (filters.propertyType !== undefined) params.append('propertyType', String(filters.propertyType));
@@ -543,3 +543,61 @@ export const UserUpdatePassword = async (data: ChangePasswordSchema): Promise<Up
     throw error;
   }
 };
+
+// Static Data 
+
+export const getAllPropertyStatuses = async (): Promise<GetPropertyStatuses> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetPropertyStatuses>(`/api/v1/staticdata/property-statuses`);
+    return data;
+  } catch (error) {
+    console.error('Get all properties statuses failed:', error);
+    throw error;
+  }
+};
+
+export const getAllPropertyTypes = async (): Promise<GetPropertyTypes> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetPropertyTypes>(`/api/v1/staticdata/property-types`);
+    return data;
+  } catch (error) {
+    console.error('Get all properties types failed:', error);
+    throw error;
+  }
+};
+
+export const getAllPropertyUnitCategories = async (): Promise<GetPropertyUnitCategories> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetPropertyUnitCategories>(`/api/v1/staticdata/unit-categories`);
+    return data;
+  } catch (error) {
+    console.error('Get all properties unit categories failed:', error);
+    throw error;
+  }
+};
+
+export const getAllPropertyFeatures = async (): Promise<GetPropertyFeatures> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetPropertyFeatures>(`/api/v1/staticdata/features`);
+    return data;
+  } catch (error) {
+    console.error('Get all properties features failed:', error);
+    throw error;
+  }
+};
+
+export const getAllPropertyCities = async (): Promise<GetPropertyCities> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<GetPropertyCities>(`/api/v1/staticdata/cities`);
+    return data;
+  } catch (error) {
+    console.error('Get all properties cities failed:', error);
+    throw error;
+  }
+};
+

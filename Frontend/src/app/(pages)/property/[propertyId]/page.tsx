@@ -14,16 +14,13 @@ export default async function DetailsPropertyPage({
 }) {
   try {
     const response = await getPropertyById(params.propertyId);
+    const BASE_URL = process.env.SERVER_BASE_URL;
 
     if (!response?.data) {
       return notFound();
     }
 
     const data = response.data;
-    const imageBase64Strings =
-      data.imageBase64Strings?.map((img) =>
-        img.startsWith("data:image/") ? img : `data:image/jpeg;base64,${img}`
-      ) || [];
 
     return (
       <Authenticate >
@@ -105,25 +102,25 @@ export default async function DetailsPropertyPage({
             </CollapsibleSection>
 
             <CollapsibleSection title="Images & Videos">
-              <div className="flex flex-col md:flex-row gap-6 items-start">
-                {imageBase64Strings.length > 0 && (
+              <div className="flex flex-col gap-6 items-start">
+                {data.imageUrls && data.imageUrls.length > 0 && (
                   <div className="flex flex-wrap gap-4">
-                    {imageBase64Strings.map((imgSrc, idx) => (
+                    {data.imageUrls.map((imgSrc, idx) => (
                       <img
                         key={idx}
-                        src={imgSrc}
+                        src={`${BASE_URL}/${imgSrc}`}
                         alt={`Property Preview ${idx + 1}`}
                         className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200"
                       />
                     ))}
                   </div>
                 )}
-                {Array.isArray(data?.videoBase64Strings) && data.videoBase64Strings.length > 0 && (
-                  <div className="flex-1">
-                    {data.videoBase64Strings.map((video: string, idx: number) => (
+                {Array.isArray(data?.videoUrls) && data.videoUrls.length > 0 && (
+                  <div className="flex flex-wrap gap-4">
+                    {data.videoUrls.map((video: File, idx: number) => (
                       <video
                         key={idx}
-                        src={`data:video/mp4;base64,${video}`}
+                        src={`${BASE_URL}/${video}`}
                         controls
                         className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200 mb-4"
                       />

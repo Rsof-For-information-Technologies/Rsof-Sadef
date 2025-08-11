@@ -18,12 +18,13 @@ import { basicInfoSchema, contactPublishingSchema, CreatePropertyFormData, creat
 import Authenticate from "@/components/auth/authenticate"
 import Authorize from "@/components/auth/authorize"
 import { UserRole } from "@/types/userRoles"
+import { convertNumberToLocalFormat } from "@/utils/convertNumberToLocalFormat"
 
 const STEPS = [
   { title: "Basic Info", component: BasicInfoStep, schema: basicInfoSchema },
   { title: "Property Details", component: PropertyDetailsStep, schema: propertyDetailsSchema },
   { title: "Property Media", component: PropertyMediaStep, schema: propertyMediaSchema },
-  { title: "Location / Map", component: LocationStep, schema: locationSchema },
+  { title: "Location", component: LocationStep, schema: locationSchema },
   { title: "Contact & Publishing", component: ContactPublishingStep, schema: contactPublishingSchema },
 ]
 
@@ -38,12 +39,27 @@ export default function CreatePropertyPage() {
       title: "",
       description: "",
       price: 0,
-      city: "",
+      city: undefined,
       location: "",
       areaSize: 0,
+      propertyType: undefined,
+      unitCategory: undefined,
+      bedrooms: 0,
+      bathrooms: 0,
+      totalFloors: undefined,
+      unitName: "",
+      status: undefined,
       features: [],
+      projectedResaleValue: 0,
+      expectedAnnualRent: 0,
+      warrantyInfo: "",
+      expectedDeliveryDate: undefined,
+      expiryDate: undefined,
       images: [],
       videos: [],
+      latitude: undefined,
+      longitude: undefined,
+      whatsAppNumber: "",
       isInvestorOnly: false,
     },
   })
@@ -51,8 +67,12 @@ export default function CreatePropertyPage() {
   const {
     handleSubmit,
     trigger,
+    watch,
     formState: { errors },
   } = form
+
+
+  console.log("Property Values", watch());
 
   const validateCurrentStep = async () => {
     const currentStepSchema = STEPS[currentStep - 1].schema
@@ -74,13 +94,14 @@ export default function CreatePropertyPage() {
   }
 
   const onSubmit = async (data: CreatePropertyFormData) => {
-     const features = Array.isArray(data.features)
-    ? data.features.map((f) => String(Number(f)))
-    : [];
+    const features = Array.isArray(data.features)
+      ? data.features.map((f) => String(Number(f)))
+      : [];
 
     const formattedData = {
-        ...data,
-        features,
+      ...data,
+      whatsAppNumber: convertNumberToLocalFormat(data.whatsAppNumber as string) || "",
+      features,
     };
     setIsSubmitting(true)
     try {
@@ -155,7 +176,7 @@ export default function CreatePropertyPage() {
             </div>
           )}
         </div>
-        </Authorize>
+      </Authorize>
     </Authenticate>
   )
 }

@@ -4,14 +4,14 @@ export interface PropertyFormData {
     propertyType?: number;
     unitCategory?: number;
     price: number;
-    city: string;
+    city: number | undefined;
     location: string;
     areaSize: number;
     bedrooms?: number;
     bathrooms?: number;
     totalFloors?: number;
     unitName?: string;
-    isInvestorOnly?: boolean;
+    isInvestorOnly: boolean;
 
     // Property Details
     description: string;
@@ -42,15 +42,15 @@ export type CreatePropertyData = {
     price: number;
     propertyType?: number;
     unitCategory?: number;
-    city: string;
+    city: number;
     location: string;
     areaSize: number;
     bedrooms?: number;
     bathrooms?: number;
     totalFloors?: number;
-    images?: string[];
+    imageUrls?: File[];
     status?: number;
-    videos?: string[];
+    videoUrls?: File[];
     unitName?: string;
     projectedResaleValue?: number;
     expectedAnnualRent?: number;
@@ -60,12 +60,10 @@ export type CreatePropertyData = {
     whatsAppNumber?: string;
     expectedDeliveryDate?: string;
     expiryDate?: string;
-    isInvestorOnly?: boolean;
+    isInvestorOnly: boolean;
     features?: number[];
     createdAt?: string;
     updatedAt?: string;
-    imageBase64Strings?: string[];
-    videoBase64Strings?: string[];
 }
 
 export type CreatePropertyResponse = {
@@ -81,7 +79,7 @@ export type PropertyItem = {
     price: number;
     propertyType: number;
     unitCategory: number;
-    city: string;
+    city: number;
     location: string;
     areaSize: number;
     bedrooms: number;
@@ -120,7 +118,7 @@ export type GetProperties = {
 }
 
 export type PropertyFilters = {
-    city?: string;
+    city?: number;
     location?: string;
     status?: number;
     propertyType?: number;

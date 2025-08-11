@@ -1,11 +1,12 @@
 "use client"
 
+import { useEffect } from "react"
 import { Label } from "@/components/shadCn/ui/label"
 import { ShadCnNumberInput } from "@/components/shadCn/ui/numberInput"
-import { propertyOptions, unitsOptions } from "@/constants/constants"
 import { CreatePropertyFormData } from "@/validators/createProperty"
 import type { UseFormReturn } from "react-hook-form"
 import { Checkbox, Input, Select } from "rizzui"
+import { useStaticDataStore } from "@/store/static-data.store"
 
 interface BasicInfoStepProps {
   form: UseFormReturn<CreatePropertyFormData>
@@ -19,8 +20,34 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
     watch,
   } = form
 
+  const { cities, propertyTypes, unitCategories, fetchStaticData } = useStaticDataStore();
+
+  // Fetch static data on component mount
+  useEffect(() => {
+    fetchStaticData();
+  }, [fetchStaticData]);
+
   const propertyTypeValue = watch("propertyType");
   const unitCategoryValue = watch("unitCategory");
+  const cityValue = watch("city");
+
+  // Convert static data to Select options format
+  const propertyTypeOptions = propertyTypes.map(type => ({
+    label: type.displayName,
+    value: type.value
+  }));
+
+  const unitCategoryOptions = unitCategories.map(cat => ({
+    label: cat.displayName,
+    value: cat.value
+  }));
+
+  const cityOptions = cities.map(city => ({
+    label: city.displayName,
+    value: city.value
+  }));
+
+  console.log(watch())
 
   return (
     <div>
@@ -46,16 +73,17 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
           <div className="space-y-2">
             <Select
               label="Property Type"
-              options={propertyOptions}
+              options={propertyTypeOptions}
               value={propertyTypeValue ?? undefined}
               onChange={(value) => setValue("propertyType", value ? Number(value) : undefined)}
               getOptionValue={(option) => option.value.toString()}
               displayValue={(selected: number | undefined) =>
                 selected !== undefined
-                  ? propertyOptions.find(opt => opt.value === selected)?.label || ""
+                  ? propertyTypeOptions.find(opt => opt.value === selected)?.label || ""
                   : ""
               }
               placeholder="Select property type"
+              searchable={true}
             />
             {errors.propertyType && (
               <p className="text-sm text-red-600">{errors.propertyType.message}</p>
@@ -64,16 +92,17 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
           <div className="space-y-2">
             <Select
               label="Unit Category"
-              options={unitsOptions}
+              options={unitCategoryOptions}
               value={unitCategoryValue ?? undefined}
               onChange={(value) => setValue("unitCategory", value ? Number(value) : undefined)}
               getOptionValue={(option) => option.value.toString()}
               displayValue={(selected: number | undefined) =>
                 selected !== undefined
-                  ? unitsOptions.find(opt => opt.value === selected)?.label || ""
+                  ? unitCategoryOptions.find(opt => opt.value === selected)?.label || ""
                   : ""
               }
               placeholder="Select unit category"
+              searchable={true}
             />
             {errors.unitCategory && (
               <p className="text-sm text-red-600">{errors.unitCategory.message}</p>
@@ -83,8 +112,20 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="city">City <span className="text-red-600">*</span></Label>
-            <Input id="city" {...register("city")} placeholder="Enter city" />
+            <Select
+              label={<>City <span className="text-red-600">*</span></>}
+              options={cityOptions}
+              value={cityValue ?? undefined}
+              onChange={(value) => setValue("city", value ? Number(value) : 0)}
+              getOptionValue={(option) => option.value.toString()}
+              displayValue={(selected: number | undefined) =>
+                selected !== undefined
+                  ? cityOptions.find(opt => opt.value === selected)?.label || ""
+                  : ""
+              }
+              placeholder="Select or search city"
+              searchable={true}
+            />
             {errors.city && <p className="text-sm text-red-600">{errors.city.message}</p>}
           </div>
 
@@ -137,12 +178,12 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
               placeholder="Number of bathrooms"
               min={0}
               max={10}
-              decimalScale={1}
+              decimalScale={0}
               value={watch("bathrooms") ?? undefined}
               onValueChange={(value) => {
                 setValue("bathrooms", value ?? 0, { shouldValidate: true });
               }}
-              stepper={0.5}
+              stepper={1}
               thousandSeparator=""
             />
             {errors.bathrooms && (
@@ -176,7 +217,8 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
             <Checkbox
               id="isInvestorOnly"
               {...register("isInvestorOnly")}
-              checked={watch("isInvestorOnly") || false}
+              checked={watch("isInvestorOnly") ?? false}
+              onChange={(e) => setValue("isInvestorOnly", e.target.checked)}
               label="Investor Only Property"
             />
           </div>

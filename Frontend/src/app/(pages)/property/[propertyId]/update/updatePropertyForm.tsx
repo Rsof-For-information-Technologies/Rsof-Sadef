@@ -12,6 +12,10 @@ import { CreatePropertyFormData, createPropertySchema, } from "@/validators/crea
 import { updateProperty } from "@/utils/api";
 import { CreatePropertyData } from "@/types/property";
 import { STEPS } from "@/constants/constants";
+import { convertNumberToLocalFormat } from "@/utils/convertNumberToLocalFormat";
+import { UserRole } from "@/types/userRoles";
+import Authenticate from "@/components/auth/authenticate";
+import Authorize from "@/components/auth/authorize";
 
 interface UpdatePropertyFormProps {
   propertyId: string;
@@ -22,6 +26,8 @@ export default function UpdatePropertyForm({
   propertyId,
   initialData,
 }: UpdatePropertyFormProps) {
+
+  console.log({ propertyId, initialData });
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -36,9 +42,9 @@ export default function UpdatePropertyForm({
       location: initialData.location,
       areaSize: initialData.areaSize,
       features: initialData.features?.map((f) => f.toString()),
-      images: initialData.imageBase64Strings || [],
-      videos: initialData.videoBase64Strings || [],
-      isInvestorOnly: initialData.isInvestorOnly || false,
+      images: initialData.imageUrls || [],
+      videos: initialData.videoUrls || [],
+      isInvestorOnly: initialData.isInvestorOnly ?? false,
       propertyType: initialData.propertyType,
       unitCategory: initialData.unitCategory,
       bedrooms: initialData.bedrooms,
@@ -59,9 +65,12 @@ export default function UpdatePropertyForm({
 
   const {
     handleSubmit,
+    watch,
     trigger,
     formState: { errors },
   } = form;
+
+  console.log("Update Property Values", watch());
 
   const validateCurrentStep = async () => {
     const currentStepSchema = STEPS[currentStep - 1].schema;
@@ -89,6 +98,7 @@ export default function UpdatePropertyForm({
 
     const formattedData = {
       ...data,
+      whatsAppNumber: convertNumberToLocalFormat(data.whatsAppNumber as string) || "",
       features,
     };
 
@@ -112,62 +122,66 @@ export default function UpdatePropertyForm({
   const CurrentStepComponent = STEPS[currentStep - 1].component;
 
   return (
-    <div className="container">
-      <StepIndicator
-        currentStep={currentStep}
-        totalSteps={STEPS.length}
-        stepTitles={STEPS.map((step) => step.title)}
-      />
+    <Authenticate>
+      <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
+        <div className="container">
+          <StepIndicator
+            currentStep={currentStep}
+            totalSteps={STEPS.length}
+            stepTitles={STEPS.map((step) => step.title)}
+          />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <CurrentStepComponent form={form} />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <CurrentStepComponent form={form} />
 
-        <div className="flex justify-between pt-6">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            className="flex items-center gap-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
+            <div className="flex justify-between pt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 1}
+                className="flex items-center gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
 
-          {currentStep < STEPS.length ? (
-            <Button
-              type="button"
-              onClick={nextStep}
-              className="flex items-center gap-2"
-            >
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex items-center gap-2"
-            >
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Update Property
-            </Button>
+              {currentStep < STEPS.length ? (
+                <Button
+                  type="button"
+                  onClick={nextStep}
+                  className="flex items-center gap-2"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex items-center gap-2"
+                >
+                  {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Update Property
+                </Button>
+              )}
+            </div>
+          </form>
+
+          {Object.keys(errors).length > 0 && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h3 className="text-red-800 font-medium mb-2">Validation Errors:</h3>
+              <ul className="text-red-700 text-sm space-y-1">
+                {Object.entries(errors).map(([field, error]) => (
+                  <li key={field}>
+                    <strong>{field}:</strong> {error?.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
-      </form>
-
-      {Object.keys(errors).length > 0 && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <h3 className="text-red-800 font-medium mb-2">Validation Errors:</h3>
-          <ul className="text-red-700 text-sm space-y-1">
-            {Object.entries(errors).map(([field, error]) => (
-              <li key={field}>
-                <strong>{field}:</strong> {error?.message}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+      </Authorize>
+    </Authenticate>
   );
 }

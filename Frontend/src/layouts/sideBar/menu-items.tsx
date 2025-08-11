@@ -32,7 +32,7 @@ export function MenuItems(user: User): MenuItem[] {
         name: "Dashboard",
         href: `${routes.dashboard}`,
         icon: <FaFolderOpen />,
-        allowedRoles: [UserRole.Admin, UserRole.Investor, UserRole.SuperAdmin, UserRole.Visitor],
+        allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
       },
       {
         name: "Property",
@@ -50,7 +50,7 @@ export function MenuItems(user: User): MenuItem[] {
             name: "Create Property",
             href: `${routes.property.create}`,
             badge: '',
-            allowedRoles: [UserRole.Admin],
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           }
         ]
       },
@@ -104,7 +104,7 @@ export function MenuItems(user: User): MenuItem[] {
             name: "Create Request",
             href: `${routes.maintenanceRequest.create}`,
             badge: '',
-            allowedRoles: [UserRole.Admin],
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           }
         ]
       },

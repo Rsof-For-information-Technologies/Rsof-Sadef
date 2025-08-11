@@ -5,21 +5,28 @@ export const basicInfoSchema = z.object({
   propertyType: z.number().optional(),
   unitCategory: z.number().optional(),
   price: z.number({ required_error: "Price must be greater then 0" }).min(1, "Price must be a positive number"),
-  city: z.string().min(2, "City is required").max(100, "City must be less than 100 characters"),
+  city: z.number({ required_error: "City is required" }),
   location: z.string().min(1, "Location is required"),
   areaSize: z.number({ required_error: "Area size must be a positive number" }).min(1, "Area size must be a positive number"),
-  bedrooms: z.number().nullable().optional(),
-  bathrooms: z.number().nullable().optional(),
-  totalFloors: z.number().nullable().optional(),
+  bedrooms: z.number().optional(),
+  bathrooms: z.number().optional(),
+  totalFloors: z.number().optional(),
   unitName: z.string().optional(),
-  isInvestorOnly: z.boolean().default(false)
+  isInvestorOnly: z.boolean(),
+})
+
+export const translationJson = z.object({
+  title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
+  description: z.string().min(10, "Description is required").max(2000, "Description must be less than 2000 characters"),
+  warrantyInfo: z.string().optional(),
+  unitCategory: z.number().optional(),
 })
 
 export const propertyDetailsSchema = z.object({
   description: z.string().min(10, "Description is required").max(2000, "Description must be less than 2000 characters"),
   features: z.array(z.string()).optional(),
-  projectedResaleValue: z.number().min(1, "Projected resale value must be at least 1").optional(),
-  expectedAnnualRent: z.number().min(1, "Expected annual rent must be at least 1").optional(),
+  projectedResaleValue: z.number().nonnegative("Projected resale value must be a non-negative number").optional(),
+  expectedAnnualRent: z.number().nonnegative("Expected annual rent must be a non-negative number").optional(),
   warrantyInfo: z.string().optional(),
   expectedDeliveryDate: z.string().optional(),
   status: z.number().optional(),
@@ -77,11 +84,13 @@ export const contactPublishingSchema = z.object({
     .optional(),
 })
 
-export const createPropertySchema = basicInfoSchema
-  .merge(propertyDetailsSchema)
-  .merge(propertyMediaSchema)
-  .merge(locationSchema)
-  .merge(contactPublishingSchema)
+export const createPropertySchema = z.object({
+  ...basicInfoSchema.shape,
+  ...propertyDetailsSchema.shape,
+  ...propertyMediaSchema.shape,
+  ...locationSchema.shape,
+  ...contactPublishingSchema.shape
+})
 
 export type BasicInfoFormData = z.infer<typeof basicInfoSchema>
 export type PropertyDetailsFormData = z.infer<typeof propertyDetailsSchema>

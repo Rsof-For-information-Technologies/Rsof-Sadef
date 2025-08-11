@@ -3,6 +3,8 @@
 import { Button, Input, Select } from "rizzui";
 import { PropertyFilters } from "@/types/property";
 import { propertyStatusesFilters, propertyTypesFilters } from "@/constants/constants";
+import { useStaticDataStore } from "@/store/static-data.store";
+import { useEffect } from "react";
 
 interface PropertyFiltersProps {
     filters: PropertyFilters;
@@ -17,6 +19,16 @@ export default function PropertyFiltersComponent({
     onApplyFilters,
     onClearFilters
 }: PropertyFiltersProps) {
+    const { cities, fetchStaticData } = useStaticDataStore();
+
+    useEffect(() => {
+        fetchStaticData();
+    }, [fetchStaticData]);
+
+    const cityOptions = cities.map(city => ({
+        label: city.displayName,
+        value: city.value
+    }));
 
     const handleFilterChange = (key: keyof PropertyFilters, value: string | number | undefined) => {
         const newFilters = {
@@ -33,10 +45,18 @@ export default function PropertyFiltersComponent({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">City</label>
-                    <Input
-                        placeholder="Enter city"
-                        value={filters.city || ''}
-                        onChange={(e) => handleFilterChange('city', e.target.value || undefined)}
+                    <Select
+                        options={cityOptions}
+                        value={filters.city !== undefined ? filters.city.toString() : ''}
+                        onChange={(value) => handleFilterChange('city', value && value !== '' ? Number(value) : undefined)}
+                        getOptionValue={(option) => option.value.toString()}
+                        displayValue={(selected: string) => {
+                            if (selected === '') return '';
+                            const city = cityOptions.find(c => c.value.toString() === selected);
+                            return city ? city.label : '';
+                        }}
+                        placeholder="Select city"
+                        searchable={true}
                     />
                 </div>
                 <div>
