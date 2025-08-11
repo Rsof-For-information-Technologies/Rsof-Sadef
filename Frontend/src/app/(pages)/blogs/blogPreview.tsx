@@ -20,24 +20,19 @@ function BlogPreview({
     <div className="block w-full">
       <p className="text-[14px] mb-[6px]">Preview</p>
       <div className="rounded-lg border-2 overflow-hidden">
-        <div className="bg-white p-2">
+        <div className="bg-inherit p-2">
           {previewImage ||
-          (coverImage &&
-            coverImage instanceof FileList &&
-            coverImage.length > 0) ? (
+            (coverImage &&
+              coverImage instanceof FileList &&
+              coverImage.length > 0) ? (
             <div className="mb-4 h-60 relative border-2 rounded-lg overflow-hidden">
               <Image
-                src={
-                  previewImage ||
-                  (coverImage instanceof FileList &&
-                  coverImage.length > 0 &&
-                  coverImage[0] instanceof File
-                    ? URL.createObjectURL(coverImage[0])
-                    : "")
-                }
+                src={previewImage || ""}
                 alt="Blog cover"
-                fill
-                className="object-cover"
+                width={1200}
+                height={600}
+                className="object-cover w-full h-full"
+                unoptimized={!!previewImage && previewImage.includes('ngrok-free.app')}
               />
             </div>
           ) : (

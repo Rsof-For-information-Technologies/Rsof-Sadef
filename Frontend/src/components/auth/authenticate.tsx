@@ -2,7 +2,7 @@
 import { useUserStore } from '@/store/user.store'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
-import { useIsMounted } from '@/hooks/use-is-mounted'
+import { useIsMounted } from '@/hooks/useIsMounted'
 import { routes } from '@/config/routes'
 import { getLocalStorage } from '@/utils/localStorage';
 import { User } from '@/types/user'
@@ -42,13 +42,13 @@ function Authenticate({ children, }: T_Authenticate) {
     }, [userInfo, router, mounted, pathName, searchParams])
 
 
-    if (userInfo){
+    if (userInfo) {
         return (
             <>
                 {children}
             </>
         )
-    }else{
+    } else {
         return null
     }
 

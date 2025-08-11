@@ -13,8 +13,10 @@ async function DetailsBlog({ params }: { params: { blogId: string } }) {
       return notFound();
     }
 
+    const BASE_URL = process.env.SERVER_BASE_URL || '';
+
     const previewImage = response.data.coverImage
-      ? `data:image/jpeg;base64,${response.data.coverImage}`
+      ? `${BASE_URL}/${response.data.coverImage}`
       : null;
 
     const blogData = {

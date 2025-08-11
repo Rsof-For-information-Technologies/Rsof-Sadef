@@ -1,6 +1,6 @@
 "use client"
 
-import { useIsMounted } from '@/hooks/use-is-mounted';
+import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserStore } from '@/store/user.store';
 import { User } from '@/types/user';
 import { UserRole } from '@/types/userRoles';

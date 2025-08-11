@@ -5,8 +5,8 @@ import { Input } from 'rizzui';
 import cn from '@/utils/class-names';
 import { PiMagnifyingGlassBold } from 'react-icons/pi';
 import WidgetCard from '../cards/widget-card';
-import { useTable } from '@/hooks/use-table';
-import { useColumn } from '@/hooks/use-column';
+import { useTable } from '@/hooks/useTable';
+import { useColumn } from '@/hooks/useColumn';
 import ControlledTable from '@/components/controlled-table';
 
 

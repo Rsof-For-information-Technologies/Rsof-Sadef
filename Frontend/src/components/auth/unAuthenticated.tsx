@@ -2,7 +2,7 @@
 import { useUserStore } from '@/store/user.store'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
-import { useIsMounted } from '@/hooks/use-is-mounted'
+import { useIsMounted } from '@/hooks/useIsMounted'
 import { routes } from '@/config/routes';
 import { getLocalStorage, removeLocalStorage } from '@/utils/localStorage'
 import { User } from '@/types/user'

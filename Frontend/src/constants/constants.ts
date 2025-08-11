@@ -31,26 +31,6 @@ export const propertyStatusesFilters = [
   { label: 'Archived', value: '4' },
 ];
 
-export const propertyTypesFilters  = [
-  { label: 'All', value: '' },
-  { label: 'Apartment', value: '0' },
-  { label: 'Villa', value: '1' },
-  { label: 'House', value: '2' },
-  { label: 'Office', value: '3' },
-  { label: 'Shop', value: '4' },
-  { label: 'Plot', value: '5' },
-  { label: 'Warehouse', value: '6' },
-  { label: 'Building', value: '7' },
-  { label: 'Farmhouse', value: '8' },
-  { label: 'Penthouse', value: '9' },
-  { label: 'Studio', value: '10' },
-  { label: 'Commercial', value: '11' },
-  { label: 'Industrial', value: '12' },
-  { label: 'MixedUse', value: '13' },
-  { label: 'Hotel', value: '14' },
-  { label: 'Mall', value: '15' },
-];
-
 export const contactStatuses = [
   { label: "New", value: 0 },
   { label: "InProgress", value: 1 },

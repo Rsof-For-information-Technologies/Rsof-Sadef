@@ -9,7 +9,7 @@ import TableSkeleton from "./TableSkeleton";
 import { useState, useEffect } from "react";
 
 interface PropertyPageClientProps {
-  initialProperties: PropertyItem[];
+    initialProperties: PropertyItem[];
 }
 
 export default function PropertyPageClient({ initialProperties }: PropertyPageClientProps) {

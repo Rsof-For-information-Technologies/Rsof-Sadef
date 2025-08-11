@@ -2,7 +2,7 @@
 
 import { Button, Input, Select } from "rizzui";
 import { PropertyFilters } from "@/types/property";
-import { propertyStatusesFilters, propertyTypesFilters } from "@/constants/constants";
+import { propertyStatusesFilters } from "@/constants/constants";
 import { useStaticDataStore } from "@/store/static-data.store";
 import { useEffect } from "react";
 
@@ -19,7 +19,7 @@ export default function PropertyFiltersComponent({
     onApplyFilters,
     onClearFilters
 }: PropertyFiltersProps) {
-    const { cities, fetchStaticData } = useStaticDataStore();
+    const { cities, propertyTypes, fetchStaticData } = useStaticDataStore();
 
     useEffect(() => {
         fetchStaticData();
@@ -28,6 +28,11 @@ export default function PropertyFiltersComponent({
     const cityOptions = cities.map(city => ({
         label: city.displayName,
         value: city.value
+    }));
+
+    const propertyTypeOptions = propertyTypes.map(type => ({
+        label: type.displayName,
+        value: type.value
     }));
 
     const handleFilterChange = (key: keyof PropertyFilters, value: string | number | undefined) => {
@@ -85,13 +90,13 @@ export default function PropertyFiltersComponent({
                 <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">Property Type</label>
                     <Select
-                        options={propertyTypesFilters}
+                        options={propertyTypeOptions}
                         value={filters.propertyType !== undefined ? filters.propertyType.toString() : ''}
                         onChange={(value) => handleFilterChange('propertyType', value && value !== '' ? Number(value) : undefined)}
                         getOptionValue={(option) => option.value.toString()}
                         displayValue={(selected: string) => {
                             if (selected === '') return '';
-                            const type = propertyTypesFilters.find(t => t.value === selected);
+                            const type = propertyTypeOptions.find(t => t.value.toString() === selected);
                             return type ? type.label : '';
                         }}
                         placeholder="Select property type"

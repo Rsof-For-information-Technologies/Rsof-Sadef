@@ -5,7 +5,7 @@ import HamburgerButton from "./header-parts/hamburger-button";
 import Sidebar from "@/layouts/sideBar/sidebar";
 import cn from "@/utils/class-names";
 import { Suspense } from "react";
-import { useIsMounted } from "@/hooks/use-is-mounted";
+import { useIsMounted } from "@/hooks/useIsMounted";
 import useWindowScroll from "react-use/lib/useWindowScroll";
 import { useDrawerStore } from "@/app/shared/drawer-views/use-drawer";
 import Authenticate from "@/components/auth/authenticate";
@@ -40,7 +40,7 @@ export default function Header({ className }: { className?: string }) {
           <HamburgerButton
             view={<Suspense>
               {/* <Authenticate> */}
-                <Sidebar className="static w-full 2xl:w-full" />
+              <Sidebar className="static w-full 2xl:w-full" />
               {/* </Authenticate> */}
             </Suspense>}
           />
