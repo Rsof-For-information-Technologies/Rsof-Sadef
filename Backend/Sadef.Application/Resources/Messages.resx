@@ -171,6 +171,30 @@
   <data name="Contact_InvalidPropertyReference" xml:space="preserve">
     <value>Invalid property reference. The specified property does not exist.</value>
   </data>
+  <data name="Contact_SubjectRequired" xml:space="preserve">
+    <value>Subject is required.</value>
+  </data>
+  <data name="Contact_SubjectMaxLength" xml:space="preserve">
+    <value>Subject cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_MessageRequired" xml:space="preserve">
+    <value>Message is required.</value>
+  </data>
+  <data name="Contact_MessageMinLength" xml:space="preserve">
+    <value>Message must be at least {0} characters long.</value>
+  </data>
+  <data name="Contact_MessageMaxLength" xml:space="preserve">
+    <value>Message cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_PreferredContactMethodMaxLength" xml:space="preserve">
+    <value>Preferred contact method cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_LocationMaxLength" xml:space="preserve">
+    <value>Location cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_LanguageCodeRequired" xml:space="preserve">
+    <value>Language code is required.</value>
+  </data>
   <data name="User_Created" xml:space="preserve">
     <value>User created successfully.</value>
   </data>

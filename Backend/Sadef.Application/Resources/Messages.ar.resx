@@ -171,6 +171,30 @@
   <data name="Contact_InvalidPropertyReference" xml:space="preserve">
     <value>مرجع عقار غير صالح. العقار المحدد غير موجود.</value>
   </data>
+  <data name="Contact_SubjectRequired" xml:space="preserve">
+    <value>الموضوع مطلوب.</value>
+  </data>
+  <data name="Contact_SubjectMaxLength" xml:space="preserve">
+    <value>الموضوع لا يمكن أن يتجاوز {0} حرف.</value>
+  </data>
+  <data name="Contact_MessageRequired" xml:space="preserve">
+    <value>الرسالة مطلوبة.</value>
+  </data>
+  <data name="Contact_MessageMinLength" xml:space="preserve">
+    <value>الرسالة يجب أن تكون {0} حرف على الأقل.</value>
+  </data>
+  <data name="Contact_MessageMaxLength" xml:space="preserve">
+    <value>الرسالة لا يمكن أن تتجاوز {0} حرف.</value>
+  </data>
+  <data name="Contact_PreferredContactMethodMaxLength" xml:space="preserve">
+    <value>طريقة الاتصال المفضلة لا يمكن أن تتجاوز {0} حرف.</value>
+  </data>
+  <data name="Contact_LocationMaxLength" xml:space="preserve">
+    <value>الموقع لا يمكن أن يتجاوز {0} حرف.</value>
+  </data>
+  <data name="Contact_LanguageCodeRequired" xml:space="preserve">
+    <value>رمز اللغة مطلوب.</value>
+  </data>
   <data name="User_Created" xml:space="preserve">
     <value>تم إنشاء المستخدم بنجاح.</value>
   </data>

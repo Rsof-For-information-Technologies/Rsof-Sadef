@@ -360,7 +360,7 @@ namespace Sadef.Application.Services.User
                 IsActive = user.IsActive
             };
 
-            return new Response<UserResultDTO>(updatedUserDto, _localizer["User_FailedToUpdateRole"]);
+            return new Response<UserResultDTO>(updatedUserDto, _localizer["User_Updated"]);
         }
 
         public async Task<Response<UserResultDTO>> GetUserByIdAsync(Guid id)

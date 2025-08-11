@@ -243,4 +243,76 @@
 	<data name="Property_ImageInvalidType" xml:space="preserve">
     <value>يُسمح فقط بملفات الصور (مثل: jpg، jpeg، png، webp).</value>
   </data>
+  <data name="Contact_FullNameRequired" xml:space="preserve">
+    <value>الاسم الكامل مطلوب.</value>
+  </data>
+  <data name="Contact_FullNameMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز الاسم الكامل {0} حرفًا.</value>
+  </data>
+  <data name="Contact_EmailRequired" xml:space="preserve">
+    <value>البريد الإلكتروني مطلوب.</value>
+  </data>
+  <data name="Contact_EmailInvalid" xml:space="preserve">
+    <value>يرجى إدخال عنوان بريد إلكتروني صحيح.</value>
+  </data>
+  <data name="Contact_PhoneMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز رقم الهاتف {0} حرفًا.</value>
+  </data>
+  <data name="Contact_BudgetMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز الميزانية {0} حرفًا.</value>
+  </data>
+  <data name="Contact_PropertyTypeMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز نوع العقار {0} حرفًا.</value>
+  </data>
+  <data name="Contact_TypeInvalid" xml:space="preserve">
+    <value>يرجى إدخال نوع اتصال صحيح.</value>
+  </data>
+  <data name="Contact_StatusInvalid" xml:space="preserve">
+    <value>يرجى إدخال حالة اتصال صحيحة.</value>
+  </data>
+  <data name="Contact_IdRequired" xml:space="preserve">
+    <value>معرف الاتصال مطلوب.</value>
+  </data>
+  <data name="Contact_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>مطلوب ترجمة واحدة على الأقل.</value>
+  </data>
+  <data name="Contact_SubjectRequired" xml:space="preserve">
+    <value>الموضوع مطلوب.</value>
+  </data>
+  <data name="Contact_SubjectMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز الموضوع {0} حرفًا.</value>
+  </data>
+  <data name="Contact_MessageRequired" xml:space="preserve">
+    <value>الرسالة مطلوبة.</value>
+  </data>
+  <data name="Contact_MessageMinLength" xml:space="preserve">
+    <value>يجب أن تكون الرسالة {0} حرفًا على الأقل.</value>
+  </data>
+  <data name="Contact_MessageMaxLength" xml:space="preserve">
+    <value>لا يمكن أن تتجاوز الرسالة {0} حرفًا.</value>
+  </data>
+  <data name="Contact_PreferredContactMethodMaxLength" xml:space="preserve">
+    <value>لا يمكن أن تتجاوز طريقة الاتصال المفضلة {0} حرفًا.</value>
+  </data>
+  <data name="Contact_LocationMaxLength" xml:space="preserve">
+    <value>لا يمكن أن يتجاوز الموقع {0} حرفًا.</value>
+  </data>
+  <data name="Contact_LanguageCodeRequired" xml:space="preserve">
+    <value>رمز اللغة مطلوب.</value>
+  </data>
+  <data name="Contact_InvalidLanguageCode" xml:space="preserve">
+    <value>رمز اللغة غير صالح. يدعم فقط 'en' و 'ar'.</value>
+  </data>
+  <data name="Contact_SubjectRequiredForLanguage" xml:space="preserve">
+    <value>الموضوع مطلوب للغة '{0}'.</value>
+  </data>
+  <data name="Contact_MessageRequiredForLanguage" xml:space="preserve">
+    <value>الرسالة مطلوبة للغة '{0}'.</value>
+  </data>
+  <data name="Contact_InvalidPropertyReference" xml:space="preserve">
+    <value>مرجع عقار غير صالح. العقار المحدد غير موجود.</value>
+  </data>
+  <data name="Contact_InvalidTranslationsJson" xml:space="preserve">
+    <value>تنسيق JSON للترجمات غير صحيح.</value>
+  </data>
 </root> 

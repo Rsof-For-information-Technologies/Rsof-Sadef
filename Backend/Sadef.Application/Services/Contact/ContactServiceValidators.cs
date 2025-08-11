@@ -61,6 +61,13 @@ namespace Sadef.Application.Services.Contact
                     return false;
                 })
                 .WithMessage(localizer["Contact_AtLeastOneTranslationRequired"]);
+
+            // Validate individual translations when provided directly
+            When(x => x.Translations != null && x.Translations.Any(), () =>
+            {
+                RuleForEach(x => x.Translations)
+                    .SetValidator(new TranslationDictionaryValidator(localizer));
+            });
         }
     }
 
@@ -98,6 +105,33 @@ namespace Sadef.Application.Services.Contact
             RuleFor(x => x.Status)
                 .IsInEnum().When(x => x.Status.HasValue)
                 .WithMessage(localizer["Contact_StatusInvalid"]);
+
+            // Validate TranslationsJson if provided
+            When(x => !string.IsNullOrEmpty(x.TranslationsJson), () =>
+            {
+                RuleFor(x => x.TranslationsJson)
+                    .Must((dto, translationsJson) =>
+                    {
+                        try
+                        {
+                            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                            var translations = JsonSerializer.Deserialize<Dictionary<string, ContactTranslationDto>>(translationsJson, options);
+                            return translations != null && translations.Any();
+                        }
+                        catch (JsonException)
+                        {
+                            return false;
+                        }
+                    })
+                    .WithMessage(localizer["Contact_InvalidTranslationsJson"]);
+            });
+
+            // Validate translations if provided directly
+            When(x => x.Translations != null && x.Translations.Any(), () =>
+            {
+                RuleForEach(x => x.Translations)
+                    .SetValidator(new TranslationDictionaryValidator(localizer));
+            });
         }
     }
 
@@ -110,6 +144,42 @@ namespace Sadef.Application.Services.Contact
 
             RuleFor(x => x.Status)
                 .IsInEnum().WithMessage(localizer["Contact_StatusInvalid"]);
+        }
+    }
+
+    public class ContactTranslationValidator : AbstractValidator<ContactTranslationDto>
+    {
+        public ContactTranslationValidator(IStringLocalizer localizer)
+        {
+            RuleFor(x => x.Subject)
+                .NotEmpty().WithMessage(localizer["Contact_SubjectRequired"])
+                .MaximumLength(200).WithMessage(localizer["Contact_SubjectMaxLength", 200]);
+
+            RuleFor(x => x.Message)
+                .NotEmpty().WithMessage(localizer["Contact_MessageRequired"])
+                .MinimumLength(10).WithMessage(localizer["Contact_MessageMinLength", 10])
+                .MaximumLength(1000).WithMessage(localizer["Contact_MessageMaxLength", 1000]);
+
+            RuleFor(x => x.PreferredContactMethod)
+                .MaximumLength(100).When(x => !string.IsNullOrWhiteSpace(x.PreferredContactMethod))
+                .WithMessage(localizer["Contact_PreferredContactMethodMaxLength", 100]);
+
+            RuleFor(x => x.Location)
+                .MaximumLength(200).When(x => !string.IsNullOrWhiteSpace(x.Location))
+                .WithMessage(localizer["Contact_LocationMaxLength", 200]);
+        }
+    }
+
+    public class TranslationDictionaryValidator : AbstractValidator<KeyValuePair<string, ContactTranslationDto>>
+    {
+        public TranslationDictionaryValidator(IStringLocalizer localizer)
+        {
+            RuleFor(x => x.Key)
+                .NotEmpty().WithMessage(localizer["Contact_LanguageCodeRequired"])
+                .Must(key => key == "en" || key == "ar").WithMessage(localizer["Contact_InvalidLanguageCode"]);
+
+            RuleFor(x => x.Value)
+                .SetValidator(new ContactTranslationValidator(localizer));
         }
     }
 } 

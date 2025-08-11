@@ -32,6 +32,7 @@ namespace Sadef.Application.Services.Contact
         private readonly IValidator<UpdateContactStatusDto> _updateContactStatusValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
         private readonly IStringLocalizer _localizer;
+        private readonly IStringLocalizer _validationLocalizer;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEnumLocalizationService _enumLocalizationService;
         private readonly IDistributedCache _cache;
@@ -59,6 +60,7 @@ namespace Sadef.Application.Services.Contact
             _updateContactStatusValidator = updateContactStatusValidator;
             _queryRepositoryFactory = queryRepositoryFactory;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
+            _validationLocalizer = localizerFactory.Create("Validation", "Sadef.Application");
             _httpContextAccessor = httpContextAccessor;
             _enumLocalizationService = enumLocalizationService;
             _cache = cache;
@@ -94,7 +96,7 @@ namespace Sadef.Application.Services.Contact
             // Validate that at least one translation is provided
             if (dto.Translations == null || !dto.Translations.Any())
             {
-                return new Response<ContactDto>(_localizer["Contact_AtLeastOneTranslationRequired"]);
+                return new Response<ContactDto>(_validationLocalizer["Contact_AtLeastOneTranslationRequired"]);
             }
 
             // Validate translation content
@@ -112,31 +114,25 @@ namespace Sadef.Application.Services.Contact
                     .Queryable()
                     .AnyAsync(p => p.Id == dto.PropertyId.Value);
                 if (!propertyExists)
-                    return new Response<ContactDto>(_localizer["Contact_InvalidPropertyReference"]);
+                    return new Response<ContactDto>(_validationLocalizer["Contact_InvalidPropertyReference"]);
             }
 
             var contact = _mapper.Map<Sadef.Domain.ContactEntity.Contact>(dto);
             contact.Status = ContactStatus.New;
             contact.CreatedAt = DateTime.UtcNow;
 
-            // Set ContentLanguage based on available translations
             contact.ContentLanguage = DetermineContentLanguage(dto.Translations);
 
-            // Set translatable fields from the first available translation (fallback)
             if (dto.Translations != null && dto.Translations.Any())
             {
                 var firstTranslation = dto.Translations.First().Value;
-                // Note: These fields are now handled by translations, but we keep them in the main entity
-                // for backward compatibility and fallback purposes
             }
 
             await _uow.RepositoryAsync<Sadef.Domain.ContactEntity.Contact>().AddAsync(contact);
             await _uow.SaveChangesAsync(CancellationToken.None);
 
-            // Save translations
             await SaveContactTranslationsInternalAsync(contact.Id, dto.Translations);
 
-            // Clear all language-specific caches for contacts
             await ClearContactCaches();
 
             var responseDto = _mapper.Map<ContactDto>(contact);
@@ -150,7 +146,6 @@ namespace Sadef.Application.Services.Contact
             var currentLanguage = GetCurrentLanguage();
             string cacheKey = $"{CONTACT_CACHE_PREFIX}:page={pageNumber}&size={pageSize}&lang={currentLanguage}&filters={JsonConvert.SerializeObject(filters)}";
 
-            // Try to get from cache first
             var cached = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cached))
             {
@@ -308,6 +303,23 @@ namespace Sadef.Application.Services.Contact
             contact.UpdatedAt = DateTime.UtcNow;
 
             await _uow.SaveChangesAsync(CancellationToken.None);
+
+            // Parse translations JSON if provided
+            if (!string.IsNullOrEmpty(dto.TranslationsJson))
+            {
+                try
+                {
+                    var options = new SystemTextJson.JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    dto.Translations = SystemTextJson.JsonSerializer.Deserialize<Dictionary<string, ContactTranslationDto>>(dto.TranslationsJson, options);
+                }
+                catch (Exception ex)
+                {
+                    return new Response<ContactDto>($"Invalid translations JSON format: {ex.Message}. Received: {dto.TranslationsJson}");
+                }
+            }
 
             // Update translations if provided
             if (dto.Translations != null)
@@ -610,7 +622,7 @@ namespace Sadef.Application.Services.Contact
         {
             if (translations == null || !translations.Any())
             {
-                return (false, _localizer["Contact_AtLeastOneTranslationRequired"]);
+                return (false, _validationLocalizer["Contact_AtLeastOneTranslationRequired"]);
             }
 
             foreach (var translation in translations)
@@ -620,18 +632,18 @@ namespace Sadef.Application.Services.Contact
 
                 if (string.IsNullOrWhiteSpace(translationDto.Subject))
                 {
-                    return (false, _localizer["Contact_SubjectRequiredForLanguage", languageCode]);
+                    return (false, _validationLocalizer["Contact_SubjectRequiredForLanguage", languageCode]);
                 }
 
                 if (string.IsNullOrWhiteSpace(translationDto.Message))
                 {
-                    return (false, _localizer["Contact_MessageRequiredForLanguage", languageCode]);
+                    return (false, _validationLocalizer["Contact_MessageRequiredForLanguage", languageCode]);
                 }
 
                 // Validate language code
                 if (languageCode != "en" && languageCode != "ar")
                 {
-                    return (false, _localizer["Contact_InvalidLanguageCode", languageCode]);
+                    return (false, _validationLocalizer["Contact_InvalidLanguageCode", languageCode]);
                 }
             }
 
