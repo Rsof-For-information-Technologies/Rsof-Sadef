@@ -12,6 +12,7 @@ using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.Services.Multilingual;
 using Sadef.Application.Utils;
 using Sadef.Common.Domain;
+using Sadef.Common.Infrastructure.Validator;
 using Sadef.Common.Infrastructure.Wrappers;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.Constants;
@@ -126,7 +127,7 @@ namespace Sadef.Application.Services.Blogs
         {
             var repo = _queryFactory.QueryRepository<Blog>();
             var blog = await repo.Queryable().Include(b => b.Translations).FirstOrDefaultAsync(b => b.Id == id);
-            if (blog == null) return new Response<BlogDto>(_localizer["Blog_NotFound"]);
+            if (blog == null) return new Response<BlogDto> { Succeeded = false, Message = _localizer["Blog_NotFound"] };
 
             var dto = _mapper.Map<BlogDto>(blog);
             var currentLanguage = GetCurrentLanguage();
@@ -140,8 +141,12 @@ namespace Sadef.Application.Services.Blogs
             var validationResult = await _createBlogValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var validationErrorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<BlogDto>(validationErrorMessage);
+                return new Response<BlogDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             // Parse translations JSON if provided
@@ -164,13 +169,13 @@ namespace Sadef.Application.Services.Blogs
             // Validate that at least one translation is provided
             if (dto.Translations == null || !dto.Translations.Any())
             {
-                return new Response<BlogDto>(_localizer["Blog_AtLeastOneTranslationRequired"]);
+                return new Response<BlogDto> { Succeeded = false, Message = _localizer["Blog_AtLeastOneTranslationRequired"] };
             }
             // Validate translation content
             var translationValidation = ValidateTranslations(dto.Translations);
             if (!translationValidation.IsValid)
             {
-                return new Response<BlogDto>(translationValidation.ErrorMessage);
+                return new Response<BlogDto> { Succeeded = false, Message = translationValidation.ErrorMessage };
             }
             var blog = _mapper.Map<Blog>(dto);
 
@@ -210,8 +215,12 @@ namespace Sadef.Application.Services.Blogs
             var validationResult = await _updateBlogValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var validationErrorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<BlogDto>(validationErrorMessage);
+                return new Response<BlogDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             var repo = _uow.RepositoryAsync<Blog>();
@@ -220,7 +229,7 @@ namespace Sadef.Application.Services.Blogs
                 .Queryable()
                 .Include(b => b.Translations)
                 .FirstOrDefaultAsync(x => x.Id == dto.Id);
-            if (blog == null) return new Response<BlogDto>(_localizer["Blog_NotFound"]);
+            if (blog == null) return new Response<BlogDto> { Succeeded = false, Message = _localizer["Blog_NotFound"] };
 
             // Update non-translatable fields
             blog.IsPublished = dto.IsPublished;
@@ -250,7 +259,7 @@ namespace Sadef.Application.Services.Blogs
                 var (isValid, errorMessage) = ValidateTranslations(dto.Translations);
                 if (!isValid)
                 {
-                    return new Response<BlogDto>(errorMessage);
+                    return new Response<BlogDto> { Succeeded = false, Message = errorMessage };
                 }
 
                 blog.ContentLanguage = DetermineContentLanguage(dto.Translations);
@@ -274,7 +283,7 @@ namespace Sadef.Application.Services.Blogs
                 .Queryable()
                 .Include(b => b.Translations)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (blog == null) return new Response<string>(_localizer["Blog_NotFound"]);
+            if (blog == null) return new Response<string> { Succeeded = false, Message = _localizer["Blog_NotFound"] };
 
             // Delete translations first
             if (blog.Translations.Any())

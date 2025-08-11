@@ -68,10 +68,10 @@ namespace Sadef.Application.Services.MaintenanceRequest
             var leadQuery = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             var lead = await leadQuery.Queryable().FirstOrDefaultAsync(l => l.Id == dto.LeadId);
             if (lead == null)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotFound", dto.LeadId].ToString());
+                return new Response<MaintenanceRequestDto> { Succeeded = false, Message = _localizer["MaintenanceRequest_LeadNotFound", dto.LeadId].ToString() };
 
             if (lead.Status != LeadStatus.Converted)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_LeadNotConverted"].ToString());
+                return new Response<MaintenanceRequestDto> { Succeeded = false, Message = _localizer["MaintenanceRequest_LeadNotConverted"].ToString() };
 
             var request = _mapper.Map<Domain.MaintenanceRequestEntity.MaintenanceRequest>(dto);
             request.Status = MaintenanceRequestStatus.Pending;
@@ -153,7 +153,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (request == null)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_NotFound"]);
+                return new Response<MaintenanceRequestDto> { Succeeded = false, Message = _localizer["MaintenanceRequest_NotFound"] };
 
             var dto = _mapper.Map<MaintenanceRequestDto>(request);
             dto.ImageUrls = request.Images?.Select(img => img.ImageUrl).ToList() ?? new();
@@ -226,7 +226,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .FirstOrDefaultAsync(r => r.Id == dto.Id);
 
             if (request == null)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_NotFound"]);
+                return new Response<MaintenanceRequestDto>{ Succeeded = false, Message = _localizer["MaintenanceRequest_NotFound"] };
 
             request.Description = dto.Description;
             request.UpdatedAt = DateTime.UtcNow;
@@ -285,7 +285,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (request == null)
-                return new Response<string>(_localizer["MaintenanceRequest_NotFound"]);
+                return new Response<string> { Succeeded = false, Message = _localizer["MaintenanceRequest_NotFound"] };
+
             request.IsActive = false; // Soft delete
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().UpdateAsync(request);
@@ -306,20 +307,20 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .FirstOrDefaultAsync(m => m.Id == dto.Id);
 
             if (request == null)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_NotFound"]);
+                return new Response<MaintenanceRequestDto>{ Succeeded = false, Message = _localizer["MaintenanceRequest_NotFound"] };
 
             if (!request.Status.HasValue)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_StatusNotSet"]);
+                return new Response<MaintenanceRequestDto>{ Succeeded = false, Message = _localizer["MaintenanceRequest_StatusNotSet"] };
 
             if (!dto.Status.HasValue)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_StatusRequired"]);
+                return new Response<MaintenanceRequestDto>{ Succeeded = false, Message = _localizer["MaintenanceRequest_StatusRequired"] };
 
             var currentStatus = request.Status.Value;
             var newStatus = dto.Status.Value;
 
             if (!MaintenanceRequestHelper.IsValidStatusTransition(currentStatus, newStatus, out var errorMessage))
             {
-                return new Response<MaintenanceRequestDto>(_localizer[errorMessage!]);
+                return new Response<MaintenanceRequestDto>{ Succeeded = false, Message = _localizer[errorMessage!] };
             }
 
             request.Status = newStatus;
@@ -343,7 +344,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
                 .FirstOrDefaultAsync(m => m.Id == dto.Id);
 
             if (request == null)
-                return new Response<MaintenanceRequestDto>(_localizer["MaintenanceRequest_NotFound"]);
+                return new Response<MaintenanceRequestDto>{ Succeeded = false, Message = _localizer["MaintenanceRequest_NotFound"] };
 
             if (dto.AdminResponse != null)
                 request.AdminResponse = dto.AdminResponse;
@@ -355,7 +356,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
                 if (!MaintenanceRequestHelper.IsValidStatusTransition(currentStatus, newStatus, out var errorMessage))
                 {
-                    return new Response<MaintenanceRequestDto>(_localizer[errorMessage!]);
+                    return new Response<MaintenanceRequestDto>{ Succeeded = false, Message = _localizer[errorMessage!] };
                 }
                 request.Status = dto.Status.Value;
             }
@@ -371,7 +372,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
         public async Task<Response<List<MaintenanceRequestDto>>> GetMyMaintenanceRequestsAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
-                return new Response<List<MaintenanceRequestDto>>("Invalid user email");
+                return new Response<List<MaintenanceRequestDto>> { Succeeded = false, Message = "Invalid user email." };
 
             var repo = _queryRepositoryFactory.QueryRepository<Domain.MaintenanceRequestEntity.MaintenanceRequest>();
 

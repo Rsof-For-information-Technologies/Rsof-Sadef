@@ -5,6 +5,8 @@ using Sadef.Common.Infrastructure.Wrappers;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Sadef.Common.Infrastructure.Validator;
+using FluentValidation.Results;
 using Sadef.Application.Utils;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
@@ -53,8 +55,12 @@ namespace Sadef.Application.Services.User
             var validationResult = await _registerValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.Select(e => e.ErrorMessage).FirstOrDefault();
-                return new Response<bool>(errorMessage);
+                return new Response<bool>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             var user = new ApplicationUser
@@ -71,7 +77,13 @@ namespace Sadef.Application.Services.User
             if (!result.Succeeded)
             {
                 var localizedErrors = result.Errors.Select(e => GetLocalizedIdentityError(e.Code, e.Description)).ToList();
-                return new Response<bool>(string.Join(", ", localizedErrors));
+                var validation = new ValidationResult(localizedErrors.Select(msg => new ValidationFailure("", msg)));
+                return new Response<bool>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validation)
+                };
             }
 
             await _userManager.AddToRoleAsync(user, request.Role);
@@ -84,10 +96,10 @@ namespace Sadef.Application.Services.User
 
                 if (!confirmResult.Succeeded)
                 {
-                    return new Response<bool>(_localizer["User_FailedAutoVerifyAdminEmail"]);
+                    return new Response<bool> { Succeeded = false, Message = _localizer["User_FailedAutoVerifyAdminEmail"] };
                 }
 
-                return new Response<bool>(true, _localizer["User_Registered"]);
+                return new Response<bool> { Succeeded = true, Message = _localizer["User_Registered"] };
             }
             // Generate and send email verification link
             await SendEmailVerificationAsync(user);
@@ -145,13 +157,13 @@ namespace Sadef.Application.Services.User
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
-                return new Response<string>(_localizer["User_NotFound"]);
+                return new Response<string> { Succeeded = false, Message = _localizer["User_NotFound"] };
             var decodedToken = Uri.UnescapeDataString(request.Token);
             var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
             if (result.Succeeded)
-                return new Response<string>(_localizer["User_EmailVerified"]);
+                return new Response<string>{ Succeeded = false, Message = _localizer["User_EmailVerified"] };
 
-            return new Response<string>(_localizer["User_EmailVerificationFailed"]);
+            return new Response<string>{ Succeeded = false, Message = _localizer["User_EmailVerificationFailed"] };
         }
 
         public async Task<Response<UserLoginResultDTO>> LoginUserAsync(LoginUserDto request)
@@ -159,22 +171,26 @@ namespace Sadef.Application.Services.User
             var validationResult = await _loginValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<UserLoginResultDTO>(errorMessage);
+                return new Response<UserLoginResultDTO>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
             {
-                return new Response<UserLoginResultDTO>(_localizer["User_InvalidEmailOrPassword"]);
+                return new Response<UserLoginResultDTO>{ Succeeded = false, Message = _localizer["User_InvalidEmailOrPassword"] };
             }
             if (!user.EmailConfirmed)
             {
-                return new Response<UserLoginResultDTO>(_localizer["User_EmailNotVerified"]);
+                return new Response<UserLoginResultDTO>{ Succeeded = false, Message = _localizer["User_EmailNotVerified"] };
             }
             if (await _userManager.IsLockedOutAsync(user))
             {
-                return new Response<UserLoginResultDTO>(_localizer["User_AccountLocked"]);
+                return new Response<UserLoginResultDTO>{ Succeeded = false, Message = _localizer["User_AccountLocked"] };
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -201,13 +217,17 @@ namespace Sadef.Application.Services.User
             var validationResult = await _forgotPasswordValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<bool>(errorMessage);
+                return new Response<bool>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return new Response<bool>(_localizer["User_NotFound"]);
+                return new Response<bool>{ Succeeded = false, Message = _localizer["User_NotFound"] };
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -216,7 +236,7 @@ namespace Sadef.Application.Services.User
             var clientUrl = request.clientUrl;
             if (string.IsNullOrEmpty(clientUrl))
             {
-                return new Response<bool>(_localizer["User_ClientUrlNotConfigured"]);
+                return new Response<bool>{ Succeeded = false, Message = _localizer["User_ClientUrlNotConfigured"] };
             }
 
             var resetUrl = $"{clientUrl}/?token={encodedToken}&email={user.Email}";
@@ -231,7 +251,7 @@ namespace Sadef.Application.Services.User
             bool emailSent = await _emailService.SendEmailAsync(user.Email, "Reset Password", emailBody);
             if (!emailSent)
             {
-                return new Response<bool>(_localizer["User_FailedToSendRecoveryEmail"]);
+                return new Response<bool>{ Succeeded = false, Message = _localizer["User_FailedToSendRecoveryEmail"] };
             }
 
             return new Response<bool>(true, _localizer["User_RecoveryEmailSent"]);
@@ -242,13 +262,17 @@ namespace Sadef.Application.Services.User
             var validationResult = await _resetPasswordValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<bool>(errorMessage);
+                return new Response<bool>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return new Response<bool>(_localizer["User_NotFound"]);
+                return new Response<bool>{ Succeeded = false, Message = _localizer["User_NotFound"] };
             }
 
             var decodedToken = Uri.UnescapeDataString(request.ResetToken);
@@ -267,7 +291,7 @@ namespace Sadef.Application.Services.User
             bool emailSent = await _emailService.SendEmailAsync(user.Email, "Password Reset Confirmation", emailBody);
             if (!emailSent)
             {
-                return new Response<bool>(_localizer["User_PasswordResetButEmailFailed"]);
+                return new Response<bool>{ Succeeded = false, Message = _localizer["User_PasswordResetButEmailFailed"] };
             }
 
             return new Response<bool>(true, _localizer["User_PasswordResetAndEmailSent"]);
@@ -279,7 +303,7 @@ namespace Sadef.Application.Services.User
             var users = await _userManager.Users.ToListAsync();
             if (users == null || !users.Any())
             {
-                return new Response<List<UserResultDTO>>(_localizer["User_NoUsersFound"]);
+                return new Response<List<UserResultDTO>>{ Succeeded = false, Message = _localizer["User_NoUsersFound"] };
             }
             var userDtos = users.Select(u => new UserResultDTO
             {
@@ -298,14 +322,18 @@ namespace Sadef.Application.Services.User
             var validationResult = await _updateUserValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<UserResultDTO>(errorMessage);
+                return new Response<UserResultDTO>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
-                return new Response<UserResultDTO>(_localizer["User_NotFound"]);
+                return new Response<UserResultDTO>{ Succeeded = false, Message = _localizer["User_NotFound"] };
             }
 
             if (!string.Equals(user.Email, request.Email, StringComparison.OrdinalIgnoreCase))
@@ -313,7 +341,7 @@ namespace Sadef.Application.Services.User
                 var existingUser = await _userManager.FindByEmailAsync(request.Email);
                 if (existingUser != null && existingUser.Id != request.UserId)
                 {
-                    return new Response<UserResultDTO>(_localizer["User_EmailAlreadyInUse"]);
+                    return new Response<UserResultDTO>{ Succeeded = false, Message = _localizer["User_EmailAlreadyInUse"] };
                 }
 
                 user.Email = request.Email;
@@ -327,7 +355,7 @@ namespace Sadef.Application.Services.User
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
-                return new Response<UserResultDTO>(_localizer["User_FailedToUpdate"]);
+                return new Response<UserResultDTO>{ Succeeded = false, Message = _localizer["User_FailedToUpdate"] };
             }
 
             var currentRoles = await _userManager.GetRolesAsync(user);
@@ -346,7 +374,7 @@ namespace Sadef.Application.Services.User
                 var roleResult = await _userManager.AddToRoleAsync(user, request.Role);
                 if (!roleResult.Succeeded)
                 {
-                    return new Response<UserResultDTO>(_localizer["User_FailedToUpdateRole"]);
+                    return new Response<UserResultDTO>{ Succeeded = false, Message = _localizer["User_FailedToUpdateRole"] };
                 }
             }
 
@@ -367,7 +395,7 @@ namespace Sadef.Application.Services.User
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
-                return new Response<UserResultDTO>(_localizer["User_NotFound"]);
+                return new Response<UserResultDTO>{ Succeeded = false, Message = _localizer["User_NotFound"] };
 
             return new Response<UserResultDTO>(new UserResultDTO
             {
@@ -384,7 +412,7 @@ namespace Sadef.Application.Services.User
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-                return new Response<bool>(_localizer["User_NotFound"]);
+                return new Response<bool>{ Succeeded = false, Message = _localizer["User_NotFound"] };
 
             user.IsActive = !user.IsActive;
             var result = await _userManager.UpdateAsync(user);
@@ -399,13 +427,17 @@ namespace Sadef.Application.Services.User
             var validationResult = await _updateUserPasswordValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<bool>(errorMessage);
+                return new Response<bool>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
-                return new Response<bool>(false, _localizer["User_NotFound"]);
+                return new Response<bool> { Succeeded = false, Message = _localizer["User_NotFound"] };
             }
 
             var loggedInUserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -413,20 +445,20 @@ namespace Sadef.Application.Services.User
 
             if (loggedInUserId == null || loggedInUserRoles == null)
             {
-                return new Response<bool>(false, _localizer["User_UnauthorizedAccess"]);
+                return new Response<bool> { Succeeded = false, Message = _localizer["User_UnauthorizedAccess"] };
             }
 
             var isAuthorized = loggedInUserId == request.UserId || loggedInUserRoles.Contains("Admin") || loggedInUserRoles.Contains("SuperAdmin");
 
             if (!isAuthorized)
             {
-                return new Response<bool>(false, _localizer["User_NotAuthorizedToUpdatePassword"]);
+                return new Response<bool> { Succeeded = false, Message = _localizer["User_NotAuthorizedToUpdatePassword"] };
             }
 
             var passwordCheck = await _userManager.CheckPasswordAsync(user, request.OldPassword);
             if (!passwordCheck)
             {
-                return new Response<bool>(false, _localizer["User_OldPasswordIncorrect"]);
+                return new Response<bool> { Succeeded = false, Message = _localizer["User_OldPasswordIncorrect"] };
             }
 
             var passwordChangeResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
@@ -443,13 +475,17 @@ namespace Sadef.Application.Services.User
             var validationResult = await _refreshTokendValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<UserLoginResultDTO>(errorMessage);
+                return new Response<UserLoginResultDTO>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return new Response<UserLoginResultDTO>(_localizer["User_InvalidEmail"]);
+                return new Response<UserLoginResultDTO>{ Succeeded = false, Message = _localizer["User_InvalidEmail"] };
             }
 
             var savedRefreshToken = await _userManager.GetAuthenticationTokenAsync(user, "Default", "RefreshToken");
@@ -457,12 +493,12 @@ namespace Sadef.Application.Services.User
 
             if (savedRefreshToken != request.RefreshToken)
             {
-                return new Response<UserLoginResultDTO>(_localizer["User_InvalidRefreshToken"]);
+                return new Response<UserLoginResultDTO>{ Succeeded = false, Message = _localizer["User_InvalidRefreshToken"] };
             }
 
             if (DateTime.TryParse(refreshTokenExpiry, out DateTime expiryTime) && expiryTime < DateTime.UtcNow)
             {
-                return new Response<UserLoginResultDTO>(_localizer["User_RefreshTokenExpired"]);
+                return new Response<UserLoginResultDTO>{ Succeeded = false, Message = _localizer["User_RefreshTokenExpired"] };
             }
 
             var roles = await _userManager.GetRolesAsync(user);

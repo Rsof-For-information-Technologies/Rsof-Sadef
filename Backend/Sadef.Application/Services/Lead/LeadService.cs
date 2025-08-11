@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
+using Sadef.Common.Infrastructure.Validator;
 using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.Utils;
@@ -47,8 +48,12 @@ namespace Sadef.Application.Services.Lead
             var validationResult = await _createLeadValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<LeadDto>(errorMessage);
+                return new Response<LeadDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
             if (dto.PropertyId.HasValue)
             {
@@ -57,7 +62,7 @@ namespace Sadef.Application.Services.Lead
                     .Queryable()
                     .AnyAsync(p => p.Id == dto.PropertyId.Value);
                 if (!propertyExists)
-                    return new Response<LeadDto>(_localizer["Lead_InvalidPropertyReference"]);
+                    return new Response<LeadDto> { Succeeded = false, Message = _localizer["Lead_InvalidPropertyReference"] };
             }
 
             var lead = _mapper.Map<Domain.LeadEntity.Lead>(dto);
@@ -136,7 +141,7 @@ namespace Sadef.Application.Services.Lead
         {
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             var lead = await repo.Queryable().FirstOrDefaultAsync(b => b.Id == id);
-            if (lead == null) return new Response<LeadDto>(_localizer["Lead_NotFound"]);
+            if (lead == null) return new Response<LeadDto>{ Succeeded = false, Message = _localizer["Lead_NotFound"] };
             return new Response<LeadDto>(_mapper.Map<LeadDto>(lead));
         }
 
@@ -145,8 +150,12 @@ namespace Sadef.Application.Services.Lead
             var validationResult = await _updateLeadValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
-                var errorMessage = validationResult.Errors.First().ErrorMessage;
-                return new Response<LeadDto>(errorMessage);
+                return new Response<LeadDto>
+                {
+                    Succeeded = false,
+                    Message = "Validation Failed",
+                    ValidationResultModel = new ValidationResultModel(validationResult)
+                };
             }
 
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
@@ -154,7 +163,7 @@ namespace Sadef.Application.Services.Lead
 
             if (lead == null)
             {
-                return new Response<LeadDto>(_localizer["Lead_NotFound"]);
+                return new Response<LeadDto>{ Succeeded = false, Message = _localizer["Lead_NotFound"] };
             }
 
             _mapper.Map(dto, lead);
@@ -225,7 +234,7 @@ namespace Sadef.Application.Services.Lead
                 .FirstOrDefaultAsync(p => p.Id == dto.id);
 
             if (lead == null)
-                return new Response<LeadDto>(_localizer["Lead_NotFound"]);
+                return new Response<LeadDto>{ Succeeded = false, Message = _localizer["Lead_NotFound"] };
 
             var currentStatus = lead.Status;
 
@@ -240,7 +249,7 @@ namespace Sadef.Application.Services.Lead
             };
 
             if (!dto.status.HasValue)
-                return new Response<LeadDto>(_localizer["Lead_StatusRequired"]);
+                return new Response<LeadDto>{ Succeeded = false, Message = _localizer["Lead_StatusRequired"] };
 
             if (!allowedTransitions.TryGetValue(currentStatus, out var validNextStatuses) ||
                 !validNextStatuses.Contains(dto.status.Value))
@@ -263,7 +272,7 @@ namespace Sadef.Application.Services.Lead
         public async Task<Response<List<LeadDto>>> GetLeadsCreatedByUserAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
-                return new Response<List<LeadDto>>("Invalid user email");
+                return new Response<List<LeadDto>> { Succeeded = false, Message = "Invalid User Email." };
 
             var repo = _queryRepositoryFactory.QueryRepository<Domain.LeadEntity.Lead>();
             //var leads = await repo.Queryable()
