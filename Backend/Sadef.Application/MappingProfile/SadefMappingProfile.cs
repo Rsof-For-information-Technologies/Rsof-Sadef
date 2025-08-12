@@ -13,9 +13,42 @@ using Sadef.Domain.LeadEntity;
 using Sadef.Domain.ContactEntity;
 using Sadef.Common.Domain;
 using Sadef.Domain.MaintenanceRequestEntity;
+using Microsoft.AspNetCore.Http;
 
 namespace Sadef.Application.MappingProfile
 {
+    public class PropertyTitleResolver : IValueResolver<Contact, ContactDto, string?>
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public PropertyTitleResolver(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public string? Resolve(Contact source, ContactDto destination, string? destMember, ResolutionContext context)
+        {
+            if (source.Property == null || !source.Property.Translations.Any())
+                return string.Empty;
+
+            // Get current language from HTTP context
+            var currentLanguage = _httpContextAccessor.HttpContext?.Items["CurrentLanguage"] as string ?? "en";
+
+            // Try to find translation for current language
+            var translation = source.Property.Translations.FirstOrDefault(t => t.LanguageCode == currentLanguage);
+            
+            // If not found, fallback to English
+            if (translation == null)
+                translation = source.Property.Translations.FirstOrDefault(t => t.LanguageCode == "en");
+            
+            // If still not found, take the first available translation
+            if (translation == null)
+                translation = source.Property.Translations.FirstOrDefault();
+
+            return translation?.Title ?? string.Empty;
+        }
+    }
+
     public class SadefMappingProfile : Profile
     {
         public SadefMappingProfile()
@@ -80,14 +113,12 @@ namespace Sadef.Application.MappingProfile
             CreateMap<AuditLog, AuditLogDto>();
 
             // Contact
-            CreateMap<CreateContactDto, Contact>()
-                .ForMember(dest => dest.Translations, opt => opt.Ignore());
-            CreateMap<Contact, ContactDto>()
-                .ForMember(dest => dest.PropertyTitle, opt => opt.Ignore()); 
+            CreateMap<CreateContactDto, Contact>();
             CreateMap<UpdateContactDto, Contact>()
-                .ForMember(dest => dest.Translations, opt => opt.Ignore())
                 .ForAllMembers(opts =>
                     opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<Contact, ContactDto>()
+                .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom<PropertyTitleResolver>());
 
         }
     }

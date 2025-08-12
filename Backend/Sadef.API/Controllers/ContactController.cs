@@ -24,9 +24,9 @@ namespace Sadef.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll(
-            [FromQuery] ContactFilterDto filters, 
-            [FromQuery] int pageNumber = 1, 
-            [FromQuery] int pageSize = 10, 
+            [FromQuery] ContactFilterDto filters,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
             [FromQuery] bool isExport = false)
         {
             var result = await _contactService.GetPaginatedAsync(pageNumber, pageSize, filters, isExport);
@@ -91,4 +91,4 @@ namespace Sadef.API.Controllers
             return Ok(result);
         }
     }
-} 
+}
