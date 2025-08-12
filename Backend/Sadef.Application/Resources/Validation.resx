@@ -243,4 +243,76 @@
 	<data name="Property_ImageInvalidType" xml:space="preserve">
     <value>Only image files are allowed (e.g., jpg, jpeg, png, webp).</value>
   </data>
+  <data name="Contact_FullNameRequired" xml:space="preserve">
+    <value>Full name is required.</value>
+  </data>
+  <data name="Contact_FullNameMaxLength" xml:space="preserve">
+    <value>Full name cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_EmailRequired" xml:space="preserve">
+    <value>Email is required.</value>
+  </data>
+  <data name="Contact_EmailInvalid" xml:space="preserve">
+    <value>Please enter a valid email address.</value>
+  </data>
+  <data name="Contact_PhoneMaxLength" xml:space="preserve">
+    <value>Phone number cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_BudgetMaxLength" xml:space="preserve">
+    <value>Budget cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_PropertyTypeMaxLength" xml:space="preserve">
+    <value>Property type cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_TypeInvalid" xml:space="preserve">
+    <value>Please enter a valid contact type.</value>
+  </data>
+  <data name="Contact_StatusInvalid" xml:space="preserve">
+    <value>Please enter a valid contact status.</value>
+  </data>
+  <data name="Contact_IdRequired" xml:space="preserve">
+    <value>Contact ID is required.</value>
+  </data>
+  <data name="Contact_AtLeastOneTranslationRequired" xml:space="preserve">
+    <value>At least one translation is required.</value>
+  </data>
+  <data name="Contact_SubjectRequired" xml:space="preserve">
+    <value>Subject is required.</value>
+  </data>
+  <data name="Contact_SubjectMaxLength" xml:space="preserve">
+    <value>Subject cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_MessageRequired" xml:space="preserve">
+    <value>Message is required.</value>
+  </data>
+  <data name="Contact_MessageMinLength" xml:space="preserve">
+    <value>Message must be at least {0} characters long.</value>
+  </data>
+  <data name="Contact_MessageMaxLength" xml:space="preserve">
+    <value>Message cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_PreferredContactMethodMaxLength" xml:space="preserve">
+    <value>Preferred contact method cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_LocationMaxLength" xml:space="preserve">
+    <value>Location cannot exceed {0} characters.</value>
+  </data>
+  <data name="Contact_LanguageCodeRequired" xml:space="preserve">
+    <value>Language code is required.</value>
+  </data>
+  <data name="Contact_InvalidLanguageCode" xml:space="preserve">
+    <value>Invalid language code. Only 'en' and 'ar' are supported.</value>
+  </data>
+  <data name="Contact_SubjectRequiredForLanguage" xml:space="preserve">
+    <value>Subject is required for language '{0}'.</value>
+  </data>
+  <data name="Contact_MessageRequiredForLanguage" xml:space="preserve">
+    <value>Message is required for language '{0}'.</value>
+  </data>
+  <data name="Contact_InvalidPropertyReference" xml:space="preserve">
+    <value>Invalid property reference. The specified property does not exist.</value>
+  </data>
+  <data name="Contact_InvalidTranslationsJson" xml:space="preserve">
+    <value>Invalid translations JSON format.</value>
+  </data>
 </root> 

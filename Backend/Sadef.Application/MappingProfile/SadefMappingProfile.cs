@@ -80,10 +80,12 @@ namespace Sadef.Application.MappingProfile
             CreateMap<AuditLog, AuditLogDto>();
 
             // Contact
-            CreateMap<CreateContactDto, Sadef.Domain.ContactEntity.Contact>();
-            CreateMap<Sadef.Domain.ContactEntity.Contact, ContactDto>()
+            CreateMap<CreateContactDto, Contact>()
+                .ForMember(dest => dest.Translations, opt => opt.Ignore());
+            CreateMap<Contact, ContactDto>()
                 .ForMember(dest => dest.PropertyTitle, opt => opt.Ignore()); 
-            CreateMap<UpdateContactDto, Sadef.Domain.ContactEntity.Contact>()
+            CreateMap<UpdateContactDto, Contact>()
+                .ForMember(dest => dest.Translations, opt => opt.Ignore())
                 .ForAllMembers(opts =>
                     opts.Condition((src, dest, srcMember) => srcMember != null));
 

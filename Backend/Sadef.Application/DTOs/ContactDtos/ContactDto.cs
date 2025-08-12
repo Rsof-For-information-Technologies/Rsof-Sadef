@@ -21,6 +21,7 @@ namespace Sadef.Application.DTOs.ContactDtos
         public bool IsUrgent { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public ContentLanguage ContentLanguage { get; set; }
         
         // Navigation properties
         public string? PropertyTitle { get; set; }
