@@ -378,10 +378,19 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             var requests = await repo.Queryable()
                 .Where(m => m.CreatedBy == email)
+                .Include(m => m.Images)
+                .Include(m => m.Videos)
                 .OrderByDescending(m => m.CreatedAt)
                 .ToListAsync();
 
             var dtoList = _mapper.Map<List<MaintenanceRequestDto>>(requests);
+
+            foreach (var dto in dtoList)
+            {
+                var entity = requests.First(r => r.Id == dto.Id);
+                dto.ImageUrls = entity.Images?.Select(img => img.ImageUrl).ToList() ?? new();
+                dto.VideoUrls = entity.Videos?.Select(vid => vid.VideoUrl).ToList() ?? new();
+            }
 
             return new Response<List<MaintenanceRequestDto>>(dtoList, "Maintenance requests created by user retrieved successfully.");
         }
