@@ -204,7 +204,7 @@ export const getPropertyColumns = ({
   onHeaderCellClick,
 
 }: Columns) => {
-
+  const { locale } = useParams<Params>()
   const { propertyTypes, fetchStaticData } = useStaticDataStore();
 
   useEffect(() => {
@@ -385,14 +385,14 @@ export const getPropertyColumns = ({
               </span>
             </div>
             <Tooltip size="sm" content={'Edit Property'} placement="top" color="invert">
-              <Link href={routes.property.editProperty(row.id)}>
+              <Link href={`/${locale}${routes.property.editProperty(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <PencilIcon className="h-4 w-4" />
                 </ActionIcon>
               </Link>
             </Tooltip>
             <Tooltip size="sm" content={'View Property'} placement="top" color="invert">
-              <Link href={routes.property.propertyDetails(row.id)}>
+              <Link href={`/${locale}${routes.property.propertyDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />
                 </ActionIcon>
@@ -415,7 +415,9 @@ export const getPropertyColumns = ({
 export const getLeadColumns = ({
   sortConfig,
   onHeaderCellClick,
-}: Columns) => [
+}: Columns) => {
+  const { locale } = useParams<Params>()
+  return [
     {
       title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
@@ -549,7 +551,7 @@ export const getLeadColumns = ({
               </span>
             </div>
             <Tooltip size="sm" content={'View Lead'} placement="top" color="invert">
-              <Link href={routes.lead.leadDetails(row.id)}>
+              <Link href={`/${locale}${routes.lead.leadDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />
                 </ActionIcon>
@@ -560,6 +562,7 @@ export const getLeadColumns = ({
       },
     },
   ];
+}
 
 // maintenance Request columns
 
@@ -573,7 +576,9 @@ const maintenanceRequestStatuses = [
 export const getMaintenanceRequestColumns = ({
   sortConfig,
   onHeaderCellClick,
-}: Columns) => [
+}: Columns) => {
+  const { locale } = useParams<Params>()
+  return [
     {
       title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
@@ -701,14 +706,14 @@ export const getMaintenanceRequestColumns = ({
               </span>
             </div>
             <Tooltip size="sm" content={'Edit Maintenance Request'} placement="top" color="invert">
-              <Link href={routes.maintenanceRequest.editMaintenance(row.id)}>
+              <Link href={`/${locale}${routes.maintenanceRequest.editMaintenance(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <PencilIcon className="h-4 w-4" />
                 </ActionIcon>
               </Link>
             </Tooltip>
             <Tooltip size="sm" content={'View Maintenance Request'} placement="top" color="invert">
-              <Link href={routes.maintenanceRequest.maintenanceDetails(row.id)}>
+              <Link href={`/${locale}${routes.maintenanceRequest.maintenanceDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />
                 </ActionIcon>
@@ -724,6 +729,7 @@ export const getMaintenanceRequestColumns = ({
       },
     },
   ];
+}
 
 // user columns
 
@@ -841,7 +847,9 @@ export const getUserColumns = ({
 export const getContactColumns = ({
   sortConfig,
   onHeaderCellClick,
-}: Columns) => [
+}: Columns) => {
+  const { locale } = useParams<Params>()
+  return [
     {
       title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
@@ -910,7 +918,7 @@ export const getContactColumns = ({
       width: 100,
       render: (value: string) => (
         <Text className="truncate text-gray-600" title={value}>
-          {value.length > 20 ? value.slice(0, 20) + '...' : value}
+          {value && value.length > 20 ? value.slice(0, 20) + '...' : value}
         </Text>
       ),
     },
@@ -1022,7 +1030,7 @@ export const getContactColumns = ({
               </span>
             </div>
             <Tooltip size="sm" content={'View Contact'} placement="top" color="invert">
-              <Link href={routes.contact.contactDetails(row.id)}>
+              <Link href={`/${locale}${routes.contact.contactDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />
                 </ActionIcon>
@@ -1033,4 +1041,5 @@ export const getContactColumns = ({
       },
     },
   ];
+}
 
