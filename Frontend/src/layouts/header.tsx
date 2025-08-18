@@ -8,9 +8,15 @@ import { Suspense } from "react";
 import useWindowScroll from "react-use/lib/useWindowScroll";
 import HamburgerButton from "./header-parts/hamburger-button";
 import HeaderMenuRight from "./header-parts/header-menu-right";
+import { UserRole } from "@/types/userRoles";
+import Authenticate from "@/components/auth/authenticate";
+import Authorize from "@/components/auth/authorize";
+import { useUserStore } from "@/store/user.store";
 
 export default function Header({ className }: { className?: string; }) {
   const isMounted = useIsMounted();
+
+  const { userInfo } = useUserStore()
 
   const windowScroll = useWindowScroll();
 
@@ -30,11 +36,16 @@ export default function Header({ className }: { className?: string; }) {
 
       <div className="flex w-full items-center justify-between gap-5 3xl:gap-6">
         <div className="flex max-w-2xl items-center xl:w-auto">
-          <HamburgerButton
-            view={<Suspense>
-              <Sidebar className="static w-full 2xl:w-full" />
-            </Suspense>}
-          />
+
+          {
+            userInfo &&
+            <HamburgerButton
+              view={<Suspense>
+                <Sidebar className="static w-full 2xl:w-full" />
+              </Suspense>}
+            />
+          }
+
         </div>
 
         <div className="flex items-center justify-between flex-1">
@@ -42,6 +53,6 @@ export default function Header({ className }: { className?: string; }) {
         </div>
       </div>
 
-    </header>
+    </header >
   );
 }

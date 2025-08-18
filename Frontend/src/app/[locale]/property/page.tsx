@@ -19,7 +19,6 @@ type SearchParams = {
 async function getProperties(searchParams: SearchParams) {
   try {
     const properties = await getAllProperties(searchParams.pageNumber, searchParams.pageSize)
-    console.log("Fetched properties:", JSON.stringify(properties, null, 4));
     return properties;
   } catch (error) {
     console.log("Error fetching properties:", error);

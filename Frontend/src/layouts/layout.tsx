@@ -1,9 +1,13 @@
 "use client"
 import { useDrawerStore } from '@/app/shared/drawer-views/use-drawer';
+import Authenticate from '@/components/auth/authenticate';
+import Authorize from '@/components/auth/authorize';
+import { ROLES } from '@/config/constants';
 import { routes } from '@/config/routes';
 import Header from '@/layouts/header';
 import Sidebar from '@/layouts/sideBar/sidebar';
 import { Params } from '@/types/params';
+import { UserRole } from '@/types/userRoles';
 import { useParams, usePathname } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -19,6 +23,8 @@ export default function HydrogenLayout({
   const isAuthPage = authRoutes.includes(pathname);
   return (
     <main className={`flex min-h-screen flex-grow ${isAuthPage ? "pt-0" : "pt-[100px]"}`}>
+
+      
       <Suspense>
         <Sidebar className="fixed hidden xl:block dark:bg-gray-50" />
       </Suspense>
