@@ -43,15 +43,14 @@ export default function Sidebar({ className }: { className?: string }) {
           aria-label="Sadef Logo"
           className="text-gray-800 hover:text-gray-900 w-fit inline-block"
         >
-          {/* <Image
-            src={"/vercel.svg"}
+          <Image
+            src={"/sadef-logo.png"}
             alt="Sadef Logo"
             height={200}
             width={200}
             priority
-            className="w-[50px] sm:w-[70px]"
-          /> */}
-          <h2>Sadef</h2>
+            className="w-[70px] sm:w-[130px]"
+          />
         </Link>
       </div>
 
