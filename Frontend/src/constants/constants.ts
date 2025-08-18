@@ -1,9 +1,9 @@
 
-import { BasicInfoStep } from "@/app/(pages)/property/(components)/basic-info-step";
-import { ContactPublishingStep } from "@/app/(pages)/property/(components)/contact-publishing-step";
-import { LocationStep } from "@/app/(pages)/property/(components)/location-step";
-import { PropertyDetailsStep } from "@/app/(pages)/property/(components)/property-details-step";
-import { PropertyMediaStep } from "@/app/(pages)/property/(components)/property-media-step";
+import { ContactPublishingStep } from "@/app/[locale]/property/(components)/contact-publishing-step";
+import { LocationStep } from "@/app/[locale]/property/(components)/location-step";
+import { PropertyDetailsStep } from "@/app/[locale]/property/(components)/property-details-step";
+import { PropertyMediaStep } from "@/app/[locale]/property/(components)/property-media-step";
+import { BasicInfoStep } from "@/app/[locale]/property/(components)/basic-info-step";
 import { propertyDetailsSchema, propertyMediaSchema, locationSchema, contactPublishingSchema, basicInfoSchema, } from "@/validators/createProperty";
 
 export const STEPS = [

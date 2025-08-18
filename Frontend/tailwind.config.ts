@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss';
 import plugin from 'tailwindcss/plugin';
+// @ts-ignore - rtl plugin may not have types
+import tailwindcssRtl from 'tailwindcss-rtl';
 import containerQueries from "@tailwindcss/container-queries"
 
 export default {
@@ -175,6 +177,7 @@ export default {
       // required this to prevent any style on readOnly input elements
       addVariant('not-read-only', '&:not(:read-only)');
     }),
-    containerQueries
+    containerQueries,
+    tailwindcssRtl
   ],
 } satisfies Config;

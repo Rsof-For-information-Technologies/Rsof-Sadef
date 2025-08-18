@@ -1,19 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import HamburgerButton from "./header-parts/hamburger-button";
+import { useDrawerStore } from "@/app/shared/drawer-views/use-drawer";
+import { useIsMounted } from "@/hooks/useIsMounted";
 import Sidebar from "@/layouts/sideBar/sidebar";
 import cn from "@/utils/class-names";
 import { Suspense } from "react";
-import { useIsMounted } from "@/hooks/useIsMounted";
 import useWindowScroll from "react-use/lib/useWindowScroll";
-import { useDrawerStore } from "@/app/shared/drawer-views/use-drawer";
-import Authenticate from "@/components/auth/authenticate";
+import HamburgerButton from "./header-parts/hamburger-button";
 import HeaderMenuRight from "./header-parts/header-menu-right";
-import SearchWidget from "@/components/search/search";
-import { PiMagnifyingGlass } from "react-icons/pi";
 
-export default function Header({ className }: { className?: string }) {
+export default function Header({ className }: { className?: string; }) {
   const isMounted = useIsMounted();
 
   const windowScroll = useWindowScroll();
@@ -32,30 +28,13 @@ export default function Header({ className }: { className?: string }) {
       )}
     >
 
-
-
       <div className="flex w-full items-center justify-between gap-5 3xl:gap-6">
         <div className="flex max-w-2xl items-center xl:w-auto">
-
           <HamburgerButton
             view={<Suspense>
-              {/* <Authenticate> */}
               <Sidebar className="static w-full 2xl:w-full" />
-              {/* </Authenticate> */}
             </Suspense>}
           />
-
-          {/* <Link
-            aria-label="Site Logo"
-            href="/"
-            className="me-4 w-9 shrink-0 text-gray-800 hover:text-gray-900 lg:me-5 xl:hidden"
-          >
-            <Logo iconOnly={true} />
-          </Link> */}
-          {/* <SearchWidget
-            icon={<PiMagnifyingGlass className="me-3 h-[20px] w-[20px]" />}
-            className="xl:w-[500px]"
-          /> */}
         </div>
 
         <div className="flex items-center justify-between flex-1">

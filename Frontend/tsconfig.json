@@ -54,7 +54,7 @@
     "**/*.d.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "next.config.js",
+    "next.config.ts",
     "src/types/*.d.ts"
   ], // Specify which paths should be included in the program
   "exclude": [

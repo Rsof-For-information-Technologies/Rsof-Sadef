@@ -100,6 +100,7 @@ export type PropertyItem = {
     isInvestorOnly: boolean;
     features: number[];
     isActive: boolean;
+    contentLanguage: number;
 }
 
 type PropertyData = {

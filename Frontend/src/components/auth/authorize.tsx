@@ -2,11 +2,12 @@
 
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserStore } from '@/store/user.store';
+import { Params } from '@/types/params';
 import { User } from '@/types/user';
 import { UserRole } from '@/types/userRoles';
 import { findFirstAuthorizedUrl } from '@/utils/findFirstAuthorizedUrl';
 import { getLocalStorage } from '@/utils/localStorage';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 type T_Authorize = {
@@ -25,9 +26,10 @@ const checkAuthorize = (userInfo: User | undefined, allowedRoles: UserRole[]) =>
 
 function Authorize({ children, allowedRoles, navigate = false }: T_Authorize) {
     const { setUserInfo, userInfo } = useUserStore()
-    const [hasAccess, setHasAccess] = useState<boolean>(false);
+    const [hasAccess, setHasAccess] = useState<boolean>(true);
     const isMounted = useIsMounted()
     const router = useRouter();
+    const params = useParams<Params>();
 
     useEffect(() => {
         if (!userInfo)
@@ -45,16 +47,11 @@ function Authorize({ children, allowedRoles, navigate = false }: T_Authorize) {
     }, [userInfo, allowedRoles])
 
     useEffect(() => {
-        if (isMounted && userInfo) {
-            const authorized = checkAuthorize(userInfo, allowedRoles);
-            setHasAccess(authorized);
-
-            if (!authorized && navigate) {
-                const authorizedUrl = findFirstAuthorizedUrl();
-                router.push(authorizedUrl);
-            }
+        if (!hasAccess && userInfo && navigate) {
+            const authorizedUrl = findFirstAuthorizedUrl(params.locale);
+            router.push(authorizedUrl);
         }
-    }, [userInfo, allowedRoles, navigate, isMounted]);
+    }, [userInfo, hasAccess, router, navigate, params]);
 
     if (!isMounted)
         return null;

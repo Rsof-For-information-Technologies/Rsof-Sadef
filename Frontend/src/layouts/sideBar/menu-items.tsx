@@ -5,10 +5,9 @@ import { User } from "@/types/user";
 import { JSX } from "react";
 import { BsBuilding } from 'react-icons/bs';
 
-
 // Note: do not add href in the label object, it is rendering as label
 export type MenuItemDropdownItem = {
-  name: string;
+  translationKey: string;
   href: string;
   params?: boolean;
   badge: string;
@@ -16,7 +15,7 @@ export type MenuItemDropdownItem = {
 }
 
 export type MenuItem = {
-  name: string;
+  translationKey: string;
   href: string;
   icon: JSX.Element;
   params?: boolean;
@@ -24,127 +23,121 @@ export type MenuItem = {
   dropdownItems?: MenuItemDropdownItem[];
 }
 
-export function MenuItems(user: User): MenuItem[] {
+export function MenuItems(locale: string, user: User): MenuItem[] {
 
   return (
     [
       {
-        name: "Dashboard",
-        href: `${routes.dashboard}`,
+        translationKey: "dashboard",
+        href: `/${locale}${routes.dashboard}`,
         icon: <FaFolderOpen />,
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
       },
       {
-        name: "Property",
+        translationKey: "property.title",
         href: `#`,
         icon: <BsBuilding />,
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
         dropdownItems: [
           {
-            name: "Property list",
-            href: `${routes.property.list}`,
+            translationKey: "property.submenu.list",
+            href: `/${locale}${routes.property.list}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           },
           {
-            name: "Create Property",
-            href: `${routes.property.create}`,
+            translationKey: "property.submenu.add",
+            href: `/${locale}${routes.property.create}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           }
         ]
       },
       {
-        name: "Blog",
+        translationKey: "blog.title",
         href: `#`,
         icon: <FaBlog />,
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
         dropdownItems: [
           {
-            name: "Blog list",
-            href: `${routes.blog.list}`,
+            translationKey: "blog.submenu.list",
+            href: `/${locale}${routes.blog.list}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           },
           {
-            name: "Create Blog",
-            href: `${routes.blog.create}`,
+            translationKey: "blog.submenu.add",
+            href: `/${locale}${routes.blog.create}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           }
         ]
       },
       {
-        name: "Lead",
+        translationKey: "lead.title",
         href: `#`,
         icon: <FaUser />,
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
         dropdownItems: [
           {
-            name: "Lead list",
-            href: `${routes.lead.list}`,
+            translationKey: "lead.submenu.list",
+            href: `/${locale}${routes.lead.list}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           },
         ]
       },
       {
-        name: "Maintenance Request",
+        translationKey: "maintenanceRequest.title",
         href: `#`,
         icon: <FaHourglassEnd />,
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
         dropdownItems: [
           {
-            name: "Maintenance List",
-            href: `${routes.maintenanceRequest.list}`,
+            translationKey: "maintenanceRequest.submenu.list",
+            href: `/${locale}${routes.maintenanceRequest.list}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           },
           {
-            name: "Create Request",
-            href: `${routes.maintenanceRequest.create}`,
+            translationKey: "maintenanceRequest.submenu.add",
+            href: `/${locale}${routes.maintenanceRequest.create}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           }
         ]
       },
       {
-        name: "User Management",
+        translationKey: "userManagement.title",
         href: `#`,
         icon: <FaUsers />,
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
         dropdownItems: [
           {
-            name: "User List",
-            href: `${routes.user.list}`,
+            translationKey: "userManagement.submenu.list",
+            href: `/${locale}${routes.user.list}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           },
           {
-            name: "Create User",
-            href: `${routes.user.create}`,
+            translationKey: "userManagement.submenu.add",
+            href: `/${locale}${routes.user.create}`,
             badge: '',
-            allowedRoles: [UserRole.Admin],
+            allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
           }
         ]
       },
       {
-        name: "Contact",
+        translationKey: "contact.title",
         href: `#`,
         icon: <FaUser />,
         allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
         dropdownItems: [
           {
-            name: "Contact List",
-            href: `${routes.contact.list}`,
+            translationKey: "contact.submenu.list",
+            href: `/${locale}${routes.contact.list}`,
             badge: '',
             allowedRoles: [UserRole.SuperAdmin, UserRole.Admin],
-          },
-          {
-            name: "Create Contact",
-            href: `${routes.contact.create}`,
-            badge: '',
-            allowedRoles: [UserRole.Admin],
           }
         ]
       },

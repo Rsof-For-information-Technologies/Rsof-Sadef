@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Title, Collapse } from "rizzui";
 import { cn } from "@/utils/class-names";
 import { PiCaretDownBold } from "react-icons/pi";
@@ -12,11 +12,20 @@ import Authorize from "@/components/auth/authorize";
 import { routes } from "@/config/routes";
 import { useUserStore } from "@/store/user.store";
 import Image from "next/image";
+import { Params } from "@/types/params";
+import { useTranslations } from "next-intl";
 
 export default function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const params = useParams<Params>()
   const { state: { isOpen } } = useDrawerStore();
   const { userInfo } = useUserStore()
+  const t = useTranslations('SideMenu');
+
+  const safeT = (key: string) => {
+    try { return t(key); } catch { return key; }
+  };
+
   return (
 
     <aside
@@ -30,18 +39,19 @@ export default function Sidebar({ className }: { className?: string }) {
     >
       <div className="sticky flex justify-center top-0 z-40 bg-gray-0/10 px-6 py-2 2xl:px-8 2xl:pt-6 dark:bg-gray-100/5">
         <Link
-          href={`${routes.dashboard}`}
+          href={`/${params.locale}${routes.dashboard}`}
           aria-label="Sadef Logo"
           className="text-gray-800 hover:text-gray-900 w-fit inline-block"
         >
-          <Image
+          {/* <Image
             src={"/vercel.svg"}
             alt="Sadef Logo"
             height={200}
             width={200}
             priority
             className="w-[50px] sm:w-[70px]"
-          />
+          /> */}
+          <h2>Sadef</h2>
         </Link>
       </div>
 
@@ -50,16 +60,13 @@ export default function Sidebar({ className }: { className?: string }) {
           {
             userInfo ?
 
-              MenuItems(userInfo).map((item, index) => {
+              MenuItems(params.locale || "en", userInfo).map((item, index) => {
                 const isActive = pathname === (item?.href as string);
-                const pathnameExistInDropdowns = item?.dropdownItems?.filter(
-                  (dropdownItem) => dropdownItem.href === pathname
-                );
-
+                const pathnameExistInDropdowns = item?.dropdownItems?.filter((dropdownItem) => dropdownItem.href === pathname);
                 const isDropdownOpen = Boolean(pathnameExistInDropdowns?.length);
 
                 return (
-                  <Authorize allowedRoles={item.allowedRoles} key={item.name + "-" + index} >
+                  <Authorize allowedRoles={item.allowedRoles} key={item.translationKey + "-" + index} >
                     {item?.href
                       ? (
                         <>
@@ -90,7 +97,7 @@ export default function Sidebar({ className }: { className?: string }) {
                                           {item?.icon}
                                         </span>
                                       )}
-                                      {item.name}
+                                      {safeT(item.translationKey)}
                                     </span>
 
                                     <PiCaretDownBold
@@ -113,7 +120,7 @@ export default function Sidebar({ className }: { className?: string }) {
                                     >
                                       <Link
                                         href={`${dropdownItem?.href}`}
-                                        key={dropdownItem?.name + index}
+                                        key={dropdownItem?.translationKey + index}
                                         className={cn(
                                           "mx-3.5 mb-0.5 flex items-center justify-between rounded-md px-3.5 py-2 font-medium capitalize last-of-type:mb-1 lg:last-of-type:mb-2 2xl:mx-5",
                                           isChildActive
@@ -131,7 +138,7 @@ export default function Sidebar({ className }: { className?: string }) {
                                             )}
                                           />{" "}
                                           <span className="truncate">
-                                            {dropdownItem?.name}
+                                            {safeT(dropdownItem?.translationKey)}
                                           </span>
                                         </div>
                                       </Link>
@@ -163,7 +170,7 @@ export default function Sidebar({ className }: { className?: string }) {
                                       {item?.icon}
                                     </span>
                                   )}
-                                  <span className="truncate">{item.name}</span>
+                                  <span className="truncate">{safeT(item.translationKey)}</span>
                                 </div>
                               </Link>
                             )
@@ -178,7 +185,7 @@ export default function Sidebar({ className }: { className?: string }) {
                             index !== 0 && "mt-6 3xl:mt-7"
                           )}
                         >
-                          {item.name}
+                          {safeT(item.translationKey)}
                         </Title>
                       )}
                   </Authorize>

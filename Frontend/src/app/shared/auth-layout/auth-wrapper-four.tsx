@@ -1,15 +1,13 @@
 'use client';
 
-import Link from 'next/link';
-import { routes } from '@/config/routes';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { Button, Title } from 'rizzui';
-import cn from '@/utils/class-names';
-import { PiArrowLineRight, PiUserCirclePlus } from 'react-icons/pi';
-import { FcGoogle } from 'react-icons/fc';
 import { siteConfig } from '@/config/site.config';
+import cn from '@/utils/class-names';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { BsFacebook } from 'react-icons/bs';
+import { FcGoogle } from 'react-icons/fc';
+import { Button, Title } from 'rizzui';
 import OrSeparation from './or-separation';
 
 function AuthNavLink({
@@ -54,7 +52,7 @@ export default function AuthWrapper({
 }) {
   return (
     <div className="flex min-h-screen w-full flex-col justify-between">
-      <AuthHeader />
+      {/* <AuthHeader /> */}
 
       <div className="flex w-full flex-col justify-center px-5">
         <div
@@ -64,9 +62,7 @@ export default function AuthWrapper({
           )}
         >
           <div className="flex flex-col items-center">
-            <Link href={'/'} className="mb-7 inline-block max-w-[64px] lg:mb-9">
-              <Image src={siteConfig.icon} alt={siteConfig.title} />
-            </Link>
+            <Image src={siteConfig.icon} alt={siteConfig.title} className="mb-7 inline-block max-w-[64px] lg:mb-9" />
             <Title
               as="h2"
               className="mb-7 text-center text-[28px] font-bold leading-snug md:text-3xl md:!leading-normal lg:mb-10 lg:text-4xl"
@@ -98,7 +94,7 @@ export default function AuthWrapper({
         </div>
       </div>
 
-      <AuthFooter />
+      {/* <AuthFooter /> */}
     </div>
   );
 }
@@ -115,11 +111,11 @@ function AuthHeader() {
         />
       </Link>
       {/* <div className="flex items-center space-x-2 md:space-x-4">
-        <AuthNavLink href={routes.auth.login}>
+        <AuthNavLink href={`/${params.locale}${routes.auth.login}`}>
           <PiArrowLineRight className="h-4 w-4" />
           <span>Login</span>
         </AuthNavLink>
-        <AuthNavLink href={routes.auth.signup}>
+        <AuthNavLink href={`/${params.locale}${routes.auth.signup}`}>
           <PiUserCirclePlus className="h-4 w-4" />
           <span>Sign Up</span>
         </AuthNavLink>

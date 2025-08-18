@@ -39,15 +39,15 @@ function DropdownMenu() {
       </div>
       <div className="px-6 pb-5 pt-5">
         <Button
-            className="h-auto w-full justify-start p-0 font-medium text-gray-700 outline-none focus-within:text-gray-600 hover:text-gray-900 focus-visible:ring-0"
-            variant="text"
-            onClick={() => {
-              router.push(routes.profile.changePassword);
-            }}
-          >
-            <PiLockKey className="mr-2 h-5 w-5" />
-            Change Password
-          </Button>
+          className="h-auto w-full justify-start p-0 font-medium text-gray-700 outline-none focus-within:text-gray-600 hover:text-gray-900 focus-visible:ring-0"
+          variant="text"
+          onClick={() => {
+            router.push(`/${params.locale}${routes.profile.changePassword}`);
+          }}
+        >
+          <PiLockKey className="mr-2 h-5 w-5" />
+          Change Password
+        </Button>
       </div>
       <div className="border-t border-gray-300 px-6 pb-5 pt-5">
         <Button
@@ -55,7 +55,7 @@ function DropdownMenu() {
           variant="text"
           onClick={() => {
             logOutUser(true);
-            router.push(routes.auth.login);
+            router.push(`/${params.locale}${routes.auth.login}`);
           }}
         >
           <PiSignOut className="mr-2 h-5 w-5" />

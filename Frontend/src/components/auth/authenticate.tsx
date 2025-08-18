@@ -1,11 +1,12 @@
 "use client"
 import { useUserStore } from '@/store/user.store'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useIsMounted } from '@/hooks/useIsMounted'
 import { routes } from '@/config/routes'
 import { getLocalStorage } from '@/utils/localStorage';
 import { User } from '@/types/user'
+import { Params } from '@/types/params'
 
 type T_Authenticate = {
     children: React.ReactNode;
@@ -23,6 +24,8 @@ function Authenticate({ children, }: T_Authenticate) {
 
     const pathName = usePathname()
 
+    const params = useParams<Params>();
+
     useEffect(() => {
         setUserInfo(getLocalStorage("user-info") as User)
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,10 +39,10 @@ function Authenticate({ children, }: T_Authenticate) {
 
             queryParams.set("navigate_to", pathName);
 
-            router.push(`${routes.auth.login}?${queryParams.toString()}`);
+            router.push(`/${params.locale}${routes.auth.login}?${queryParams}`);
 
         }
-    }, [userInfo, router, mounted, pathName, searchParams])
+    }, [userInfo, router, mounted, params.locale, pathName, searchParams])
 
 
     if (userInfo) {

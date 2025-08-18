@@ -1,0 +1,79 @@
+{
+    "landingPage": {
+        "title": "Welcome to Sadef Admin Site"
+    },
+    "SignInPage": {
+        "title": {
+            "line1": "Welcome Back!",
+            "line2": "Sign in with your credentials."
+        },
+        "form": {
+            "email": "Email",
+            "emailPlaceholder": "Enter your email",
+            "password": "Password",
+            "passwordPlaceholder": "Enter your password",
+            "submit": "Log In",
+            "rememberMe": "Remember Me",
+            "forgotPassword": "Forgot Password",
+            "login": "Log In"
+        }
+    },
+    "ForgotPasswordPage": {
+        "title": {
+            "line1": "Having trouble to sign in?",
+            "line2": "Reset your password."
+        },
+        "form": {
+            "email": "Email",
+            "emailPlaceholder": "Enter your email",
+            "resetButton": "Reset Password"
+        },
+        "footer": {
+            "text1": "Don't want to reset?",
+            "text2": "Sign in"
+        }
+    },
+    "SideMenu": {
+        "dashboard": "Dashboard",
+        "property": {
+            "title": "Property",
+            "submenu": {
+                "list": "Property List",
+                "add": "Add Property"
+            }
+        },
+        "blog": {
+            "title": "Blog",
+            "submenu": {
+                "list": "Blog List",
+                "add": "Add Blog"
+            }
+        },
+        "lead": {
+            "title": "Leads",
+            "submenu": {
+                "list": "Leads List"
+            }
+        },
+        "maintenanceRequest": {
+            "title": "Maintenance Request",
+            "submenu": {
+                "list": "Maintenance List",
+                "add": "Add Request"
+            }
+        },
+        "userManagement": {
+            "title": "User Management",
+            "submenu": {
+                "list": "Users List",
+                "add": "Add User"
+            }
+        },
+        "contact": {
+            "title": "Contact",
+            "submenu": {
+                "list": "Contact List"
+            }
+        }
+    }
+}

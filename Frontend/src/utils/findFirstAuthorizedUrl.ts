@@ -2,27 +2,28 @@ import { getLocalStorage } from '@/utils/localStorage';
 import { User } from '@/types/user';
 import { routes } from '@/config/routes';
 import { UserRole } from '@/types/userRoles';
+import { Params } from '@/types/params';
 
-export const findFirstAuthorizedUrl = () => {
+export const findFirstAuthorizedUrl = (locale: Params["locale"]) => {
     const userInfo = getLocalStorage('user-info') as User | null;
     if (!userInfo || !userInfo.role) {
-        return routes.auth.login;
+        return `/${locale}${routes.auth.login}`;
     }
 
     switch (userInfo.role) {
         case UserRole.SuperAdmin:
-            return routes.dashboard;
+            return `/${locale}${routes.dashboard}`;
 
         case UserRole.Admin:
-            return routes.dashboard;
+            return `/${locale}${routes.dashboard}`;
 
         case UserRole.Investor:
-            return routes.dashboard;
+            return `/${locale}${routes.dashboard}`;
 
         case UserRole.Visitor:
-            return routes.dashboard;
+            return `/${locale}${routes.dashboard}`;
 
         default:
-            return routes.dashboard;
+            return `/${locale}${routes.dashboard}`;
     }
 };

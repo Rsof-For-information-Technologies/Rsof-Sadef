@@ -3,7 +3,8 @@ import { useDrawerStore } from '@/app/shared/drawer-views/use-drawer';
 import { routes } from '@/config/routes';
 import Header from '@/layouts/header';
 import Sidebar from '@/layouts/sideBar/sidebar';
-import { usePathname } from 'next/navigation';
+import { Params } from '@/types/params';
+import { useParams, usePathname } from 'next/navigation';
 import { Suspense } from 'react';
 
 export default function HydrogenLayout({
@@ -13,7 +14,8 @@ export default function HydrogenLayout({
 }) {
   const { state: { isOpen, screenWidth } } = useDrawerStore()
   const pathname = usePathname();
-  const authRoutes = [routes.auth.login, routes.auth.signup, routes.auth.forgotPassword, routes.auth.resetPassword];
+  const params = useParams<Params>()
+  const authRoutes = [`/${params.locale}${routes.auth.login}`, `/${params.locale}${routes.auth.signup}`, `/${params.locale}${routes.auth.forgotPassword}`, `/${params.locale}${routes.auth.resetPassword}`];
   const isAuthPage = authRoutes.includes(pathname);
   return (
     <main className={`flex min-h-screen flex-grow ${isAuthPage ? "pt-0" : "pt-[100px]"}`}>
@@ -22,8 +24,7 @@ export default function HydrogenLayout({
       </Suspense>
 
       <div className={`flex w-full flex-col flex-1 ${isOpen && (screenWidth as number) > 1280 ? "xl:ms-[270px]" : ""}`} >
-      {isAuthPage ? null : <Header />}
-
+        <Header />
 
         <div id='main-page-container' className="flex flex-grow flex-col px-[10px] sm:px-4 pb-6 pt-2 md:px-5 lg:px-6 lg:pb-8 3xl:px-8 3xl:pt-4 4xl:px-10 4xl:pb-9 @container">
           {children}
