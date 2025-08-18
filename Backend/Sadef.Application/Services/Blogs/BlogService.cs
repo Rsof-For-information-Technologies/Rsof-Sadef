@@ -300,7 +300,7 @@ namespace Sadef.Application.Services.Blogs
             // Clear all language-specific caches for blogs
             await ClearBlogCaches();
 
-            return new Response<string>(_localizer["Blog_Deleted"]);
+            return new Response<string> { Succeeded = true, Message = _localizer["Blog_Deleted"] };
         }
 
         private string GetCurrentLanguage()

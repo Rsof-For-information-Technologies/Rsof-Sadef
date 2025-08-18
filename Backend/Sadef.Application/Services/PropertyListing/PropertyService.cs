@@ -246,7 +246,7 @@ namespace Sadef.Application.Services.PropertyListing
             // Clear all language-specific caches for properties
             await ClearPropertyCaches();
 
-            return new Response<string>(_localizer["Property_Deleted"]);
+            return new Response<string> { Succeeded = true, Message = _localizer["Property_Deleted"] };
         }
 
         public async Task<Response<PropertyDto>> UpdatePropertyAsync(UpdatePropertyDto dto)
