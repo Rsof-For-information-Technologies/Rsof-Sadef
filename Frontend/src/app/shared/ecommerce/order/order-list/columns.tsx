@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import { PropertyItem } from '@/types/property';
 import { contactStatuses, leadStatuses, propertyStatuses } from '@/constants/constants';
 import { useStaticDataStore } from '@/store/static-data.store';
+import { useParams } from 'next/navigation';
+import { Params } from "@/types/params";
 
 type Columns = {
   sortConfig?: any;
@@ -119,7 +121,9 @@ function ExpiryDateDuration({ row }: { row: PropertyItem }) {
 export const getBlogColumns = ({
   sortConfig,
   onHeaderCellClick,
-}: Columns) => [
+}: Columns) => {
+  const { locale } = useParams<Params>()
+  return [
     {
       title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
@@ -170,14 +174,14 @@ export const getBlogColumns = ({
       render: (_: string, row: any) => (
         <div className="flex items-center justify-end gap-3">
           <Tooltip size="sm" content={'Edit Blog'} placement="top" color="invert">
-            <Link href={routes.blog.editBlog(row.id)}>
+            <Link href={`/${locale}${routes.blog.editBlog(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <PencilIcon className="h-4 w-4" />
               </ActionIcon>
             </Link>
           </Tooltip>
           <Tooltip size="sm" content={'View Blog'} placement="top" color="invert">
-            <Link href={routes.blog.blogDetails(row.id)}>
+            <Link href={`/${locale}${routes.blog.blogDetails(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <EyeIcon className="h-4 w-4" />
               </ActionIcon>
@@ -192,6 +196,7 @@ export const getBlogColumns = ({
       ),
     },
   ];
+}
 
 // property columns
 export const getPropertyColumns = ({
@@ -725,7 +730,9 @@ export const getMaintenanceRequestColumns = ({
 export const getUserColumns = ({
   sortConfig,
   onHeaderCellClick,
-}: Columns) => [
+}: Columns) => {
+  const { locale } = useParams<Params>()
+  return [
     {
       title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
@@ -810,14 +817,14 @@ export const getUserColumns = ({
       render: (_: string, row: any) => (
         <div className="flex items-center justify-end gap-3">
           <Tooltip size="sm" content={'Edit User'} placement="top" color="invert">
-            <Link href={routes.user.editUser(row.id)}>
+            <Link href={`/${locale}${routes.user.editUser(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <PencilIcon className="h-4 w-4" />
               </ActionIcon>
             </Link>
           </Tooltip>
           <Tooltip size="sm" content={'View User'} placement="top" color="invert">
-            <Link href={routes.user.userDetails(row.id)}>
+            <Link href={`/${locale}${routes.user.userDetails(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <EyeIcon className="h-4 w-4" />
               </ActionIcon>
@@ -827,6 +834,7 @@ export const getUserColumns = ({
       ),
     },
   ];
+}
 
 // contact columns
 
