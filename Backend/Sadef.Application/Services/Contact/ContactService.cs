@@ -403,7 +403,7 @@ namespace Sadef.Application.Services.Contact
             // Invalidate cache
             await _cache.RemoveAsync("contact:dashboard:stats");
 
-            return new Response<string>(_localizer["Contact_Deleted"]);
+            return new Response<string>{ Succeeded = true, Message = _localizer["Contact_Deleted"] };
         }
     }
 }
