@@ -7,24 +7,19 @@ import CollapsibleSection from "../../(components)/CollapsibleSection";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import { UserRole } from "@/types/userRoles";
+import { maintenanceRequestStatuses } from "@/constants/constants";
 
-const maintenenceStatuses = [
-  { label: 'Pending', value: 0 },
-  { label: 'Approved', value: 1 },
-  { label: 'Sold', value: 2 },
-  { label: 'Rejected', value: 3 },
-  { label: 'Archived', value: 4 },
-];
-
-interface DetailsMaintenanceRequestProps {
+export default async function DetailsMaintenanceRequest({
+  params,
+}: {
   params: { maintenanceRequestId: string };
-}
-
-export default async function DetailsMaintenanceRequest({ params }: DetailsMaintenanceRequestProps) {
+}) {
   let data: DataItem | null = null;
+  const BASE_URL = process.env.SERVER_BASE_URL || '';
+
   try {
     const response = await getMaintenanceRequestById(params.maintenanceRequestId);
-   if (!response?.data) return notFound();
+    if (!response?.data) return notFound();
     data = response.data;
   } catch {
     return notFound();
@@ -55,7 +50,7 @@ export default async function DetailsMaintenanceRequest({ params }: DetailsMaint
                 <span className="font-semibold text-green-700">Status:</span>
                 <span className="text-gray-800">{
                   (() => {
-                    const found = maintenenceStatuses.find(
+                    const found = maintenanceRequestStatuses.find(
                       (opt) => String(opt.value) === String(data?.status)
                     );
                     return found ? found.label : data?.status;
@@ -70,29 +65,27 @@ export default async function DetailsMaintenanceRequest({ params }: DetailsMaint
           </CollapsibleSection>
 
           <CollapsibleSection title="Images & Videos">
-            <div className="flex flex-col md:flex-row gap-6 items-start">
-              {Array.isArray(data.imageBase64Strings) && data.imageBase64Strings.length > 0 ? (
+            <div className="flex flex-col gap-6 items-start">
+              {data.imageUrls && data.imageUrls.length > 0 && (
                 <div className="flex flex-wrap gap-4">
-                  {data.imageBase64Strings.map((imgSrc: string, idx: number) =>
-                    imgSrc ? (
-                      <Image
-                        height={200}
-                        width={300}
-                        key={idx}
-                        src={imgSrc}
-                        alt={`Maintenence Request Preview ${idx + 1}`}
-                        className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200"
-                      />
-                    ) : null
-                  )}
+                  {data.imageUrls.map((imgSrc: File, idx: number) => (
+                    <Image
+                      width={256}
+                      height={192}
+                      key={idx}
+                      src={`${BASE_URL}/${imgSrc}`}
+                      alt={`Property Preview ${idx + 1}`}
+                      className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200"
+                    />
+                  ))}
                 </div>
-              ) : null}
-              {data.videoUrls && data.videoUrls.length > 0 && (
-                <div className="flex-1">
-                  {data.videoUrls.map((video: string, idx: number) => (
+              )}
+              {Array.isArray(data?.videoUrls) && data.videoUrls.length > 0 && (
+                <div className="flex flex-wrap gap-4">
+                  {data.videoUrls.map((video: File, idx: number) => (
                     <video
                       key={idx}
-                      src={video}
+                      src={`${BASE_URL}/${video}`}
                       controls
                       className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200 mb-4"
                     />

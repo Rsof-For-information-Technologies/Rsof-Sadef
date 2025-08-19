@@ -17,13 +17,15 @@ export default async function UpdateBlogPage({
       return notFound();
     }
 
+    const BASE_URL = process.env.SERVER_BASE_URL || '';
+
     const initialData = {
       title: response.data.title || "",
       content: response.data.content || "",
       coverImage: null,
       isPublished: response.data.isPublished || false,
       previewImage: response.data.coverImage
-        ? `data:image/jpeg;base64,${response.data.coverImage}`
+        ? `${BASE_URL}/${response.data.coverImage}`
         : null,
     };
 

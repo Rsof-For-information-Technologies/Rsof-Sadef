@@ -5,7 +5,7 @@ export type CreateLeadData = {
     phone: string | null;
     message: string | null;
     propertyId: number | null;
-    status: number | null;
+    status: string | null;
 }
 
 export type CreateLeadResponse = {
@@ -21,7 +21,7 @@ export type LeadItem = {
     phone: string | null;
     message: string | null;
     propertyId: number | null;
-    status: number | null;
+    status: string | null;
 }
 
 type LeadData = {

@@ -69,14 +69,14 @@ async function DetailsContact({ params }: DetailsContactProps) {
                 <span className="font-semibold text-blue-700">Status:</span>
                 <Badge
                   color={
-                    data?.status === 0 ? "warning" :
-                    data?.status === 1 ? "info" :
-                    data?.status === 2 ? "success" :
-                    data?.status === 3 ? "info" :
-                    data?.status === 4 ? "success" :
-                    data?.status === 5 ? "danger" :
-                    data?.status === 6 ? "secondary" :
-                    data?.status === 7 ? "danger" :
+                    data?.status === "New" ? "warning" :
+                    data?.status === "InProgress" ? "info" :
+                    data?.status === "Contacted" ? "success" :
+                    data?.status === "Responded" ? "info" :
+                    data?.status === "Scheduled" ? "success" :
+                    data?.status === "Completed" ? "success" :
+                    data?.status === "Cancelled" ? "secondary" :
+                    data?.status === "Spam" ? "danger" :
                     "secondary"
                   }
                   className="min-w-[80px] text-center"

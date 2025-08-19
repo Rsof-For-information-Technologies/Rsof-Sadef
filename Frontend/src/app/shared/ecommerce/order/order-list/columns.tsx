@@ -8,32 +8,35 @@ import PencilIcon from '@/components/icons/pencil';
 import DateCell from '@/components/ui/date-cell';
 import DeletePopover from '@/app/shared/delete-popover';
 import { HeaderCell } from '@/components/ui/table';
-import { deleteBlog, deleteMaintenanceRequest, deleteProperty, LeadUpdateStatus, MaintenanceRequestUpdateStatus, PropertyExpireDuration, PropertyUpdateStatus, updateContactStatus } from '@/utils/api';
+import { deleteBlog, deleteContact, deleteMaintenanceRequest, deleteProperty, LeadUpdateStatus, MaintenanceRequestUpdateStatus, PropertyExpireDuration, PropertyUpdateStatus, updateContactStatus } from '@/utils/api';
 import { toast } from 'sonner';
 import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { PropertyItem } from '@/types/property';
-import { contactStatuses, leadStatuses, propertyStatuses } from '@/constants/constants';
+import { contactStatuses, leadStatuses, propertyStatuses, maintenanceRequestStatuses } from '@/constants/constants';
 import { useStaticDataStore } from '@/store/static-data.store';
 import { useParams } from 'next/navigation';
 import { Params } from "@/types/params";
 
 type Columns = {
   sortConfig?: any;
-  onDeleteItem: (id: string) => void;
+  onDeleteBlog: (id: string) => void;
   onDeleteProperty: (id: string) => void;
   onDeleteMaintenanceRequest: (id: string) => void;
+  onDeleteContact: (id: string) => void;
   onHeaderCellClick: (value: string) => void;
   onChecked?: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;
 };
 
-const onDeleteItem = async (id: string | number) => {
+const onDeleteBlog = async (id: string | number) => {
   try {
     const response = await deleteBlog(id);
     if (response.succeeded) {
+      toast.success('Blog deleted successfully');
       window.location.reload();
       console.log('Blog deleted successfully:', response);
     } else {
+      toast.error('Failed to delete blog');
       console.error('Failed to delete blog:', response);
     }
   } catch (error) {
@@ -45,9 +48,11 @@ const onDeleteProperty = async (id: string | number) => {
   try {
     const response = await deleteProperty(id)
     if (response.succeeded) {
+      toast.success('Property deleted successfully');
       window.location.reload();
       console.log('Property deleted successfully:', response);
     } else {
+      toast.error('Failed to delete property');
       console.error('Failed to delete property:', response);
     }
   } catch (error) {
@@ -59,13 +64,32 @@ const onDeleteMaintenanceRequest = async (id: string | number) => {
   try {
     const response = await deleteMaintenanceRequest(id)
     if (response.succeeded) {
+      toast.success('Maintenance Request deleted successfully');
       window.location.reload();
       console.log('Maintenance Request deleted successfully:', response);
     } else {
+      toast.error('Failed to delete Maintenance Request');
       console.error('Failed to delete Maintenance Request:', response);
     }
   } catch (error) {
     console.error('Error deleting Maintenance Request:', error);
+  }
+}
+
+const onDeleteContact = async (id: string | number) => {
+  try {
+    const response = await deleteContact(id)
+    if (response.succeeded) {
+      toast.success('Contact deleted successfully');
+      window.location.reload();
+      console.log('Contact deleted successfully:', response);
+    } else {
+      toast.error('Failed to delete contact');
+      console.error('Failed to delete contact:', response);
+    }
+  } catch (error) {
+    toast.error('Error deleting contact');
+    console.error('Error deleting contact:', error);
   }
 }
 
@@ -190,7 +214,7 @@ export const getBlogColumns = ({
           <DeletePopover
             title={`Delete the blog`}
             description={`Are you sure you want to delete this #${row.id} blog?`}
-            onDelete={() => onDeleteItem(row.id)}
+            onDelete={() => onDeleteBlog(row.id)}
           />
         </div>
       ),
@@ -480,15 +504,16 @@ export const getLeadColumns = ({
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (value: number) => {
+      render: (value: string) => {
         const status = leadStatuses.find((s) => s.value === value);
         let color: "warning" | "success" | "info" | "danger" | "secondary" = "secondary";
         switch (value) {
-          case 0: color = "warning"; break;
-          case 1: color = "success"; break;
-          case 2: color = "danger"; break;
-          case 3: color = "info"; break;
-          case 4: color = "secondary"; break;
+          case "New": color = "warning"; break;
+          case "Contacted": color = "info"; break;
+          case "InDiscussion": color = "info"; break;
+          case "VisitScheduled": color = "success"; break;
+          case "Converted": color = "success"; break;
+          case "Rejected": color = "danger"; break;
           default: color = "secondary";
         }
         return (
@@ -506,14 +531,15 @@ export const getLeadColumns = ({
       render: (_: string, row: any) => {
         const status = leadStatuses.find((s) => s.value === row.status);
 
-        let nextStatusValue: number | undefined;
-        if (row.status === 0) nextStatusValue = 1;
-        else if (row.status === 1) nextStatusValue = 2;
-        else if (row.status === 2) nextStatusValue = 3;
-        else if (row.status === 3) nextStatusValue = 4;
-        else if (row.status === 4) nextStatusValue = undefined
+        let nextStatusValue: string | undefined;
+        if (row.status === "New") nextStatusValue = "Contacted";
+        else if (row.status === "Contacted") nextStatusValue = "InDiscussion";
+        else if (row.status === "InDiscussion") nextStatusValue = "VisitScheduled";
+        else if (row.status === "VisitScheduled") nextStatusValue = "Converted";
+        else if (row.status === "Converted") nextStatusValue = undefined;
+        else if (row.status === "Rejected") nextStatusValue = undefined;
 
-        const allowedStatuses = typeof nextStatusValue === "number"
+        const allowedStatuses = typeof nextStatusValue === "string"
           ? leadStatuses.filter(s => s.value === nextStatusValue)
           : [];
 
@@ -523,7 +549,7 @@ export const getLeadColumns = ({
               <select
                 value={row.status}
                 onChange={async (e) => {
-                  const newStatus = Number(e.target.value);
+                  const newStatus = e.target.value;
                   try {
                     const response = await LeadUpdateStatus(row.id, newStatus);
                     if (response.succeeded) {
@@ -566,13 +592,6 @@ export const getLeadColumns = ({
 
 // maintenance Request columns
 
-const maintenanceRequestStatuses = [
-  { label: 'Pending', value: 0 },
-  { label: 'InProgress', value: 1 },
-  { label: 'Resolved', value: 2 },
-  { label: 'Rejected', value: 3 },
-];
-
 export const getMaintenanceRequestColumns = ({
   sortConfig,
   onHeaderCellClick,
@@ -612,14 +631,14 @@ export const getMaintenanceRequestColumns = ({
       dataIndex: 'status',
       key: 'status',
       width: 120,
-      render: (value: number) => {
+      render: (value: string) => {
         const status = maintenanceRequestStatuses.find((s) => s.value === value);
         let color: "warning" | "success" | "info" | "secondary" = "secondary";
         switch (value) {
-          case 0: color = "warning"; break;
-          case 1: color = "success"; break;
-          case 2: color = "info"; break;
-          case 3: color = "secondary"; break;
+          case "Pending": color = "warning"; break;
+          case "InProgress": color = "success"; break;
+          case "Resolved": color = "info"; break;
+          case "Rejected": color = "secondary"; break;
           default: color = "secondary";
         }
         return (
@@ -662,13 +681,13 @@ export const getMaintenanceRequestColumns = ({
 
         const status = maintenanceRequestStatuses.find((s) => s.value === row.status);
 
-        let nextStatusValue: number | undefined;
-        if (row.status === 0) nextStatusValue = 1;
-        else if (row.status === 1) nextStatusValue = 2;
-        else if (row.status === 2) nextStatusValue = 3;
-        else if (row.status === 3) nextStatusValue = undefined;
+        let nextStatusValue: string | undefined;
+        if (row.status === "Pending") nextStatusValue = "InProgress";
+        else if (row.status === "InProgress") nextStatusValue = "Resolved";
+        else if (row.status === "Resolved") nextStatusValue = "Rejected";
+        else if (row.status === "Rejected") nextStatusValue = undefined;
 
-        const allowedStatuses = typeof nextStatusValue === "number"
+        const allowedStatuses = typeof nextStatusValue === "string"
           ? maintenanceRequestStatuses.filter(s => s.value === nextStatusValue)
           : [];
 
@@ -678,7 +697,7 @@ export const getMaintenanceRequestColumns = ({
               <select
                 value={row.status}
                 onChange={async (e) => {
-                  const newStatus = Number(e.target.value);
+                  const newStatus = e.target.value;
                   try {
                     const response = await MaintenanceRequestUpdateStatus(row.id, newStatus);
                     if (response.succeeded) {
@@ -849,6 +868,12 @@ export const getContactColumns = ({
   onHeaderCellClick,
 }: Columns) => {
   const { locale } = useParams<Params>()
+  const { propertyTypes, fetchStaticData } = useStaticDataStore();
+
+  useEffect(() => {
+    fetchStaticData();
+  }, [fetchStaticData]);
+
   return [
     {
       title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
@@ -906,9 +931,14 @@ export const getContactColumns = ({
       dataIndex: 'propertyType',
       key: 'propertyType',
       minWidth: 150,
-      render: (value: string) => (
-        <Text className="font-medium text-gray-800">{value}</Text>
-      ),
+      render: (value: string) => {
+        const propertyType = propertyTypes.find((type) => type.value === Number(value));
+        return (
+          <Text className="font-medium text-gray-800">
+            {propertyType?.displayName ?? value}
+          </Text>
+        );
+      },
     },
     {
       title: <HeaderCell title="Location" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
@@ -944,18 +974,18 @@ export const getContactColumns = ({
       dataIndex: 'status',
       key: 'status',
       width: 200,
-      render: (value: number) => {
+      render: (value: string) => {
         const status = contactStatuses.find((s) => s.value === value);
         let color: "warning" | "success" | "info" | "danger" | "secondary" = "secondary";
         switch (value) {
-          case 0: color = "warning"; break;
-          case 1: color = "info"; break;
-          case 2: color = "success"; break;
-          case 3: color = "info"; break;
-          case 4: color = "success"; break;
-          case 5: color = "danger"; break;
-          case 6: color = "secondary"; break;
-          case 7: color = "danger"; break;
+          case "New": color = "warning"; break;
+          case "InProgress": color = "info"; break;
+          case "Contacted": color = "success"; break;
+          case "Responded": color = "info"; break;
+          case "Scheduled": color = "success"; break;
+          case "Completed": color = "success"; break;
+          case "Cancelled": color = "secondary"; break;
+          case "Spam": color = "danger"; break;
           default: color = "secondary";
         }
         return (
@@ -981,17 +1011,17 @@ export const getContactColumns = ({
       render: (_: string, row: any) => {
         const status = contactStatuses.find((s) => s.value === row.status);
 
-        let nextStatusValue: number | undefined;
-        if (row.status === 0) nextStatusValue = 1;
-        else if (row.status === 1) nextStatusValue = 2;
-        else if (row.status === 2) nextStatusValue = 3;
-        else if (row.status === 3) nextStatusValue = 4;
-        else if (row.status === 4) nextStatusValue = 5;
-        else if (row.status === 5) nextStatusValue = 6;
-        else if (row.status === 6) nextStatusValue = 7;
-        else if (row.status === 7) nextStatusValue = undefined;
+        let nextStatusValue: string | undefined;
+        if (row.status === "New") nextStatusValue = "InProgress";
+        else if (row.status === "InProgress") nextStatusValue = "Contacted";
+        else if (row.status === "Contacted") nextStatusValue = "Responded";
+        else if (row.status === "Responded") nextStatusValue = "Scheduled";
+        else if (row.status === "Scheduled") nextStatusValue = "Completed";
+        else if (row.status === "Completed") nextStatusValue = "Cancelled";
+        else if (row.status === "Cancelled") nextStatusValue = "Spam";
+        else if (row.status === "Spam") nextStatusValue = undefined;
 
-        const allowedStatuses = typeof nextStatusValue === "number"
+        const allowedStatuses = typeof nextStatusValue === "string"
           ? contactStatuses.filter(s => s.value === nextStatusValue)
           : [];
 
@@ -1001,7 +1031,7 @@ export const getContactColumns = ({
               <select
                 value={row.status}
                 onChange={async (e) => {
-                  const newStatus = Number(e.target.value);
+                  const newStatus = e.target.value;
                   try {
                     const response = await updateContactStatus(row.id, newStatus);
                     if (response.succeeded) {
@@ -1036,6 +1066,11 @@ export const getContactColumns = ({
                 </ActionIcon>
               </Link>
             </Tooltip>
+            <DeletePopover
+              title={`Delete the Contact`}
+              description={`Are you sure you want to delete this #${row.id} Contact?`}
+              onDelete={() => onDeleteContact(row.id)}
+            />
           </div>
         );
       },

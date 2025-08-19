@@ -32,20 +32,28 @@ export const propertyStatusesFilters = [
 ];
 
 export const contactStatuses = [
-  { label: "New", value: 0 },
-  { label: "InProgress", value: 1 },
-  { label: "Contacted", value: 2 },
-  { label: "Responded", value: 3 },
-  { label: "Scheduled", value: 4 },
-  { label: "Completed", value: 5 },
-  { label: "Cancelled", value: 6 },
-  { label: "Spam", value: 7 },
+  { label: "New", value: "New" },
+  { label: "In Progress", value: "InProgress" },
+  { label: "Contacted", value: "Contacted" },
+  { label: "Responded", value: "Responded" },
+  { label: "Scheduled", value: "Scheduled" },
+  { label: "Completed", value: "Completed" },
+  { label: "Cancelled", value: "Cancelled" },
+  { label: "Spam", value: "Spam" },
 ];
 
 export const leadStatuses = [
-  { label: "Pending", value: 0 },
-  { label: "Approved", value: 1 },
-  { label: "Sold", value: 2 },
-  { label: "Rejected", value: 3 },
-  { label: "Archived", value: 4 },
+  { label: "New", value: "New" },
+  { label: "Contacted", value: "Contacted" },
+  { label: "In Discussion", value: "InDiscussion" },
+  { label: "Visit Scheduled", value: "VisitScheduled" },
+  { label: "Converted", value: "Converted" },
+  { label: "Rejected", value: "Rejected" },
+];
+
+export const maintenanceRequestStatuses = [
+  { label: 'Pending', value: 'Pending' },
+  { label: 'In Progress', value: 'InProgress' },
+  { label: 'Resolved', value: 'Resolved' },
+  { label: 'Rejected', value: 'Rejected' },
 ];

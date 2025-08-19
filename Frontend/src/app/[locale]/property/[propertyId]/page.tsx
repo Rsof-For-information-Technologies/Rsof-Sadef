@@ -28,9 +28,7 @@ export default async function DetailsPropertyPage({
               <h1 className="mb-4 text-2xl font-semibold">Property Details</h1>
               <p className="mb-6 text-gray-600">This page allows you to view the property details.</p>
             </div>
-
             <PropertyDetailsClient propertyData={data} baseUrl={BASE_URL} />
-            
           </div>
         </Authorize>
       </Authenticate>

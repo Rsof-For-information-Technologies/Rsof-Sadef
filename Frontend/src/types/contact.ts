@@ -5,8 +5,8 @@ export interface Contact {
     phone: string;
     subject: string;
     message: string;
-    type: number;
-    status: number;
+    type: string;
+    status: string;
     propertyId: number;
     preferredContactMethod: string;
     preferredContactTime: string;

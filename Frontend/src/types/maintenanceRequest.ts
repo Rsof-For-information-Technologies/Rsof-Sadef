@@ -3,9 +3,9 @@ export type DataItem = {
     leadId: number;
     description: string;
     adminResponse: string | null;
-    status: number;
-    imageBase64Strings: string[] | null;
-    videoUrls: string[] | null;
+    status: string;
+    imageUrls?: File[];
+    videoUrls?: File[];
     createdAt: string;
     isActive: boolean;
 }

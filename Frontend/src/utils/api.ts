@@ -183,13 +183,13 @@ export const getMaintenanceRequestById = async (id: string) => {
   }
 };
 
-export const MaintenanceRequestUpdateStatus = async (id: number, status: number) => {
+export const MaintenanceRequestUpdateStatus = async (id: number, status: string) => {
   const api = apiCall();
   try {
     const response = await api.patch<MaintenenceRequestResponse>('/api/v1/maintenancerequest/update-status', { id, status, });
     return response.data;
   } catch (error) {
-    console.error('Update property status failed:', error);
+    console.error('Update maintenance request status failed:', error);
     throw error;
   }
 };
@@ -451,7 +451,7 @@ export const getLeadById = async (id: string | number) => {
   }
 }
 
-export const LeadUpdateStatus = async (id: number, status: number) => {
+export const LeadUpdateStatus = async (id: number, status: string) => {
   const api = apiCall();
   try {
     const response = await api.patch('/api/v1/lead/update-status', { id, status, });
@@ -662,7 +662,7 @@ export const getContactById = async (id: string): Promise<GetContactById> => {
   }
 };
 
-export const updateContactStatus = async (id: number, status: number): Promise<UpdateContactStatusResponse> => {
+export const updateContactStatus = async (id: number, status: string): Promise<UpdateContactStatusResponse> => {
   const api = apiCall();
   try {
     const { data } = await api.patch<UpdateContactStatusResponse>('/api/v1/contact/update-status', { id, status, notes: "test" });
@@ -683,3 +683,14 @@ export const getContactDashboardStats = async (): Promise<GetContactDashboardSta
     throw error;
   }
 };
+
+export const deleteContact = async (id: string | number) => {
+  const api = apiCall();
+  try {
+    const response = await api.delete(`/api/v1/contact/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Delete contact failed:', error);
+    throw error;
+  }
+}

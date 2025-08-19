@@ -6,11 +6,11 @@ import { getContactDashboardStats } from '@/utils/api';
 import ContactChart from './ContactChart';
 import Link from 'next/link';
 import { routes } from '@/config/routes';
-import { contactStatuses } from '@/constants/constants';
 import { ContactDashboardStats } from '@/types/contact';
 import { ClockIcon, EyeIcon, MailIcon, PhoneIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Params } from '@/types/params';
+import { contactStatuses } from '@/constants/constants';
 
 const ContactDashboard: React.FC = () => {
     const [data, setData] = useState<ContactDashboardStats | null>(null);
@@ -86,21 +86,21 @@ const ContactDashboard: React.FC = () => {
         );
     }
 
-    const getStatusColor = (status: number) => {
+    const getStatusColor = (status: string) => {
         switch (status) {
-            case 0: return "warning";
-            case 1: return "info";
-            case 2: return "success";
-            case 3: return "info";
-            case 4: return "success";
-            case 5: return "danger";
-            case 6: return "secondary";
-            case 7: return "danger";
+            case "New": return "warning";
+            case "InProgress": return "info";
+            case "Contacted": return "success";
+            case "Responded": return "info";
+            case "Scheduled": return "success";
+            case "Completed": return "success";
+            case "Cancelled": return "secondary";
+            case "Spam": return "danger";
             default: return "secondary";
         }
     };
 
-    const getStatusLabel = (status: number) => {
+    const getStatusLabel = (status: string) => {
         const statusItem = contactStatuses.find(s => s.value === status);
         return statusItem?.label || 'Unknown';
     };
