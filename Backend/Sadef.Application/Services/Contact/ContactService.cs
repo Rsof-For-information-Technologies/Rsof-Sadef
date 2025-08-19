@@ -82,6 +82,7 @@ namespace Sadef.Application.Services.Contact
 
             // Invalidate cache
             await _cache.RemoveAsync("contact:dashboard:stats");
+            await BumpContactsCacheVersionAsync();
 
             // Get the created contact with property and translations for proper mapping
             var contactQueryRepo = _queryRepositoryFactory.QueryRepository<Sadef.Domain.ContactEntity.Contact>();
@@ -101,7 +102,8 @@ namespace Sadef.Application.Services.Contact
                 return await GetFreshPaginatedContactsAsync(pageNumber, pageSize, filters, true);
             }
 
-            var cacheKey = $"contacts:page:{pageNumber}:size:{pageSize}:filters:{System.Text.Json.JsonSerializer.Serialize(filters)}";
+            var version = await GetContactsCacheVersionAsync();
+            var cacheKey = $"contacts:v:{version}:page:{pageNumber}:size:{pageSize}:filters:{System.Text.Json.JsonSerializer.Serialize(filters)}";
             var cached = await _cache.GetStringAsync(cacheKey);
             if (cached != null)
             {
@@ -268,6 +270,7 @@ namespace Sadef.Application.Services.Contact
 
             // Invalidate cache
             await _cache.RemoveAsync("contact:dashboard:stats");
+            await BumpContactsCacheVersionAsync();
 
             // Get the updated contact with property and translations for proper mapping
             var updatedContact = await queryRepo.Queryable()
@@ -300,6 +303,7 @@ namespace Sadef.Application.Services.Contact
 
             // Invalidate cache
             await _cache.RemoveAsync("contact:dashboard:stats");
+            await BumpContactsCacheVersionAsync();
 
             // Get the updated contact with property and translations for proper mapping
             var updatedContact = await queryRepo.Queryable()
@@ -402,8 +406,32 @@ namespace Sadef.Application.Services.Contact
 
             // Invalidate cache
             await _cache.RemoveAsync("contact:dashboard:stats");
+            await BumpContactsCacheVersionAsync();
 
             return new Response<string>{ Succeeded = true, Message = _localizer["Contact_Deleted"] };
+        }
+
+        private async Task<string> GetContactsCacheVersionAsync()
+        {
+            var version = await _cache.GetStringAsync("contacts:cache:version");
+            if (!string.IsNullOrEmpty(version))
+                return version;
+
+            var initialVersion = DateTime.UtcNow.Ticks.ToString();
+            await _cache.SetStringAsync("contacts:cache:version", initialVersion, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(30)
+            });
+            return initialVersion;
+        }
+
+        private async Task BumpContactsCacheVersionAsync()
+        {
+            var newVersion = DateTime.UtcNow.Ticks.ToString();
+            await _cache.SetStringAsync("contacts:cache:version", newVersion, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(30)
+            });
         }
     }
 }
