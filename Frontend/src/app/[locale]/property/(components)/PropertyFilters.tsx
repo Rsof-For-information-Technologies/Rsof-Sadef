@@ -5,7 +5,7 @@ import { PropertyFilters } from "@/types/property";
 import { propertyStatusesFilters } from "@/constants/constants";
 import { useStaticDataStore } from "@/store/static-data.store";
 import { useEffect } from "react";
-
+import { useTranslations } from "next-intl";
 interface PropertyFiltersProps {
     filters: PropertyFilters;
     onFiltersChange: (filters: PropertyFilters) => void;
@@ -20,6 +20,7 @@ export default function PropertyFiltersComponent({
     onClearFilters
 }: PropertyFiltersProps) {
     const { cities, propertyTypes, fetchStaticData } = useStaticDataStore();
+    const t = useTranslations('PropertyPages.propertyListPage.propertyFiltersCard')
 
     useEffect(() => {
         fetchStaticData();
@@ -39,17 +40,17 @@ export default function PropertyFiltersComponent({
         const newFilters = {
             ...filters,
             [key]: value === '' ? undefined : value,
-            pageNumber: 1 // Reset to first page when filters change
+            pageNumber: 1
         };
         onFiltersChange(newFilters);
     };
 
     return (
         <div className="mb-6 p-4 bg-white dark:bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-200">
-            <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">Filter Properties</h3>
+            <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">{t('title')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">City</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">{t('city')}</label>
                     <Select
                         options={cityOptions}
                         value={filters.city !== undefined ? filters.city.toString() : ''}
@@ -60,20 +61,20 @@ export default function PropertyFiltersComponent({
                             const city = cityOptions.find(c => c.value.toString() === selected);
                             return city ? city.label : '';
                         }}
-                        placeholder="Select city"
+                        placeholder={t('cityPlaceholder')}
                         searchable={true}
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">Location</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">{t('location')}</label>
                     <Input
-                        placeholder="Enter location"
+                        placeholder={t('locationPlaceholder')}
                         value={filters.location || ''}
                         onChange={(e) => handleFilterChange('location', e.target.value || undefined)}
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">Status</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">{t('status')}</label>
                     <Select
                         options={propertyStatusesFilters}
                         value={filters.status !== undefined ? filters.status.toString() : ''}
@@ -84,11 +85,11 @@ export default function PropertyFiltersComponent({
                             const status = propertyStatusesFilters.find(s => s.value === selected);
                             return status ? status.label : '';
                         }}
-                        placeholder="Select status"
+                        placeholder={t('statusPlaceholder')}
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">Property Type</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-500 mb-1">{t('propertyType')}</label>
                     <Select
                         options={propertyTypeOptions}
                         value={filters.propertyType !== undefined ? filters.propertyType.toString() : ''}
@@ -99,7 +100,7 @@ export default function PropertyFiltersComponent({
                             const type = propertyTypeOptions.find(t => t.value.toString() === selected);
                             return type ? type.label : '';
                         }}
-                        placeholder="Select property type"
+                        placeholder={t('propertyTypePlaceholder')}
                     />
                 </div>
             </div>
@@ -108,14 +109,14 @@ export default function PropertyFiltersComponent({
                     variant="solid"
                     onClick={onApplyFilters}
                 >
-                    Apply Filter
+                    {t('applyFilter')}
                 </Button>
                 <Button
                     variant="outline"
                     onClick={onClearFilters}
                     className="border-gray-300 dark:border-gray-200 text-gray-700 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-100"
                 >
-                    Clear All Filter
+                    {t('clearAllFilter')}
                 </Button>
             </div>
         </div>

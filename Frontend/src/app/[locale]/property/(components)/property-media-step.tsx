@@ -9,12 +9,13 @@ import { toast } from "sonner"
 import { CreatePropertyFormData } from "@/validators/createProperty"
 import { Label } from "@/components/shadCn/ui/label"
 import { Button } from "rizzui"
-
+import { useTranslations } from "next-intl"
 interface PropertyMediaStepProps {
   form: UseFormReturn<CreatePropertyFormData>
 }
 
 export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
+  const t = useTranslations('PropertyPages.createPropertyPage.createProperty.form.stepPropertyMedia')
   const { setValue, watch, formState: { errors } } = form
   const [images, setImages] = useState<File[]>(watch("images") || [])
   const [videos, setVideos] = useState<File[]>(watch("videos") || [])
@@ -114,13 +115,13 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
   return (
     <div>
       <div className="mb-4">
-        <h3>Property Media</h3>
+        <h3>{t('title')}</h3>
       </div>
       <div className="space-y-6">
         {/* Images Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label>Property Images</Label>
+            <Label>{t('propertyImages')}</Label>
             <Button
               type="button"
               variant="outline"
@@ -128,7 +129,7 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
               className="flex items-center gap-2"
             >
               <Upload className="h-4 w-4" />
-              Upload Images
+              {t('uploadImages')}
             </Button>
           </div>
 
@@ -180,8 +181,8 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
           {images.length === 0 && (
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
               <ImageIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500">No images uploaded yet</p>
-              <p className="text-sm text-gray-400">Click "Upload Images" to add property photos</p>
+              <p className="text-gray-500">{t('noImagesUploaded')}</p>
+              <p className="text-sm text-gray-400">{t('clickToUploadImages')}</p>
             </div>
           )}
           {errors.images && (
@@ -192,7 +193,7 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
         {/* Videos Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label>Property Videos</Label>
+            <Label>{t('propertyVideos')}</Label>
             <Button
               type="button"
               variant="outline"
@@ -200,7 +201,7 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
               className="flex items-center gap-2"
             >
               <Upload className="h-4 w-4" />
-              Upload Videos
+              {t('uploadVideos')}
             </Button>
           </div>
 
@@ -241,8 +242,8 @@ export function PropertyMediaStep({ form }: PropertyMediaStepProps) {
           {videos.length === 0 && (
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
               <Video className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500">No videos uploaded yet</p>
-              <p className="text-sm text-gray-400">Click "Upload Videos" to add property videos</p>
+              <p className="text-gray-500">{t('noVideosUploaded')}</p>
+              <p className="text-sm text-gray-400">{t('clickToUploadVideos')}</p>
             </div>
           )}
           {errors.videos && (

@@ -1,6 +1,6 @@
 import cn from "@/utils/class-names"
 import { Check } from "lucide-react"
-
+import { useTranslations } from "next-intl"
 interface StepIndicatorProps {
   currentStep: number
   totalSteps: number
@@ -8,6 +8,14 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ currentStep, totalSteps, stepTitles }: StepIndicatorProps) {
+  const t = useTranslations('PropertyPages.updatePropertyPage.updateProperty.steps')
+
+  const getStepTitle = (index: number) => {
+    const stepKeys = ['basicInfo', 'propertyDetails', 'propertyMedia', 'location', 'contactPublishing']
+    const key = stepKeys[index]
+    return key ? t(key) : stepTitles[index]
+  }
+
   return (
     <div className="w-full py-6">
       <div className="flex items-start justify-center sm:justify-between">
@@ -38,7 +46,7 @@ export function StepIndicator({ currentStep, totalSteps, stepTitles }: StepIndic
                     "text-gray-500": !isCompleted && !isCurrent,
                   })}
                 >
-                  {title}
+                  {getStepTitle(index)}
                 </span>
               </div>
               {index < totalSteps - 1 && (

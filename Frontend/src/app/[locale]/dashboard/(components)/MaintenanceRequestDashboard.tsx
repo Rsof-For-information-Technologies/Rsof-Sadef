@@ -6,12 +6,13 @@ import { MaintenanceRequestDashboardData } from '@/types/maintenanceRequest';
 import { Title } from 'rizzui';
 import { BsTools } from 'react-icons/bs';
 import MaintenanceRequestChart from './MaintenanceRequestChart';
+import { useTranslations } from 'next-intl';
 
 export default function MaintenanceRequestDashboard() {
     const [dashboardData, setDashboardData] = useState<MaintenanceRequestDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
+    const t = useTranslations('DashboardPage.maintenanceRequestAnalytics')
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
@@ -61,42 +62,42 @@ export default function MaintenanceRequestDashboard() {
 
     const stats = [
         {
-            title: 'Total Requests',
+            title: t('cards.totalRequests'),
             value: dashboardData.totalRequests,
             icon: BsTools,
             color: 'bg-blue-500',
             textColor: 'text-blue-500'
         },
         {
-            title: 'This Month',
+            title: t('cards.thisMonth'),
             value: dashboardData.requestsThisMonth,
             icon: BsTools,
             color: 'bg-indigo-500',
             textColor: 'text-indigo-500'
         },
         {
-            title: 'Pending',
+            title: t('cards.pending'),
             value: dashboardData.pending,
             icon: BsTools,
             color: 'bg-yellow-500',
             textColor: 'text-yellow-500'
         },
         {
-            title: 'In Progress',
+            title: t('cards.inProgress'),
             value: dashboardData.inProgress,
             icon: BsTools,
             color: 'bg-orange-500',
             textColor: 'text-orange-500'
         },
         {
-            title: 'Resolved',
+            title: t('cards.resolved'),
             value: dashboardData.resolved,
             icon: BsTools,
             color: 'bg-green-500',
             textColor: 'text-green-500'
         },
         {
-            title: 'Rejected',
+            title: t('cards.rejected'),
             value: dashboardData.rejected,
             icon: BsTools,
             color: 'bg-red-500',
@@ -135,19 +136,19 @@ export default function MaintenanceRequestDashboard() {
                 {/* Summary Card */}
                 <div className="p-6 bg-white dark:bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-200">
                     <Title as="h5" className="mb-4 text-gray-900 dark:text-white">
-                        Maintenance Request Summary
+                        {t('maintenanceRequestSummaryCard.title')}
                     </Title>
                     <div className="space-y-4">
                         <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <h4 className="font-medium text-blue-900 dark:text-blue-200">Total Requests</h4>
+                            <h4 className="font-medium text-blue-900 dark:text-blue-200">{t('maintenanceRequestSummaryCard.content.totalRequests')}</h4>
                             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dashboardData.totalRequests}</p>
                         </div>
                         <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                            <h4 className="font-medium text-yellow-900 dark:text-yellow-200">Pending</h4>
+                            <h4 className="font-medium text-yellow-900 dark:text-yellow-200">{t('maintenanceRequestSummaryCard.content.pending')}</h4>
                             <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{dashboardData.pending}</p>
                         </div>
                         <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <h4 className="font-medium text-green-900 dark:text-green-200">Resolved</h4>
+                            <h4 className="font-medium text-green-900 dark:text-green-200">{t('maintenanceRequestSummaryCard.content.resolved')}</h4>
                             <p className="text-2xl font-bold text-green-600 dark:text-green-400">{dashboardData.resolved}</p>
                         </div>
                     </div>

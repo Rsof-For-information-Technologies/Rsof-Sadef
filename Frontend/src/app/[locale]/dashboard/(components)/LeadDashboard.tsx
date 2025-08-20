@@ -6,11 +6,13 @@ import { LeadDashboardData } from '@/types/lead';
 import { Title } from 'rizzui';
 import { BsPerson } from 'react-icons/bs';
 import LeadChart from './LeadChart';
+import { useTranslations } from 'next-intl';
 
 export default function LeadDashboard() {
     const [dashboardData, setDashboardData] = useState<LeadDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const t = useTranslations('DashboardPage.leadAnalytics')
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -61,63 +63,63 @@ export default function LeadDashboard() {
 
     const stats = [
         {
-            title: 'Total Leads',
+            title: t('cards.totalLeads'),
             value: dashboardData.totalLeads,
             icon: BsPerson,
             color: 'bg-blue-500',
             textColor: 'text-blue-500'
         },
         {
-            title: 'Leads This Month',
+            title: t('cards.leadsThisMonth'),
             value: dashboardData.leadsThisMonth,
             icon: BsPerson,
             color: 'bg-indigo-500',
             textColor: 'text-indigo-500'
         },
         {
-            title: 'Active Leads',
+            title: t('cards.activeLeads'),
             value: dashboardData.activeLeads,
             icon: BsPerson,
             color: 'bg-green-500',
             textColor: 'text-green-500'
         },
         {
-            title: 'New Leads',
+            title: t('cards.newLeads'),
             value: dashboardData.newLeads,
             icon: BsPerson,
             color: 'bg-emerald-500',
             textColor: 'text-emerald-500'
         },
         {
-            title: 'Contacted',
+            title: t('cards.contacted'),
             value: dashboardData.contacted,
             icon: BsPerson,
             color: 'bg-yellow-500',
             textColor: 'text-yellow-500'
         },
         {
-            title: 'In Discussion',
+            title: t('cards.inDiscussion'),
             value: dashboardData.inDiscussion,
             icon: BsPerson,
             color: 'bg-orange-500',
             textColor: 'text-orange-500'
         },
         {
-            title: 'Visit Scheduled',
+            title: t('cards.visitScheduled'),
             value: dashboardData.visitScheduled,
             icon: BsPerson,
             color: 'bg-teal-500',
             textColor: 'text-teal-500'
         },
         {
-            title: 'Converted',
+            title: t('cards.converted'),
             value: dashboardData.converted,
             icon: BsPerson,
             color: 'bg-purple-500',
             textColor: 'text-purple-500'
         },
         {
-            title: 'Rejected',
+            title: t('cards.rejected'),
             value: dashboardData.rejected,
             icon: BsPerson,
             color: 'bg-red-500',
@@ -156,19 +158,19 @@ export default function LeadDashboard() {
                 {/* Summary Card */}
                 <div className="p-6 bg-white dark:bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-200">
                     <Title as="h5" className="mb-4 text-gray-900 dark:text-white">
-                        Lead Summary
+                        {t('leadSummaryCard.title')}
                     </Title>
                     <div className="space-y-4">
                         <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <h4 className="font-medium text-blue-900 dark:text-blue-200">Total Leads</h4>
+                            <h4 className="font-medium text-blue-900 dark:text-blue-200">{t('leadSummaryCard.content.totalLeads')}</h4>
                             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dashboardData.totalLeads}</p>
                         </div>
                         <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <h4 className="font-medium text-green-900 dark:text-green-200">Active Leads</h4>
+                            <h4 className="font-medium text-green-900 dark:text-green-200">{t('leadSummaryCard.content.activeLeads')}</h4>
                             <p className="text-2xl font-bold text-green-600 dark:text-green-400">{dashboardData.activeLeads}</p>
                         </div>
                         <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                            <h4 className="font-medium text-purple-900 dark:text-purple-200">Converted</h4>
+                            <h4 className="font-medium text-purple-900 dark:text-purple-200">{t('leadSummaryCard.content.converted')}</h4>
                             <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{dashboardData.converted}</p>
                         </div>
                     </div>

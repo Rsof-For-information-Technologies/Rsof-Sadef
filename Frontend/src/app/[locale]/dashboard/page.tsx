@@ -6,20 +6,21 @@ import LeadDashboard from "./(components)/LeadDashboard";
 import MaintenanceRequestDashboard from "./(components)/MaintenanceRequestDashboard";
 import PropertyDashboard from "./(components)/PropertyDashboard";
 import ContactDashboard from "./(components)/ContactDashboard";
+import { useTranslations } from "next-intl";
 
 const Dashboard = () => {
+    const t = useTranslations('DashboardPage')
     return (
         <Authenticate >
             <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
                 <div className="space-y-8">
                     <Title as="h2" className="text-gray-900 dark:text-white">
-                        Dashboard
+                        {t('title')}
                     </Title>
-                    
                     {/* Property Dashboard */}
                     <div>
                         <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
-                            Property Analytics
+                            {t('propertyAnalytics.title')}
                         </Title>
                         <PropertyDashboard />
                     </div>
@@ -27,7 +28,7 @@ const Dashboard = () => {
                     {/* Lead Dashboard */}
                     <div>
                         <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
-                            Lead Analytics
+                            {t('leadAnalytics.title')}
                         </Title>
                         <LeadDashboard />
                     </div>
@@ -35,7 +36,7 @@ const Dashboard = () => {
                     {/* Maintenance Request Dashboard */}
                     <div>
                         <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
-                            Maintenance Request Analytics
+                            {t('maintenanceRequestAnalytics.title')}
                         </Title>
                         <MaintenanceRequestDashboard />
                     </div>
@@ -43,7 +44,7 @@ const Dashboard = () => {
                     {/* Contact Dashboard */}
                     <div>
                         <Title as="h3" className="mb-4 text-gray-800 dark:text-white">
-                            Contact Analytics
+                            {t('contactAnalytics.title')}
                         </Title>
                         <ContactDashboard />
                     </div>

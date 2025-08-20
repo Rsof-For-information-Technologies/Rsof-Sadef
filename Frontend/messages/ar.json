@@ -75,5 +75,372 @@
                 "list": "قائمة جهات الاتصال"
             }
         }
+    },
+    "loading": {
+        "title": "جاري التحميل..."
+    },
+    "DashboardPage": {
+        "title": "لوحة التحكم",
+        "propertyAnalytics": {
+            "title": "تحليلات العقارات",
+            "cards": {
+                "totalProperties": "العقارات الكلية",
+                "activeProperties": "العقارات النشطة",
+                "expiredProperties": "العقارات المنتهية",
+                "pending": "قيد الانتظار",
+                "approved": "موافق عليه",
+                "sold": "مباع",
+                "rejected": "مرفوض",
+                "archived": "مؤرشف"
+            },
+            "unitCategoriesCard": {
+                "title": "فئات الوحدات"
+            },
+            "financialOverviewCard": {
+                "title": "ملخص المالي",
+                "content": {
+                    "totalExpectedAnnualRent": "إيجارات متوقعة سنويا",
+                    "totalProjectedResaleValue": "قيمة البيع المتوقعة",
+                    "propertiesWithInvestmentData": "العقارات التي لديها بيانات الاستثمار",
+                    "listedThisWeek": "مدونة هذا الأسبوع"
+                }
+            }
+        },
+        "leadAnalytics": {
+            "title": "تحليلات العملاء المحتملين",
+            "cards": {
+                "totalLeads": "العملاء المحتملين الكلي",
+                "leadsThisMonth": "العملاء المحتملين الشهري",
+                "activeLeads": "العملاء المحتملين النشطين",
+                "newLeads": "العملاء المحتملين الجدد",
+                "contacted": "العملاء المحتملين المتواصلين",
+                "inDiscussion": "العملاء المحتملين في المناقشة",
+                "visitScheduled": "العملاء المحتملين المجددين",
+                "converted": "العملاء المحتملين المحولين",
+                "rejected": "العملاء المحتملين المرفوضين"
+            },
+            "leadDistributionCard": {
+                "title": "توزيع العملاء المحتملين",
+                "new": "جدد",
+                "contacted": "متواصل",
+                "inDiscussion": "في المناقشة",
+                "visitScheduled": "مجدد",
+                "converted": "محول",
+                "rejected": "مرفوض"
+            },
+            "leadSummaryCard": {
+                "title": "ملخص العملاء المحتملين",
+                "content": {
+                    "totalLeads": "العملاء المحتملين الكلي",
+                    "activeLeads": "العملاء المحتملين النشطين",
+                    "converted": "العملاء المحتملين المحولين"
+                }
+            }
+        },
+        "maintenanceRequestAnalytics": {
+            "title": "تحليلات طلبات الصيانة",
+            "cards": {
+                "totalRequests": "إجمالي الطلبات",
+                "thisMonth": "هذا الشهر",
+                "pending": "قيد الانتظار",
+                "inProgress": "قيد التنفيذ",
+                "resolved": "منتهي",
+                "rejected": "مرفوض"
+            },
+            "requestStatusDistributionCard": {
+                "title": "توزيع حالات الطلبات",
+                "pending": "قيد الانتظار",
+                "inProgress": "قيد التنفيذ",
+                "resolved": "منتهي",
+                "rejected": "مرفوض"
+            },
+            "maintenanceRequestSummaryCard": {
+                "title": "ملخص طلبات الصيانة",
+                "content": {
+                    "totalRequests": "إجمالي الطلبات",
+                    "pending": "قيد الانتظار",
+                    "resolved": "منتهي"
+                }
+            }
+        },
+        "contactAnalytics": {
+            "title": "تحليلات جهات الاتصال",
+            "cards": {
+                "totalContacts": "إجمالي الجهات المتواصلة",
+                "newContacts": "الجهات المتواصلة الجددة",
+                "inProgress": "الجهات المتواصلة القيد التنفيذ",
+                "urgentContacts": "الجهات المتواصلة المهمة"
+            },
+            "contactsbyTypeCard": {
+                "title": "جهات الاتصال بنوع"
+            },
+            "contactsbyStatusCard": {
+                "title": "جهات الاتصال بحالة",
+                "new": "جدد",
+                "inProgress": "قيد التنفيذ",
+                "contacted": "متواصل",
+                "responded": "متواصل",
+                "scheduled": "مجدد",
+                "completed": "منتهي",
+                "cancelled": "ملغي",
+                "spam": "مهمل"
+            },
+            "recentContactsCard": {
+                "title": "الجهات المتواصلة الأخيرة"
+            },
+            "noDataAvailable": "لا يوجد بيانات"
+        }
+    },
+    "PropertyPages": {
+        "propertyListPage": {
+            "title": "قائمة العقارات",
+            "description": "يعرض قائمة العقارات جميع العقارات المتاحة مع التفاصيل الرئيسية للتصفح السهل.",
+            "navigateCreateProperty": {
+                "createPropertyBtn": "+ إضافة عقار"
+            },
+            "propertyFiltersCard": {
+                "title": "تصفية العقارات",
+                "city": "المدينة",
+                "cityPlaceholder": "اختر المدينة",
+                "location": "الموقع",
+                "locationPlaceholder": "أدخل الموقع",
+                "status": "الحالة",
+                "statusPlaceholder": "اختر الحالة",
+                "propertyType": "نوع العقار",
+                "propertyTypePlaceholder": "اختر نوع العقار",
+                "applyFilter": "تطبيق التصفية",
+                "clearAllFilter": "مسح كل التصفيات"
+            },
+            "propertyTable": {
+                "title": "جدول العقارات",
+                "searchPlaceholder": "ابحث عن عقار...",
+                "propertyHeader": {
+                    "id": "الرقم",
+                    "title": "العنوان",
+                    "price": "السعر",
+                    "city": "المدينة",
+                    "location": "الموقع",
+                    "areaSize": "المساحة",
+                    "bedrooms": "الغرف",
+                    "bathrooms": "الحمامات",
+                    "status": "الحالة",
+                    "propertyType": "نوع العقار",
+                    "expiryDate": "تاريخ الانتهاء",
+                    "investorOnly": "فقط المستثمرين",
+                    "actions": "الإجراءات",
+                    "saving": "الحفظ...",
+                    "save": "حفظ"
+                },
+                "propertyFooter": {
+                    "pages": "الصفحات",
+                    "rowsPerPage": "عدد الصفوف في الصفحة"
+                }
+            }
+        },
+        "propertyDetailPage": {
+            "title": "تفاصيل العقار",
+            "description": "يعرض تفاصيل العقار بالتفاصيل الرئيسية.",
+            "loading": "جاري تحميل تفاصيل العقار...",
+            "propertyDetails": {
+                "basicInformationCard": {
+                    "title": "المعلومات الأساسية",
+                    "infoCard": {
+                        "title": "العنوان",
+                        "type": "نوع العقار",
+                        "unitCategory": "فئة الوحدة",
+                        "city": "المدينة",
+                        "location": "الموقع",
+                        "areaSize": "المساحة",
+                        "status": "الحالة",
+                        "investorOnly": "فقط المستثمرين"
+                    }
+                },
+                "financialInformationCard": {
+                    "title": "المعلومات المالية",
+                    "infoCard": {
+                        "price": "السعر",
+                        "projectedResaleValue": "قيمة البيع المتوقعة",
+                        "expectedAnnualRent": "إيجارات متوقعة سنويا",
+                        "warrantyInfo": "معلومات الضمان",
+                        "expectedDeliveryDate": "تاريخ التسليم المتوقع",
+                        "expiryDate": "تاريخ الانتهاء"
+                    }
+                },
+                "unitDetailsCard": {
+                    "title": "تفاصيل الوحدة",
+                    "infoCard": {
+                        "unitName": "اسم الوحدة",
+                        "bedrooms": "الغرف",
+                        "bathrooms": "الحمامات",
+                        "totalFloors": "عدد الأدوار"
+                    }
+                },
+                "locationContactCard": {
+                    "title": "الموقع والاتصال",
+                    "infoCard": {
+                        "latitude": "العرض",
+                        "longitude": "الطول",
+                        "whatsAppNumber": "رقم الواتساب"
+                    }
+                },
+                "featuresCard": {
+                    "title": "الميزات",
+                    "noFeatures": "لا توجد ميزات"
+                },
+                "descriptionCard": {
+                    "title": "الوصف"
+                },
+                "imagesVideosCard": {
+                    "title": "الصور والفيديوهات"
+                }
+            }
+        },
+        "createPropertyPage": {
+            "title": "إنشاء عقار",
+            "description": "يسمح هذا الصفحة بإنشاء العقار الجديد.",
+            "loading": "جاري إنشاء العقار...",
+            "createProperty": {
+                "steps": {
+                    "basicInfo": "المعلومات الأساسية",
+                    "propertyDetails": "تفاصيل العقار",
+                    "propertyMedia": "الوسائط المرئية",
+                    "location": "الموقع / الخريطة",
+                    "contactPublishing": "الاتصال والنشر"
+                },
+                "form": {
+                    "stepBasicInformation": {
+                        "title": "المعلومات الأساسية",
+                        "propertyTitle": "اسم العقار",
+                        "propertyTitlePlaceholder": "أدخل اسم العقار",
+                        "price": "السعر",
+                        "pricePlaceholder": "أدخل السعر",
+                        "propertyType": "نوع العقار",
+                        "propertyTypePlaceholder": "اختر نوع العقار",
+                        "unitCategory": "فئة الوحدة",
+                        "unitCategoryPlaceholder": "اختر فئة الوحدة",
+                        "city": "المدينة",
+                        "cityPlaceholder": "اختر المدينة",
+                        "location": "الموقع",
+                        "locationPlaceholder": "أدخل الموقع",
+                        "areaSize": "المساحة",
+                        "areaSizePlaceholder": "أدخل المساحة",
+                        "bedrooms": "الغرف",
+                        "bedroomsPlaceholder": "أدخل عدد الغرف",
+                        "bathrooms": "الحمامات",
+                        "bathroomsPlaceholder": "أدخل عدد الحمامات",
+                        "unitName": "اسم الوحدة",
+                        "unitNamePlaceholder": "أدخل اسم الوحدة",
+                        "totalFloors": "عدد الأدوار",
+                        "totalFloorsPlaceholder": "عدد الأدوار",
+                        "investorOnly": "عقار للمستثمرين فقط",
+                        "basicInfoSchema": {
+                            "title": "العنوان مطلوب",
+                            "titleMax": "العنوان يجب أن يكون أقل من 200 حرف",
+                            "price": "السعر يجب أن يكون أكبر من 0",
+                            "priceMin": "السعر يجب أن يكون رقم موجب",
+                            "city": "المدينة مطلوبة",
+                            "location": "الموقع مطلوب",
+                            "areaSize": "المساحة يجب أن تكون رقم موجب",
+                            "areaSizeMin": "المساحة يجب أن تكون رقم موجب"
+                        }
+                    },
+                    "stepPropertyDetails": {
+                        "title": "تفاصيل العقار",
+                        "description": "الوصف",
+                        "features": "الميزات",
+                        "featuresPlaceholder": "اختر الميزات",
+                        "projectedResale": "قيمة البيع المتوقعة",
+                        "projectedResalePlaceholder": "أدخل قيمة البيع المتوقعة",
+                        "expectedAnnualRent": "إيجارات متوقعة سنويا",
+                        "expectedAnnualRentPlaceholder": "أدخل إيجارات متوقعة سنويا",
+                        "warrantyInformation": "معلومات الضمان",
+                        "warrantyInformationPlaceholder": "أدخل معلومات الضمان",
+                        "expectedDeliveryDate": "تاريخ التسليم المتوقع",
+                        "expiryDate": "تاريخ الانتهاء"
+                    },
+                    "stepPropertyMedia": {
+                        "title": "الوسائط المرئية",
+                        "propertyImages": "الصور المرئية",
+                        "uploadImages": "رفع الصور",
+                        "noImagesUploaded": "لا توجد صور مرفوعة بعد",
+                        "clickToUploadImages": "اضافة الصور",
+                        "propertyVideos": "الفيديوهات",
+                        "uploadVideos": "رفع الفيديوهات",
+                        "noVideosUploaded": "لا توجد فيديوهات مرفوعة بعد",
+                        "clickToUploadVideos": "اضافة الفيديوهات"
+                    },
+                    "stepLocation": {
+                        "title": "الموقع والخريطة",
+                        "latitude": "العرض",
+                        "latitudePlaceholder": "أدخل العرض",
+                        "longitude": "الطول",
+                        "longitudePlaceholder": "أدخل الطول",
+                        "getLocation": "الحصول على الموقع الحالي",
+                        "mapPreview": "معاينة الخريطة",
+                        "coordinates": "الإحداثيات",
+                        "loadingMap": "جاري تحميل الخريطة...",
+                        "yourLocation": "الموقع الحالي"
+                    },
+                    "stepContactPublishing": {
+                        "title": "الاتصال والنشر",
+                        "whatsAppNumber": "رقم الواتساب",
+                        "includeCountryCode": "تضمين رمز الدولة (مثل 05 للمملكة العربية السعودية)",
+                        "propertySummary": {
+                            "propertySummarytitle": "ملخص العقار",
+                            "title": "العنوان:",
+                            "price": "السعر:",
+                            "unitCategory": "فئة الوحدة:",
+                            "unitName": "اسم الوحدة:",
+                            "totalFloors": "عدد الأدوار:",
+                            "expectedAnnualRent": "إيجارات متوقعة سنويا:",
+                            "features": "الميزات:",
+                            "projectedResale": "قيمة البيع المتوقعة:",
+                            "warrantyInfo": "معلومات الضمان:",
+                            "expectedDeliveryDate": "تاريخ التسليم المتوقع:",
+                            "expiryDate": "تاريخ الانتهاء:",
+                            "location": "الموقع:",
+                            "areaSize": "المساحة:",
+                            "bedrooms": "الغرف:",
+                            "bathrooms": "الحمامات:",
+                            "propertyType": "نوع العقار:",
+                            "images": "الصور:",
+                            "videos": "الفيديوهات:",
+                            "notSpecified": "لم يتم تحديد",
+                            "uploaded": "مرفوع"
+                        }
+                    }
+                },
+                "btn": {
+                    "previous": "السابق",
+                    "next": "التالي",
+                    "createProperty": "إنشاء عقار"
+                },
+                "validationErrors": {
+                    "title": "أخطاء التحقق"
+                }
+            }
+        },
+        "updatePropertyPage": {
+            "title": "تحديث العقار",
+            "description": "يسمح هذا الصفحة بتحديث العقار.",
+            "loading": "جاري تحديث العقار...",
+            "updateProperty": {
+                "steps": {
+                    "basicInfo": "المعلومات الأساسية",
+                    "propertyDetails": "تفاصيل العقار",
+                    "propertyMedia": "الوسائط المرئية",
+                    "location": "الموقع / الخريطة",
+                    "contactPublishing": "الاتصال والنشر"
+                },
+                "btn": {
+                    "previous": "السابق",
+                    "next": "التالي",
+                    "updateProperty": "تحديث العقار"
+                },
+                "validationErrors": {
+                    "title": "أخطاء التحقق"
+                }
+            }
+        }
     }
 }

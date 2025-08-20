@@ -17,6 +17,7 @@ import { contactStatuses, leadStatuses, propertyStatuses, maintenanceRequestStat
 import { useStaticDataStore } from '@/store/static-data.store';
 import { useParams } from 'next/navigation';
 import { Params } from "@/types/params";
+import { useTranslations } from 'next-intl';
 
 type Columns = {
   sortConfig?: any;
@@ -93,7 +94,10 @@ const onDeleteContact = async (id: string | number) => {
   }
 }
 
+//property expiry date duration
+
 function ExpiryDateDuration({ row }: { row: PropertyItem }) {
+  const t = useTranslations('PropertyPages.propertyListPage.propertyTable.propertyHeader');
   const initialValue = row.expiryDate
     ? dayjs(row.expiryDate).format('YYYY-MM-DDTHH:mm')
     : "";
@@ -104,10 +108,8 @@ function ExpiryDateDuration({ row }: { row: PropertyItem }) {
     try {
       const localDate = dayjs(inputValue, 'YYYY-MM-DDTHH:mm');
       const isoDate = localDate.toISOString();
-      console.log('2:', isoDate);
       const res = await PropertyExpireDuration(row.id, isoDate);
       if (res.succeeded) {
-        console.log("3", res);
         toast.success("Expiry date updated successfully");
       } else {
         toast.error("Failed to update expiry date");
@@ -134,7 +136,7 @@ function ExpiryDateDuration({ row }: { row: PropertyItem }) {
         disabled={loading || !inputValue}
         onClick={handleSave}
       >
-        {loading ? "Saving..." : "Save"}
+        {loading ? t('saving') : t('save')}
       </Button>
     </div>
   );
@@ -230,6 +232,7 @@ export const getPropertyColumns = ({
 }: Columns) => {
   const { locale } = useParams<Params>()
   const { propertyTypes, fetchStaticData } = useStaticDataStore();
+  const t = useTranslations('PropertyPages.propertyListPage.propertyTable');
 
   useEffect(() => {
     fetchStaticData();
@@ -242,7 +245,7 @@ export const getPropertyColumns = ({
 
   return [
     {
-      title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('propertyHeader.id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -250,7 +253,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="Title" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'title'} />,
+      title: <HeaderCell title={t('propertyHeader.title')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'title'} />,
       onHeaderCell: () => onHeaderCellClick('title'),
       dataIndex: 'title',
       key: 'title',
@@ -258,7 +261,7 @@ export const getPropertyColumns = ({
       render: (value: string) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title="Price" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'price'} />,
+      title: <HeaderCell title={t('propertyHeader.price')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'price'} />,
       onHeaderCell: () => onHeaderCellClick('price'),
       dataIndex: 'price',
       key: 'price',
@@ -266,7 +269,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>${value}</Text>,
     },
     {
-      title: <HeaderCell title="City" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'city'} />,
+      title: <HeaderCell title={t('propertyHeader.city')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'city'} />,
       onHeaderCell: () => onHeaderCellClick('city'),
       dataIndex: 'city',
       key: 'city',
@@ -274,23 +277,23 @@ export const getPropertyColumns = ({
       render: (value: string) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title="Location" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
+      title: <HeaderCell title={t('propertyHeader.location')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
       onHeaderCell: () => onHeaderCellClick('location'),
       dataIndex: 'location',
       key: 'location',
       minWidth: 180,
       render: (value: string) => <Text>{value}</Text>,
     },
-    // {
-    //   title: <HeaderCell title="Area Size" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'areaSize'} />,
-    //   onHeaderCell: () => onHeaderCellClick('areaSize'),
-    //   dataIndex: 'areaSize',
-    //   key: 'areaSize',
-    //   width: 100,
-    //   render: (value: number) => <Text>{value}</Text>,
-    // },
     {
-      title: <HeaderCell title="Bedrooms" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bedrooms'} />,
+      title: <HeaderCell title={t('propertyHeader.areaSize')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'areaSize'} />,
+      onHeaderCell: () => onHeaderCellClick('areaSize'),
+      dataIndex: 'areaSize',
+      key: 'areaSize',
+      minWidth: 100,
+      render: (value: number) => <Text>{value}</Text>,
+    },
+    {
+      title: <HeaderCell title={t('propertyHeader.bedrooms')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bedrooms'} />,
       onHeaderCell: () => onHeaderCellClick('bedrooms'),
       dataIndex: 'bedrooms',
       key: 'bedrooms',
@@ -298,7 +301,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title="Bathrooms" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bathrooms'} />,
+      title: <HeaderCell title={t('propertyHeader.bathrooms')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bathrooms'} />,
       onHeaderCell: () => onHeaderCellClick('bathrooms'),
       dataIndex: 'bathrooms',
       key: 'bathrooms',
@@ -306,7 +309,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>{value}</Text>,
     },
     {
-      title: (<HeaderCell title="Status" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
+      title: (<HeaderCell title={t('propertyHeader.status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
       dataIndex: 'status',
       key: 'status',
       minWidth: 120,
@@ -329,7 +332,7 @@ export const getPropertyColumns = ({
       },
     },
     {
-      title: <HeaderCell title="Property Type" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
+      title: <HeaderCell title={t('propertyHeader.propertyType')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
       onHeaderCell: () => onHeaderCellClick('propertyType'),
       dataIndex: 'propertyType',
       key: 'propertyType',
@@ -340,7 +343,7 @@ export const getPropertyColumns = ({
       },
     },
     {
-      title: <HeaderCell title="Expiry Date" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'} />,
+      title: <HeaderCell title={t('propertyHeader.expiryDate')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'} />,
       onHeaderCell: () => onHeaderCellClick('expiryDate'),
       dataIndex: 'expiryDate',
       key: 'expiryDate',
@@ -348,7 +351,7 @@ export const getPropertyColumns = ({
       render: (_: string | null, row: any) => <ExpiryDateDuration row={row} />,
     },
     {
-      title: <HeaderCell title="Investor Only" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isInvestorOnly'} />,
+      title: <HeaderCell title={t('propertyHeader.investorOnly')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isInvestorOnly'} />,
       onHeaderCell: () => onHeaderCellClick('isInvestorOnly'),
       dataIndex: 'isInvestorOnly',
       key: 'isInvestorOnly',
@@ -356,7 +359,7 @@ export const getPropertyColumns = ({
       render: (value: boolean) => value ? <Badge color="info">Yes</Badge> : <Badge color="secondary">No</Badge>,
     },
     {
-      title: <HeaderCell title="Actions" className='flex justify-end' />,
+      title: <HeaderCell title={t('propertyHeader.actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       minWidth: 50,

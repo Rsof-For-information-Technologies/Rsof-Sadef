@@ -16,6 +16,7 @@ import { convertNumberToLocalFormat } from "@/utils/convertNumberToLocalFormat";
 import { UserRole } from "@/types/userRoles";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
+import { useTranslations } from "next-intl"
 
 interface UpdatePropertyFormProps {
   propertyId: string;
@@ -26,7 +27,7 @@ export default function UpdatePropertyForm({
   propertyId,
   initialData,
 }: UpdatePropertyFormProps) {
-
+  const t = useTranslations('PropertyPages.updatePropertyPage.updateProperty')
   console.log({ propertyId, initialData });
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,7 +125,7 @@ export default function UpdatePropertyForm({
   return (
     <Authenticate>
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-        <div className="container">
+        <div className="flex flex-col">
           <StepIndicator
             currentStep={currentStep}
             totalSteps={STEPS.length}
@@ -143,7 +144,7 @@ export default function UpdatePropertyForm({
                 className="flex items-center gap-2"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                {t('btn.previous')}
               </Button>
 
               {currentStep < STEPS.length ? (
@@ -152,7 +153,7 @@ export default function UpdatePropertyForm({
                   onClick={nextStep}
                   className="flex items-center gap-2"
                 >
-                  Next
+                  {t('btn.next')}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               ) : (
@@ -162,7 +163,7 @@ export default function UpdatePropertyForm({
                   className="flex items-center gap-2"
                 >
                   {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Update Property
+                  {t('btn.updateProperty')}
                 </Button>
               )}
             </div>
@@ -170,7 +171,7 @@ export default function UpdatePropertyForm({
 
           {Object.keys(errors).length > 0 && (
             <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <h3 className="text-red-800 font-medium mb-2">Validation Errors:</h3>
+              <h3 className="text-red-800 font-medium mb-2">{t('validationErrors.title')}</h3>
               <ul className="text-red-700 text-sm space-y-1">
                 {Object.entries(errors).map(([field, error]) => (
                   <li key={field}>

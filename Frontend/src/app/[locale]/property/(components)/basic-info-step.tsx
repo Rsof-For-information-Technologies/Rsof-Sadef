@@ -7,12 +7,13 @@ import { CreatePropertyFormData } from "@/validators/createProperty"
 import type { UseFormReturn } from "react-hook-form"
 import { Checkbox, Input, Select } from "rizzui"
 import { useStaticDataStore } from "@/store/static-data.store"
-
+import { useTranslations } from "next-intl"
 interface BasicInfoStepProps {
   form: UseFormReturn<CreatePropertyFormData>
 }
 
 export function BasicInfoStep({ form }: BasicInfoStepProps) {
+  const t = useTranslations('PropertyPages.createPropertyPage.createProperty.form')
   const {
     register,
     formState: { errors },
@@ -52,19 +53,19 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
   return (
     <div>
       <div className="mb-4">
-        <h3>Basic Information</h3>
+        <h3>{t('stepBasicInformation.title')}</h3>
       </div>
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Property Title <span className="text-red-600">*</span></Label>
-            <Input id="title" {...register("title")} placeholder="Enter property title" />
+            <Label htmlFor="title">{t('stepBasicInformation.propertyTitle')} <span className="text-red-600">*</span></Label>
+            <Input id="title" {...register("title")} placeholder={t('stepBasicInformation.propertyTitlePlaceholder')} />
             {errors.title && <p className="text-sm text-red-600">{errors.title.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="price">Prices <span className="text-red-600">*</span></Label>
-            <Input id="price" type="number" {...register("price", { valueAsNumber: true })} placeholder="Enter price" />
+            <Label htmlFor="price">{t('stepBasicInformation.price')} <span className="text-red-600">*</span></Label>
+            <Input id="price" type="number" {...register("price", { valueAsNumber: true })} placeholder={t('stepBasicInformation.pricePlaceholder')} />
             {errors.price && <p className="text-sm text-red-600">{errors.price.message}</p>}
           </div>
         </div>
@@ -72,7 +73,7 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Select
-              label="Property Type"
+              label={t('stepBasicInformation.propertyType')}
               options={propertyTypeOptions}
               value={propertyTypeValue ?? undefined}
               onChange={(value) => setValue("propertyType", value ? Number(value) : undefined)}
@@ -82,7 +83,7 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                   ? propertyTypeOptions.find(opt => opt.value === selected)?.label || ""
                   : ""
               }
-              placeholder="Select property type"
+              placeholder={t('stepBasicInformation.propertyTypePlaceholder')}
               searchable={true}
             />
             {errors.propertyType && (
@@ -91,7 +92,7 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
           </div>
           <div className="space-y-2">
             <Select
-              label="Unit Category"
+              label={t('stepBasicInformation.unitCategory')}
               options={unitCategoryOptions}
               value={unitCategoryValue ?? undefined}
               onChange={(value) => setValue("unitCategory", value ? Number(value) : undefined)}
@@ -101,7 +102,7 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                   ? unitCategoryOptions.find(opt => opt.value === selected)?.label || ""
                   : ""
               }
-              placeholder="Select unit category"
+              placeholder={t('stepBasicInformation.unitCategoryPlaceholder')}
               searchable={true}
             />
             {errors.unitCategory && (
@@ -113,7 +114,7 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Select
-              label={<>City <span className="text-red-600">*</span></>}
+              label={t('stepBasicInformation.city')}
               options={cityOptions}
               value={cityValue ?? undefined}
               onChange={(value) => setValue("city", value ? Number(value) : 0)}
@@ -123,22 +124,22 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                   ? cityOptions.find(opt => opt.value === selected)?.label || ""
                   : ""
               }
-              placeholder="Select or search city"
+              placeholder={t('stepBasicInformation.cityPlaceholder')}
               searchable={true}
             />
             {errors.city && <p className="text-sm text-red-600">{errors.city.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="location">Location <span className="text-red-600">*</span></Label>
-            <Input id="location" {...register("location")} placeholder="Enter location/address" />
+            <Label htmlFor="location">{t('stepBasicInformation.location')} <span className="text-red-600">*</span></Label>
+            <Input id="location" {...register("location")} placeholder={t('stepBasicInformation.locationPlaceholder')} />
             {errors.location && <p className="text-sm text-red-600">{errors.location.message}</p>}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="areaSize">Area Size (sq ft) <span className="text-red-600">*</span></Label>
+            <Label htmlFor="areaSize">{t('stepBasicInformation.areaSize')} <span className="text-red-600">*</span></Label>
             <Input
               id="areaSize"
               min={1}
@@ -147,16 +148,16 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
                 valueAsNumber: true,
                 setValueAs: v => v === "" ? undefined : parseFloat(v)
               })}
-              placeholder="Enter area size"
+              placeholder={t('stepBasicInformation.areaSizePlaceholder')}
             />
             {errors.areaSize && <p className="text-sm text-red-600">{errors.areaSize.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="bedrooms">Bedrooms</Label>
+            <Label htmlFor="bedrooms">{t('stepBasicInformation.bedrooms')}</Label>
             <ShadCnNumberInput
               className="px-[14px] py-[8px] border-0"
               id="bedrooms"
-              placeholder="Number of bedrooms"
+              placeholder={t('stepBasicInformation.bedroomsPlaceholder')}
               min={0}
               max={10}
               decimalScale={0}
@@ -171,11 +172,11 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="bathrooms">Bathrooms</Label>
+            <Label htmlFor="bathrooms">{t('stepBasicInformation.bathrooms')}</Label>
             <ShadCnNumberInput
               className="px-[14px] py-[8px] border-0"
               id="bathrooms"
-              placeholder="Number of bathrooms"
+              placeholder={t('stepBasicInformation.bathroomsPlaceholder')}
               min={0}
               max={10}
               decimalScale={0}
@@ -194,15 +195,15 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="unitName">Unit Name</Label>
-            <Input id="unitName" {...register("unitName")} placeholder="Enter unit name (optional)" />
+            <Label htmlFor="unitName">{t('stepBasicInformation.unitName')}</Label>
+            <Input id="unitName" {...register("unitName")} placeholder={t('stepBasicInformation.unitNamePlaceholder')} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="totalFloors">Total Floors</Label>
+            <Label htmlFor="totalFloors">{t('stepBasicInformation.totalFloors')}</Label>
             <ShadCnNumberInput
               className="px-[14px] py-[8px] border-0"
               id="totalFloors"
-              placeholder="Total Floors"
+              placeholder={t('stepBasicInformation.totalFloorsPlaceholder')}
               min={1}
               decimalScale={0}
               value={watch("totalFloors") ?? undefined}
@@ -219,7 +220,7 @@ export function BasicInfoStep({ form }: BasicInfoStepProps) {
               {...register("isInvestorOnly")}
               checked={watch("isInvestorOnly") ?? false}
               onChange={(e) => setValue("isInvestorOnly", e.target.checked)}
-              label="Investor Only Property"
+              label={t('stepBasicInformation.investorOnly')}
             />
           </div>
         </div>

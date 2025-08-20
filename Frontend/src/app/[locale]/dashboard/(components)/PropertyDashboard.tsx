@@ -5,11 +5,13 @@ import { getPropertyDashboard } from '@/utils/api';
 import { PropertyDashboardData } from '@/types/property';
 import { Title } from 'rizzui';
 import { BsBuilding } from 'react-icons/bs';
+import { useTranslations } from 'next-intl';
 
 export default function PropertyDashboard() {
     const [dashboardData, setDashboardData] = useState<PropertyDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const t = useTranslations('DashboardPage.propertyAnalytics')
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -60,56 +62,56 @@ export default function PropertyDashboard() {
 
     const stats = [
         {
-            title: 'Total Properties',
+            title: t('cards.totalProperties'),
             value: dashboardData.totalProperties,
             icon: BsBuilding,
             color: 'bg-blue-500',
             textColor: 'text-blue-500'
         },
         {
-            title: 'Active Properties',
+            title: t('cards.activeProperties'),
             value: dashboardData.activeProperties,
             icon: BsBuilding,
             color: 'bg-green-500',
             textColor: 'text-green-500'
         },
         {
-            title: 'Expired Properties',
+            title: t('cards.expiredProperties'),
             value: dashboardData.expiredProperties,
             icon: BsBuilding,
             color: 'bg-red-500',
             textColor: 'text-red-500'
         },
         {
-            title: 'Pending',
+            title: t('cards.pending'),
             value: dashboardData.pendingCount,
             icon: BsBuilding,
             color: 'bg-yellow-500',
             textColor: 'text-yellow-500'
         },
         {
-            title: 'Approved',
+            title: t('cards.approved'),
             value: dashboardData.approvedCount,
             icon: BsBuilding,
             color: 'bg-emerald-500',
             textColor: 'text-emerald-500'
         },
         {
-            title: 'Sold',
+            title: t('cards.sold'),
             value: dashboardData.soldCount,
             icon: BsBuilding,
             color: 'bg-purple-500',
             textColor: 'text-purple-500'
         },
         {
-            title: 'Rejected',
+            title: t('cards.rejected'),
             value: dashboardData.rejectedCount,
             icon: BsBuilding,
             color: 'bg-red-600',
             textColor: 'text-red-600'
         },
         {
-            title: 'Archived',
+            title: t('cards.archived'),
             value: dashboardData.archivedCount,
             icon: BsBuilding,
             color: 'bg-gray-500',
@@ -160,9 +162,8 @@ export default function PropertyDashboard() {
                 {/* Unit Category Chart */}
                 <div className="p-6 bg-white dark:bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-200">
                     <Title as="h5" className="mb-4 text-gray-900 dark:text-white">
-                        Unit Categories
+                        {t('unitCategoriesCard.title')}
                     </Title>
-                    
                     <div className="space-y-4">
                         {unitCategoryData.map(([category, count], index) => {
                             const percentage = dashboardData.totalProperties > 0 ? (count / dashboardData.totalProperties) * 100 : 0;
@@ -172,25 +173,24 @@ export default function PropertyDashboard() {
                                 '#EF4444', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16', '#EC4899'
                             ];
                             const color = colors[index % colors.length];
-                            
                             return (
                                 <div key={category} className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
-                                        <div 
-                                            className="w-4 h-4 rounded-full" 
+                                        <div
+                                            className="w-4 h-4 rounded-full"
                                             style={{ backgroundColor: color }}
                                         ></div>
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 ">
                                             {category.replace(/([A-Z])/g, ' $1').trim()}
                                         </span>
                                     </div>
                                     <div className="flex items-center space-x-3">
                                         <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                            <div 
+                                            <div
                                                 className="h-2 rounded-full transition-all duration-300"
-                                                style={{ 
+                                                style={{
                                                     width: `${percentage}%`,
-                                                    backgroundColor: color 
+                                                    backgroundColor: color
                                                 }}
                                             ></div>
                                         </div>
@@ -203,33 +203,32 @@ export default function PropertyDashboard() {
                         })}
                     </div>
                 </div>
-                
                 {/* Financial Summary */}
                 <div className="p-6 bg-white dark:bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-200">
                     <Title as="h5" className="mb-4 text-gray-900 dark:text-white">
-                        Financial Overview
+                        {t('financialOverviewCard.title')}
                     </Title>
                     <div className="space-y-4">
                         <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <h4 className="font-medium text-blue-900 dark:text-blue-200">Total Expected Annual Rent</h4>
+                            <h4 className="font-medium text-blue-900 dark:text-blue-200">{t('financialOverviewCard.content.totalExpectedAnnualRent')}</h4>
                             <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                                 {formatCurrency(dashboardData.totalExpectedAnnualRent)}
                             </p>
                         </div>
                         <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <h4 className="font-medium text-green-900 dark:text-green-200">Total Projected Resale Value</h4>
+                            <h4 className="font-medium text-green-900 dark:text-green-200">{t('financialOverviewCard.content.totalProjectedResaleValue')}</h4>
                             <p className="text-xl font-bold text-green-600 dark:text-green-400">
                                 {formatCurrency(dashboardData.totalProjectedResaleValue)}
                             </p>
                         </div>
                         <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                            <h4 className="font-medium text-purple-900 dark:text-purple-200">Properties with Investment Data</h4>
+                            <h4 className="font-medium text-purple-900 dark:text-purple-200">{t('financialOverviewCard.content.propertiesWithInvestmentData')}</h4>
                             <p className="text-xl font-bold text-purple-600 dark:text-purple-400">
                                 {dashboardData.propertiesWithInvestmentData}
                             </p>
                         </div>
                         <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                            <h4 className="font-medium text-yellow-900 dark:text-yellow-200">Listed This Week</h4>
+                            <h4 className="font-medium text-yellow-900 dark:text-yellow-200">{t('financialOverviewCard.content.listedThisWeek')}</h4>
                             <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
                                 {dashboardData.listedThisWeek}
                             </p>

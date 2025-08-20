@@ -6,12 +6,13 @@ import { CreatePropertyFormData } from "@/validators/createProperty"
 import { Label } from "@/components/shadCn/ui/label"
 import { Button, Input } from "rizzui"
 import InteractiveMap from "@/components/ui/InteractiveMap"
-
+import { useTranslations } from "next-intl"
 interface LocationStepProps {
   form: UseFormReturn<CreatePropertyFormData>
 }
 
 export function LocationStep({ form }: LocationStepProps) {
+  const t = useTranslations('PropertyPages.createPropertyPage.createProperty.form.stepLocation')
   const {
     register,
     getValues,
@@ -37,30 +38,30 @@ export function LocationStep({ form }: LocationStepProps) {
   return (
     <div>
       <div className="mb-4">
-        <h3>Location & Map</h3>
+        <h3>{t('title')}</h3>
       </div>
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="latitude">Latitude</Label>
+            <Label htmlFor="latitude">{t('latitude')}</Label>
             <Input
               id="latitude"
               type="number"
               step="any"
               {...register("latitude", { valueAsNumber: true })}
-              placeholder="Enter latitude"
+              placeholder={t('latitudePlaceholder')}
             />
             {errors.latitude && <p className="text-sm text-red-600">{errors.latitude.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="longitude">Longitude</Label>
+            <Label htmlFor="longitude">{t('longitude')}</Label>
             <Input
               id="longitude"
               type="number"
               step="any"
               {...register("longitude", { valueAsNumber: true })}
-              placeholder="Enter longitude"
+              placeholder={t('longitudePlaceholder')}
             />
             {errors.longitude && <p className="text-sm text-red-600">{errors.longitude.message}</p>}
           </div>
@@ -69,15 +70,15 @@ export function LocationStep({ form }: LocationStepProps) {
         <div className="flex justify-center">
           <Button type="button" variant="outline" onClick={getCurrentLocation} className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
-            Get Current Location
+            {t('getLocation')}
           </Button>
         </div>
 
         {watch("latitude") && watch("longitude") && (
           <div className="space-y-2">
-            <Label>Map Preview</Label>
+            <Label>{t('mapPreview')}</Label>
             <p className="text-sm">
-              Coordinates: {watch("latitude")?.toFixed(6)}, {watch("longitude")?.toFixed(6)}
+              {t('coordinates')}: {watch("latitude")?.toFixed(6)}, {watch("longitude")?.toFixed(6)}
             </p>
             <InteractiveMap longitude={getValues("longitude") as number}  latitute={getValues("latitude") as number} />
           </div>

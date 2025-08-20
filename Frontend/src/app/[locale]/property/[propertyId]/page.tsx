@@ -4,6 +4,7 @@ import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import { UserRole } from "@/types/userRoles";
 import PropertyDetailsClient from "../(components)/PropertyDetailsClient";
+import { getTranslations } from "next-intl/server";
 
 export default async function DetailsPropertyPage({
   params,
@@ -11,6 +12,7 @@ export default async function DetailsPropertyPage({
   params: { propertyId: string };
 }) {
   try {
+    const t = await getTranslations('PropertyPages.propertyDetailPage');
     const response = await getPropertyById(params.propertyId);
     const BASE_URL = process.env.SERVER_BASE_URL || '';
 
@@ -23,10 +25,10 @@ export default async function DetailsPropertyPage({
     return (
       <Authenticate>
         <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-          <div className="max-w-[900px] w-full mx-auto py-8 px-4">
-            <div className="py-4 text-center">
-              <h1 className="mb-4 text-2xl font-semibold">Property Details</h1>
-              <p className="mb-6 text-gray-600">This page allows you to view the property details.</p>
+        <div className="flex flex-col justify-between items-start py-6">
+            <div>
+              <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+              <p className="mb-6 text-gray-600">{t('description')}</p>
             </div>
             <PropertyDetailsClient propertyData={data} baseUrl={BASE_URL} />
           </div>

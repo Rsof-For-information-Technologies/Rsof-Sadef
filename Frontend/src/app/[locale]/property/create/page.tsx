@@ -19,16 +19,19 @@ import Authenticate from "@/components/auth/authenticate"
 import Authorize from "@/components/auth/authorize"
 import { UserRole } from "@/types/userRoles"
 import { convertNumberToLocalFormat } from "@/utils/convertNumberToLocalFormat"
-
-const STEPS = [
-  { title: "Basic Info", component: BasicInfoStep, schema: basicInfoSchema },
-  { title: "Property Details", component: PropertyDetailsStep, schema: propertyDetailsSchema },
-  { title: "Property Media", component: PropertyMediaStep, schema: propertyMediaSchema },
-  { title: "Location", component: LocationStep, schema: locationSchema },
-  { title: "Contact & Publishing", component: ContactPublishingStep, schema: contactPublishingSchema },
-]
+import { useTranslations } from "next-intl"
 
 export default function CreatePropertyPage() {
+  const t = useTranslations('PropertyPages.createPropertyPage')
+
+  const STEPS = [
+    { title: t('createProperty.steps.basicInfo'), component: BasicInfoStep, schema: basicInfoSchema },
+    { title: t('createProperty.steps.propertyDetails'), component: PropertyDetailsStep, schema: propertyDetailsSchema },
+    { title: t('createProperty.steps.propertyMedia'), component: PropertyMediaStep, schema: propertyMediaSchema },
+    { title: t('createProperty.steps.location'), component: LocationStep, schema: locationSchema },
+    { title: t('createProperty.steps.contactPublishing'), component: ContactPublishingStep, schema: contactPublishingSchema },
+  ]
+
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
@@ -125,10 +128,10 @@ export default function CreatePropertyPage() {
   return (
     <Authenticate>
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-        <div className="container">
-          <div className="py-4 text-center">
-            <h1 className="mb-4 text-2xl font-semibold">Create New Property</h1>
-            <p className="mb-6 text-gray-600"> This page allows you to create the new property. </p>
+        <div className="flex flex-col py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
           </div>
 
           <StepIndicator currentStep={currentStep} totalSteps={STEPS.length} stepTitles={STEPS.map((step) => step.title)} />
@@ -145,18 +148,18 @@ export default function CreatePropertyPage() {
                 className="flex items-center gap-2"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                {t('createProperty.btn.previous')}
               </Button>
 
               {currentStep < STEPS.length ? (
                 <Button type="button" onClick={nextStep} className="flex items-center gap-2">
-                  Next
+                  {t('createProperty.btn.next')}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               ) : (
                 <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
                   {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Create Property
+                  {t('createProperty.btn.createProperty')}
                 </Button>
               )}
             </div>
@@ -165,7 +168,7 @@ export default function CreatePropertyPage() {
           {/* Debug: Show validation errors */}
           {Object.keys(errors).length > 0 && (
             <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <h3 className="text-red-800 font-medium mb-2">Validation Errors:</h3>
+              <h4 className="text-red-800 font-medium mb-2">{t('createProperty.validationErrors.title')}</h4>
               <ul className="text-red-700 text-sm space-y-1">
                 {Object.entries(errors).map(([field, error]) => (
                   <li key={field}>

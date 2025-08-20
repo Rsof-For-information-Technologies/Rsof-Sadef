@@ -11,13 +11,14 @@ import { ClockIcon, EyeIcon, MailIcon, PhoneIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Params } from '@/types/params';
 import { contactStatuses } from '@/constants/constants';
+import { useTranslations } from 'next-intl';
 
 const ContactDashboard: React.FC = () => {
     const [data, setData] = useState<ContactDashboardStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const params = useParams<Params>();
-
+    const t = useTranslations('DashboardPage.contactAnalytics')
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -80,7 +81,7 @@ const ContactDashboard: React.FC = () => {
         return (
             <div className="p-6">
                 <div className="text-center">
-                    <Text className="text-gray-600">No data available</Text>
+                    <Text className="text-gray-600">{t('noDataAvailable')}</Text>
                 </div>
             </div>
         );
@@ -88,14 +89,14 @@ const ContactDashboard: React.FC = () => {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case "New": return "warning";
-            case "InProgress": return "info";
-            case "Contacted": return "success";
-            case "Responded": return "info";
-            case "Scheduled": return "success";
-            case "Completed": return "success";
-            case "Cancelled": return "secondary";
-            case "Spam": return "danger";
+            case t('contactsbyStatusCard.new'): return "warning";
+            case t('contactsbyStatusCard.inProgress'): return "info";
+            case t('contactsbyStatusCard.contacted'): return "success";
+            case t('contactsbyStatusCard.responded'): return "info";
+            case t('contactsbyStatusCard.scheduled'): return "success";
+            case t('contactsbyStatusCard.completed'): return "success";
+            case t('contactsbyStatusCard.cancelled'): return "secondary";
+            case t('contactsbyStatusCard.spam'): return "danger";
             default: return "secondary";
         }
     };
@@ -112,7 +113,7 @@ const ContactDashboard: React.FC = () => {
                 <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
                     <div className="flex items-center justify-between">
                         <div>
-                            <Text className="text-sm font-medium text-blue-600">Total Contacts</Text>
+                            <Text className="text-sm font-medium text-blue-600">{t('cards.totalContacts')}</Text>
                             <Title as="h3" className="text-2xl font-bold text-blue-900">
                                 {data.totalContacts}
                             </Title>
@@ -126,7 +127,7 @@ const ContactDashboard: React.FC = () => {
                 <div className="p-6 bg-gradient-to-r from-green-50 to-green-100 border-green-200">
                     <div className="flex items-center justify-between">
                         <div>
-                            <Text className="text-sm font-medium text-green-600">New Contacts</Text>
+                            <Text className="text-sm font-medium text-green-600">{t('cards.newContacts')}</Text>
                             <Title as="h3" className="text-2xl font-bold text-green-900">
                                 {data.newContacts}
                             </Title>
@@ -140,7 +141,7 @@ const ContactDashboard: React.FC = () => {
                 <div className="p-6 bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200">
                     <div className="flex items-center justify-between">
                         <div>
-                            <Text className="text-sm font-medium text-yellow-600">In Progress</Text>
+                            <Text className="text-sm font-medium text-yellow-600">{t('cards.inProgress')}</Text>
                             <Title as="h3" className="text-2xl font-bold text-yellow-900">
                                 {data.inProgressContacts}
                             </Title>
@@ -154,7 +155,7 @@ const ContactDashboard: React.FC = () => {
                 <div className="p-6 bg-gradient-to-r from-red-50 to-red-100 border-red-200">
                     <div className="flex items-center justify-between">
                         <div>
-                            <Text className="text-sm font-medium text-red-600">Urgent Contacts</Text>
+                            <Text className="text-sm font-medium text-red-600">{t('cards.urgentContacts')}</Text>
                             <Title as="h3" className="text-2xl font-bold text-red-900">
                                 {data.urgentContacts}
                             </Title>
@@ -172,7 +173,7 @@ const ContactDashboard: React.FC = () => {
             {/* Recent Contacts */}
             <div className="p-6">
                 <Title as="h4" className="mb-4 text-gray-800 dark:text-white">
-                    Recent Contacts
+                    {t('recentContactsCard.title')}
                 </Title>
                 <div className="space-y-4">
                     {data.recentContacts.map((contact) => (

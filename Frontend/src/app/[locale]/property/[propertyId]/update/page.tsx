@@ -4,6 +4,7 @@ import UpdatePropertyForm from "./updatePropertyForm";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import { UserRole } from "@/types/userRoles";
+import { getTranslations } from "next-intl/server";
 
 export default async function UpdatePropertyPage({
   params,
@@ -17,15 +18,15 @@ export default async function UpdatePropertyPage({
       return notFound();
     }
 
+    const t = await getTranslations('PropertyPages.updatePropertyPage')
+
     return (
       <Authenticate >
         <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-          <div className="container">
-            <div className="py-4 text-center">
-              <h1 className="mb-4 text-2xl font-semibold">Update Property</h1>
-              <p className="mb-6 text-gray-600">
-                This page allows you to update the property details.
-              </p>
+        <div className="flex flex-col py-6">
+            <div>
+              <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+              <p className="mb-6 text-gray-600">{t('description')}</p>
             </div>
             <UpdatePropertyForm propertyId={params.propertyId} initialData={response.data} />
           </div>

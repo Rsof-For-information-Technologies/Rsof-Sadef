@@ -7,12 +7,13 @@ import { getAllProperties, getFilteredProperties } from "@/utils/api";
 import PropertyFiltersComponent from "./PropertyFilters";
 import TableSkeleton from "./TableSkeleton";
 import { useState, useEffect } from "react";
-
+import { useTranslations } from "next-intl";
 interface PropertyPageClientProps {
     initialProperties: PropertyItem[];
 }
 
 export default function PropertyPageClient({ initialProperties }: PropertyPageClientProps) {
+    const t = useTranslations('PropertyPages.propertyListPage.propertyTable');
     const [properties, setProperties] = useState<GetProperties | null>(null);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState<PropertyFilters>({
@@ -87,13 +88,13 @@ export default function PropertyPageClient({ initialProperties }: PropertyPageCl
                 <TableSkeleton />
             ) : (
                 <BasicTableWidget
-                    title="Search Table"
+                    title={t('title')}
                     variant="minimal"
                     data={activeProperties}
                     // @ts-ignore
                     getColumns={getPropertyColumns}
                     enablePagination
-                    searchPlaceholder="Search order..."
+                    searchPlaceholder={t('searchPlaceholder')}
                     className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
                 />
             )}

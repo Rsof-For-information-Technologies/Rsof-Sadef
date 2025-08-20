@@ -6,13 +6,14 @@ import InfoCard from "../../(components)/InfoCard";
 import { useStaticDataStore } from "@/store/static-data.store";
 import { CreatePropertyData } from "@/types/property";
 import Image from "next/image";
-
+import { useTranslations } from "next-intl";
 interface PropertyDetailsClientProps {
     propertyData: CreatePropertyData;
     baseUrl: string;
 }
 
 export default function PropertyDetailsClient({ propertyData, baseUrl }: PropertyDetailsClientProps) {
+    const t = useTranslations('PropertyPages.propertyDetailPage');
     const {
         propertyTypes,
         propertyStatuses,
@@ -53,7 +54,7 @@ export default function PropertyDetailsClient({ propertyData, baseUrl }: Propert
         return (
             <div className="flex justify-center items-center min-h-[100px] my-4">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-                <span className="ml-3 text-gray-600">Loading property details...</span>
+                <span className="ml-3 text-gray-600">{t('loading')}</span>
             </div>
         );
     }
@@ -61,64 +62,64 @@ export default function PropertyDetailsClient({ propertyData, baseUrl }: Propert
     const data = propertyData;
 
     return (
-        <div className="max-w-[900px] w-full mx-auto">
-            <CollapsibleSection title="Basic Information" defaultOpen>
+        <div className="w-full mx-auto">
+            <CollapsibleSection title={t('propertyDetails.basicInformationCard.title')} defaultOpen>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InfoCard icon="🏷️" label="Title" value={data.title} color="green" />
+                    <InfoCard icon="🏷️" label={t('propertyDetails.basicInformationCard.infoCard.title')} value={data.title} color="green" />
                     <InfoCard
                         icon="🏠"
-                        label="Type"
+                        label={t('propertyDetails.basicInformationCard.infoCard.type')}
                         value={getOptionLabel(data.propertyType, propertyTypeOptions)}
                         color="green"
                     />
                     <InfoCard
                         icon="🏢"
-                        label="Unit Category"
+                        label={t('propertyDetails.basicInformationCard.infoCard.unitCategory')}
                         value={getOptionLabel(data.unitCategory, unitCategoryOptions)}
                         color="green"
                     />
-                    <InfoCard icon="🏙️" label="City" value={data.city} color="green" />
-                    <InfoCard icon="📍" label="Location" value={data.location} color="green" />
-                    <InfoCard icon="📏" label="Area Size" value={data.areaSize} color="green" />
+                    <InfoCard icon="🏙️" label={t('propertyDetails.basicInformationCard.infoCard.city')} value={data.city} color="green" />
+                    <InfoCard icon="📍" label={t('propertyDetails.basicInformationCard.infoCard.location')} value={data.location} color="green" />
+                    <InfoCard icon="📏" label={t('propertyDetails.basicInformationCard.infoCard.areaSize')} value={data.areaSize} color="green" />
                     <InfoCard
                         icon="📄"
-                        label="Status"
+                        label={t('propertyDetails.basicInformationCard.infoCard.status')}
                         value={getOptionLabel(data.status, propertyStatusOptions)}
                         color="green"
                     />
-                    <InfoCard icon="💼" label="Investor Only" value={data.isInvestorOnly ? "Yes" : "No"} color="green" />
+                    <InfoCard icon="💼" label={t('propertyDetails.basicInformationCard.infoCard.investorOnly')} value={data.isInvestorOnly ? "Yes" : "No"} color="green" />
                 </div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="Financial & Dates">
+            <CollapsibleSection title={t('propertyDetails.financialInformationCard.title')}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InfoCard icon="💰" label="Price" value={data.price} color="orange" />
-                    <InfoCard icon="📈" label="Projected Resale Value" value={data.projectedResaleValue} color="orange" />
-                    <InfoCard icon="🏦" label="Expected Annual Rent" value={data.expectedAnnualRent} color="orange" />
-                    <InfoCard icon="🛡️" label="Warranty Info" value={data.warrantyInfo} color="orange" />
-                    <InfoCard icon="📅" label="Expected Delivery Date" value={data.expectedDeliveryDate} color="orange" />
-                    <InfoCard icon="⏳" label="Expiry Date" value={data.expiryDate} color="orange" />
+                    <InfoCard icon="💰" label={t('propertyDetails.financialInformationCard.infoCard.price')} value={data.price} color="orange" />
+                    <InfoCard icon="📈" label={t('propertyDetails.financialInformationCard.infoCard.projectedResaleValue')} value={data.projectedResaleValue} color="orange" />
+                    <InfoCard icon="🏦" label={t('propertyDetails.financialInformationCard.infoCard.expectedAnnualRent')} value={data.expectedAnnualRent} color="orange" />
+                    <InfoCard icon="🛡️" label={t('propertyDetails.financialInformationCard.infoCard.warrantyInfo')} value={data.warrantyInfo} color="orange" />
+                    <InfoCard icon="📅" label={t('propertyDetails.financialInformationCard.infoCard.expectedDeliveryDate')} value={data.expectedDeliveryDate} color="orange" />
+                    <InfoCard icon="⏳" label={t('propertyDetails.financialInformationCard.infoCard.expiryDate')} value={data.expiryDate} color="orange" />
                 </div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="Unit Details">
+            <CollapsibleSection title={t('propertyDetails.unitDetailsCard.title')}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InfoCard icon="🏷️" label="Unit Name" value={data.unitName} color="purple" />
-                    <InfoCard icon="🛏️" label="Bedrooms" value={data.bedrooms} color="purple" />
-                    <InfoCard icon="🛁" label="Bathrooms" value={data.bathrooms} color="purple" />
-                    <InfoCard icon="🏢" label="Total Floors" value={data.totalFloors} color="purple" />
+                    <InfoCard icon="🏷️" label={t('propertyDetails.unitDetailsCard.infoCard.unitName')} value={data.unitName} color="purple" />
+                    <InfoCard icon="🛏️" label={t('propertyDetails.unitDetailsCard.infoCard.bedrooms')} value={data.bedrooms} color="purple" />
+                    <InfoCard icon="🛁" label={t('propertyDetails.unitDetailsCard.infoCard.bathrooms')} value={data.bathrooms} color="purple" />
+                    <InfoCard icon="🏢" label={t('propertyDetails.unitDetailsCard.infoCard.totalFloors')} value={data.totalFloors} color="purple" />
                 </div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="Location & Contact">
+            <CollapsibleSection title={t('propertyDetails.locationContactCard.title')}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InfoCard icon="🌐" label="Latitude" value={data.latitude} color="cyan" />
-                    <InfoCard icon="🌐" label="Longitude" value={data.longitude} color="cyan" />
-                    <InfoCard icon="📱" label="WhatsApp Number" value={data.whatsAppNumber} color="cyan" />
+                    <InfoCard icon="🌐" label={t('propertyDetails.locationContactCard.infoCard.latitude')} value={data.latitude} color="cyan" />
+                    <InfoCard icon="🌐" label={t('propertyDetails.locationContactCard.infoCard.longitude')} value={data.longitude} color="cyan" />
+                    <InfoCard icon="📱" label={t('propertyDetails.locationContactCard.infoCard.whatsAppNumber')} value={data.whatsAppNumber} color="cyan" />
                 </div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="Features">
+            <CollapsibleSection title={t('propertyDetails.featuresCard.title')}>
                 <div className="flex flex-wrap gap-2">
                     {Array.isArray(data.features) && data.features.length > 0 ? (
                         data.features.map((feature: string | number, idx: number) => {
@@ -133,12 +134,12 @@ export default function PropertyDetailsClient({ propertyData, baseUrl }: Propert
                             );
                         })
                     ) : (
-                        <span className="text-gray-400">No features listed.</span>
+                        <span className="text-gray-400">{t('propertyDetails.featuresCard.noFeatures')}</span>
                     )}
                 </div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="Description">
+            <CollapsibleSection title={t('propertyDetails.descriptionCard.title')}>
                 <div
                     dangerouslySetInnerHTML={{
                         __html: data.description || "<span class='text-gray-400'>No description provided.</span>",
@@ -147,7 +148,7 @@ export default function PropertyDetailsClient({ propertyData, baseUrl }: Propert
                 ></div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="Images & Videos">
+            <CollapsibleSection title={t('propertyDetails.imagesVideosCard.title')}>
                 <div className="flex flex-col gap-6 items-start">
                     {data.imageUrls && data.imageUrls.length > 0 && (
                         <div className="flex flex-wrap gap-4">

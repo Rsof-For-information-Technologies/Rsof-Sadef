@@ -75,5 +75,372 @@
                 "list": "Contact List"
             }
         }
+    },
+    "loading": {
+        "title": "Loading..."
+    },
+    "DashboardPage": {
+        "title": "Dashboard",
+        "propertyAnalytics": {
+            "title": "Property Analytics",
+            "cards": {
+                "totalProperties": "Total Properties",
+                "activeProperties": "Active Properties",
+                "expiredProperties": "Expired Properties",
+                "pending": "Pending",
+                "approved": "Approved",
+                "sold": "Sold",
+                "rejected": "Rejected",
+                "archived": "Archived"
+            },
+            "unitCategoriesCard": {
+                "title": "Unit Categories"
+            },
+            "financialOverviewCard": {
+                "title": "Financial Overview",
+                "content": {
+                    "totalExpectedAnnualRent": "Total Expected Annual Rent",
+                    "totalProjectedResaleValue": "Total Projected Resale Value",
+                    "propertiesWithInvestmentData": "Properties with Investment Data",
+                    "listedThisWeek": "Listed This Week"
+                }
+            }
+        },
+        "leadAnalytics": {
+            "title": "Lead Analytics",
+            "cards": {
+                "totalLeads": "Total Leads",
+                "leadsThisMonth": "Leads This Month",
+                "activeLeads": "Active Leads",
+                "newLeads": "New Leads",
+                "contacted": "Contacted",
+                "inDiscussion": "In Discussion",
+                "visitScheduled": "Visit Scheduled",
+                "converted": "Converted",
+                "rejected": "Rejected"
+            },
+            "leadDistributionCard": {
+                "title": "Lead Distribution",
+                "new": "New",
+                "contacted": "Contacted",
+                "inDiscussion": "In Discussion",
+                "visitScheduled": "Visit Scheduled",
+                "converted": "Converted",
+                "rejected": "Rejected"
+            },
+            "leadSummaryCard": {
+                "title": "Lead Summary",
+                "content": {
+                    "totalLeads": "Total Leads",
+                    "activeLeads": "Active Leads",
+                    "converted": "Converted"
+                }
+            }
+        },
+        "maintenanceRequestAnalytics": {
+            "title": "Maintenance Request Analytics",
+            "cards": {
+                "totalRequests": "Total Requests",
+                "thisMonth": "This Month",
+                "pending": "Pending",
+                "inProgress": "In Progress",
+                "resolved": "Resolved",
+                "rejected": "Rejected"
+            },
+            "requestStatusDistributionCard": {
+                "title": "Request Status Distribution",
+                "pending": "Pending",
+                "inProgress": "In Progress",
+                "resolved": "Resolved",
+                "rejected": "Rejected"
+            },
+            "maintenanceRequestSummaryCard": {
+                "title": "Maintenance Request Summary",
+                "content": {
+                    "totalRequests": "Total Requests",
+                    "pending": "Pending",
+                    "resolved": "Resolved"
+                }
+            }
+        },
+        "contactAnalytics": {
+            "title": "Contact Analytics",
+            "cards": {
+                "totalContacts": "Total Contacts",
+                "newContacts": "New Contacts",
+                "inProgress": "In Progress",
+                "urgentContacts": "Urgent Contacts"
+            },
+            "contactsbyTypeCard": {
+                "title": "Contacts by Type"
+            },
+            "contactsbyStatusCard": {
+                "title": "Contacts by Status",
+                "new": "New",
+                "inProgress": "In Progress",
+                "contacted": "Contacted",
+                "responded": "Responded",
+                "scheduled": "Scheduled",
+                "completed": "Completed",
+                "cancelled": "Cancelled",
+                "spam": "Spam"
+            },
+            "recentContactsCard": {
+                "title": "Recent Contacts"
+            },
+            "noDataAvailable": "No data available"
+        }
+    },
+    "PropertyPages": {
+        "propertyListPage": {
+            "title": "Property List Page",
+            "description": "The Property List Page displays all available properties with key details for easy browsing.",
+            "navigateCreateProperty": {
+                "createPropertyBtn": "+ Create Property"
+            },
+            "propertyFiltersCard": {
+                "title": "Filter Properties",
+                "city": "City",
+                "cityPlaceholder": "Select City",
+                "location": "Location",
+                "locationPlaceholder": "Enter Location",
+                "status": "Status",
+                "statusPlaceholder": "Select Status",
+                "propertyType": "Property Type",
+                "propertyTypePlaceholder": "Select Property Type",
+                "applyFilter": "Apply Filter",
+                "clearAllFilter": "Clear All Filter"
+            },
+            "propertyTable": {
+                "title": "Property Table",
+                "searchPlaceholder": "Search property...",
+                "propertyHeader": {
+                    "id": "ID",
+                    "title": "Title",
+                    "price": "Price",
+                    "city": "City",
+                    "location": "Location",
+                    "areaSize": "Area Size",
+                    "bedrooms": "Bedrooms",
+                    "bathrooms": "Bathrooms",
+                    "status": "Status",
+                    "propertyType": "Property Type",
+                    "expiryDate": "Expiry Date",
+                    "investorOnly": "Investor Only",
+                    "actions": "Actions",
+                    "saving": "Saving...",
+                    "save": "Save"
+                },
+                "propertyFooter": {
+                    "pages": "Pages",
+                    "rowsPerPage": "Rows per page"
+                }
+            }
+        },
+        "propertyDetailPage": {
+            "title": "Property Detail Page",
+            "description": "The Property Detail Page displays the details of a property with key details.",
+            "loading": "Loading property details...",
+            "propertyDetails": {
+                "basicInformationCard": {
+                    "title": "Basic Information",
+                    "infoCard": {
+                        "title": "Title",
+                        "type": "Type",
+                        "unitCategory": "Unit Category",
+                        "city": "City",
+                        "location": "Location",
+                        "areaSize": "Area Size",
+                        "status": "Status",
+                        "investorOnly": "Investor Only"
+                    }
+                },
+                "financialInformationCard": {
+                    "title": "Financial Information",
+                    "infoCard": {
+                        "price": "Price",
+                        "projectedResaleValue": "Projected Resale Value",
+                        "expectedAnnualRent": "Expected Annual Rent",
+                        "warrantyInfo": "Warranty Info",
+                        "expectedDeliveryDate": "Expected Delivery Date",
+                        "expiryDate": "Expiry Date"
+                    }
+                },
+                "unitDetailsCard": {
+                    "title": "Unit Details",
+                    "infoCard": {
+                        "unitName": "Unit Name",
+                        "bedrooms": "Bedrooms",
+                        "bathrooms": "Bathrooms",
+                        "totalFloors": "Total Floors"
+                    }
+                },
+                "locationContactCard": {
+                    "title": "Location & Contact",
+                    "infoCard": {
+                        "latitude": "Latitude",
+                        "longitude": "Longitude",
+                        "whatsAppNumber": "WhatsApp Number"
+                    }
+                },
+                "featuresCard": {
+                    "title": "Features",
+                    "noFeatures": "No features listed."
+                },
+                "descriptionCard": {
+                    "title": "Description"
+                },
+                "imagesVideosCard": {
+                    "title": "Images & Videos"
+                }
+            }
+        },
+        "createPropertyPage": {
+            "title": "Create Property Page",
+            "description": "The Create Property Page allows you to create a new property.",
+            "loading": "Loading property creation...",
+            "createProperty": {
+                "steps": {
+                    "basicInfo": "Basic Info",
+                    "propertyDetails": "Property Details",
+                    "propertyMedia": "Property Media",
+                    "location": "Location / Map",
+                    "contactPublishing": "Contact & Publishing"
+                },
+                "form": {
+                    "stepBasicInformation": {
+                        "title": "Basic Information",
+                        "propertyTitle": "Property Title",
+                        "propertyTitlePlaceholder": "Enter property title",
+                        "price": "Price",
+                        "pricePlaceholder": "Enter price",
+                        "propertyType": "Property Type",
+                        "propertyTypePlaceholder": "Select property type",
+                        "unitCategory": "Unit Category",
+                        "unitCategoryPlaceholder": "Select unit category",
+                        "city": "City",
+                        "cityPlaceholder": "Select or search city",
+                        "location": "Location",
+                        "locationPlaceholder": "Enter location/address",
+                        "areaSize": "Area Size (sq ft)",
+                        "areaSizePlaceholder": "Enter area size",
+                        "bedrooms": "Bedrooms",
+                        "bedroomsPlaceholder": "Enter number of bedrooms",
+                        "bathrooms": "Bathrooms",
+                        "bathroomsPlaceholder": "Enter number of bathrooms",
+                        "unitName": "Unit Name",
+                        "unitNamePlaceholder": "Enter unit name",
+                        "totalFloors": "Total Floors",
+                        "totalFloorsPlaceholder": "Total floors",
+                        "investorOnly": "Investor Only Property",
+                        "basicInfoSchema": {
+                            "title": "Title is required",
+                            "titleMax": "Title must be less than 200 characters",
+                            "price": "Price must be greater then 0",
+                            "priceMin": "Price must be a positive number",
+                            "city": "City is required",
+                            "location": "Location is required",
+                            "areaSize": "Area size must be a positive number",
+                            "areaSizeMin": "Area size must be a positive number"
+                        }
+                    },
+                    "stepPropertyDetails": {
+                        "title": "Property Details",
+                        "description": "Description",
+                        "features": "Features",
+                        "featuresPlaceholder": "Select features",
+                        "projectedResale": "Projected Resale",
+                        "projectedResalePlaceholder": "Enter projected resale value",
+                        "expectedAnnualRent": "Expected Annual Rent",
+                        "expectedAnnualRentPlaceholder": "Enter expected annual rent",
+                        "warrantyInformation": "Warranty Information",
+                        "warrantyInformationPlaceholder": "Enter warranty details",
+                        "expectedDeliveryDate": "Expected Delivery Date",
+                        "expiryDate": "Expiry Date"
+                    },
+                    "stepPropertyMedia": {
+                        "title": "Property Media",
+                        "propertyImages": "Property Images",
+                        "uploadImages": "Upload Images",
+                        "noImagesUploaded": "No images uploaded yet",
+                        "clickToUploadImages": "Click Upload Images to add property photos",
+                        "propertyVideos": "Property Videos",
+                        "uploadVideos": "Upload Videos",
+                        "noVideosUploaded": "No videos uploaded yet",
+                        "clickToUploadVideos": "Click Upload Videos to add property videos"
+                    },
+                    "stepLocation": {
+                        "title": "Location & Map",
+                        "latitude": "Latitude",
+                        "latitudePlaceholder": "Enter latitude",
+                        "longitude": "Longitude",
+                        "longitudePlaceholder": "Enter longitude",
+                        "getLocation": "Get Current Location",
+                        "mapPreview": "Map Preview",
+                        "coordinates": "Coordinates",
+                        "loadingMap": "Loading map...",
+                        "yourLocation": "Your Location"
+                    },
+                    "stepContactPublishing": {
+                        "title": "Contact & Publishing",
+                        "whatsAppNumber": "WhatsApp Number",
+                        "includeCountryCode": "Include country code (e.g., 05 for SA)",
+                        "propertySummary": {
+                            "propertySummarytitle": "Property Summary",
+                            "title": "Title:",
+                            "price": "Price:",
+                            "unitCategory": "Unit Category:",
+                            "unitName": "Unit Name:",
+                            "totalFloors": "Total Floors:",
+                            "expectedAnnualRent": "Expected Annual Rent:",
+                            "features": "Features:",
+                            "projectedResale": "Projected Resale:",
+                            "warrantyInfo": "Warranty Information:",
+                            "expectedDeliveryDate": "Expected Delivery Date:",
+                            "expiryDate": "Expiry Date:",
+                            "location": "Location:",
+                            "areaSize": "Area Size:",
+                            "bedrooms": "Bedrooms:",
+                            "bathrooms": "Bathrooms:",
+                            "propertyType": "Property Type:",
+                            "images": "Images:",
+                            "videos": "Videos:",
+                            "notSpecified": "Not specified",
+                            "uploaded": "uploaded"
+                        }
+                    }
+                },
+                "btn": {
+                    "previous": "Previous",
+                    "next": "Next",
+                    "createProperty": "Create Property"
+                },
+                "validationErrors": {
+                    "title": "Validation Errors"
+                }
+            }
+        },
+        "updatePropertyPage": {
+            "title": "Update Property",
+            "description": "The Update Property Page allows you to update a property.",
+            "loading": "Loading property updates...",
+            "updateProperty": {
+                "steps": {
+                    "basicInfo": "Basic Information",
+                    "propertyDetails": "Property Details",
+                    "propertyMedia": "Property Media",
+                    "location": "Location / Map",
+                    "contactPublishing": "Contact & Publishing"
+                },
+                "btn": {
+                    "previous": "Previous",
+                    "next": "Next",
+                    "updateProperty": "Update Property"
+                },
+                "validationErrors": {
+                    "title": "Validation Errors"
+                }
+            }
+        }
     }
 }

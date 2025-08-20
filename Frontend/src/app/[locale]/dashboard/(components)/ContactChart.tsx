@@ -1,12 +1,13 @@
 import React from 'react';
 import { Title } from 'rizzui';
 import { ContactDashboardStats } from '@/types/contact';
-
+import { useTranslations } from 'next-intl';
 interface ContactChartProps {
   data: ContactDashboardStats;
 }
 
 const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
+  const t = useTranslations('DashboardPage.contactAnalytics')
   // Calculate percentages for the pie chart
   const totalByType = Object.values(data.contactsByType).reduce((sum, count) => sum + count, 0);
   const totalByStatus = Object.values(data.contactsByStatus).reduce((sum, count) => sum + count, 0);
@@ -28,13 +29,13 @@ const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
       {/* Contact Types Chart */}
       <div className="p-6">
         <Title as="h4" className="mb-4 text-gray-800 dark:text-white">
-          Contacts by Type
+          {t('contactsbyTypeCard.title')}
         </Title>
         <div className="space-y-4">
           {typeData.map((item, index) => (
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div 
+                <div
                   className="w-4 h-4 rounded-full"
                   style={{
                     backgroundColor: [
@@ -66,13 +67,13 @@ const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
       {/* Contact Status Chart */}
       <div className="p-6">
         <Title as="h4" className="mb-4 text-gray-800 dark:text-white">
-          Contacts by Status
+          {t('contactsbyStatusCard.title')}
         </Title>
         <div className="space-y-4">
           {statusData.map((item, index) => (
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div 
+                <div
                   className="w-4 h-4 rounded-full"
                   style={{
                     backgroundColor: [
@@ -104,4 +105,4 @@ const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
   );
 };
 
-export default ContactChart; 
+export default ContactChart;
