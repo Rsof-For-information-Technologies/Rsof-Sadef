@@ -7,6 +7,7 @@ import { UserRole } from "@/types/userRoles";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import NavigateCreateUser from "./create/(components)/navigateCreateUser";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "User Management",
@@ -30,28 +31,27 @@ async function getUsers(searchParams: SearchParams) {
 export default async function SearchTablePage() {
   const users = await getAllUsers();
   const activeUsers = users.data.filter((item: any) => item.isActive) || [];
-
+  const t = await getTranslations("UserPages.userListPage");
   return (
     <Authenticate >
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
         <div className="flex justify-between items-center py-6">
           <div>
-            <h1 className="mb-2 text-2xl font-semibold">User Management</h1>
-            <p className="text-gray-600">Manage system users and their roles</p>
+            <h1 className="mb-2 text-2xl font-semibold">{t("title")}</h1>
+            <p className="text-gray-600">{t("description")}</p>
           </div>
           <div>
             <NavigateCreateUser />
           </div>
         </div>
-
         <BasicTableWidget
-          title="User Management"
+          title={t("userTable.title")}
           variant="minimal"
           data={activeUsers}
           // @ts-ignore
           getColumns={getUserColumns}
           enablePagination
-          searchPlaceholder="Search users..."
+          searchPlaceholder={t("userTable.searchPlaceholder")}
           className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
         />
       </Authorize>

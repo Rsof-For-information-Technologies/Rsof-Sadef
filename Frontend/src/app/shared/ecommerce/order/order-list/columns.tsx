@@ -764,9 +764,10 @@ export const getUserColumns = ({
   onHeaderCellClick,
 }: Columns) => {
   const { locale } = useParams<Params>()
+  const t = useTranslations('UserPages.userListPage.userTable.userHeader')
   return [
     {
-      title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -774,7 +775,7 @@ export const getUserColumns = ({
       render: (value: string) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="First Name" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'firstName'} />,
+      title: <HeaderCell title={t('firstName')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'firstName'} />,
       onHeaderCell: () => onHeaderCellClick('firstName'),
       dataIndex: 'firstName',
       key: 'firstName',
@@ -784,7 +785,7 @@ export const getUserColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Last Name" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'lastName'} />,
+      title: <HeaderCell title={t('lastName')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'lastName'} />,
       onHeaderCell: () => onHeaderCellClick('lastName'),
       dataIndex: 'lastName',
       key: 'lastName',
@@ -794,7 +795,7 @@ export const getUserColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Email" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
+      title: <HeaderCell title={t('email')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
       onHeaderCell: () => onHeaderCellClick('email'),
       dataIndex: 'email',
       key: 'email',
@@ -804,7 +805,7 @@ export const getUserColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Role" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'role'} />,
+      title: <HeaderCell title={t('role')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'role'} />,
       onHeaderCell: () => onHeaderCellClick('role'),
       dataIndex: 'role',
       key: 'role',
@@ -826,7 +827,7 @@ export const getUserColumns = ({
       },
     },
     {
-      title: <HeaderCell title="Active" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isActive'} />,
+      title: <HeaderCell title={t('isActive')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isActive'} />,
       onHeaderCell: () => onHeaderCellClick('isActive'),
       dataIndex: 'isActive',
       key: 'isActive',
@@ -834,15 +835,15 @@ export const getUserColumns = ({
       render: (value: boolean) => {
         return (
           value === true ? (
-            <Badge color="success">Active</Badge>
+            <Badge color="success">{t('active')}</Badge>
           ) : (
-            <Badge color="warning">Inactive</Badge>
+            <Badge color="warning">{t('inactive')}</Badge>
           )
         );
       }
     },
     {
-      title: <HeaderCell title="Actions" className='flex justify-end' />,
+      title: <HeaderCell title={t('actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       width: 100,

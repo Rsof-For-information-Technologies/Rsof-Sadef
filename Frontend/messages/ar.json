@@ -637,5 +637,96 @@
                 "updateRequest": "تحديث طلب"
             }
         }
+    },
+    "UserPages": {
+        "userListPage": {
+            "title": "قائمة المستخدمين",
+            "description": "يعرض قائمة المستخدمين جميع المستخدمين المتاحة مع التفاصيل الرئيسية للتصفح السهل.",
+            "navigateCreateUser": {
+                "createUserBtn": "+ إنشاء مستخدم"
+            },
+            "userTable": {
+                "title": "جدول المستخدمين",
+                "searchPlaceholder": "ابحث عن مستخدم...",
+                "userHeader": {
+                    "id": "الرقم",
+                    "firstName": "الاسم الأول",
+                    "lastName": "الاسم الأخير",
+                    "email": "البريد الإلكتروني",
+                    "role": "الدور",
+                    "isActive": "نشط",
+                    "active": "نشط",
+                    "inactive": "غير نشط",
+                    "actions": "الإجراءات"
+                }
+            }
+        },
+        "userDetailPage": {
+            "title": "تفاصيل المستخدم",
+            "description": "يعرض تفاصيل المستخدم بالتفاصيل الرئيسية.",
+            "loading": "جاري تحميل تفاصيل المستخدم...",
+            "userDetails": {
+                "basicInformationCard": {
+                    "title": "معلومات المستخدم",
+                    "infoCard": {
+                        "id": "الرقم",
+                        "firstName": "الاسم الأول",
+                        "lastName": "الاسم الأخير",
+                        "email": "البريد الإلكتروني",
+                        "role": "الدور",
+                        "status": "الحالة",
+                        "active": "نشط",
+                        "inactive": "غير نشط",
+                        "accountSummary": "ملخص الحساب",
+                        "fullName": "الاسم الكامل",
+                        "emailAddress": "البريد الإلكتروني"
+                    }
+                }
+            }
+        },
+        "createUserPage": {
+            "title": "إنشاء مستخدم جديد",
+            "description": "يسمح هذا الصفحة بإنشاء مستخدم جديد.",
+            "loading": "جاري إنشاء المستخدم...",
+            "form": {
+                "firstName": "الاسم الأول",
+                "firstNamePlaceholder": "أدخل الاسم الأول",
+                "lastName": "الاسم الأخير",
+                "lastNamePlaceholder": "أدخل الاسم الأخير",
+                "email": "البريد الإلكتروني",
+                "emailPlaceholder": "أدخل البريد الإلكتروني",
+                "password": "كلمة المرور",
+                "passwordPlaceholder": "أدخل كلمة المرور",
+                "confirmPassword": "تأكيد كلمة المرور",
+                "confirmPasswordPlaceholder": "أدخل كلمة المرور",
+                "role": "الدور",
+                "rolePlaceholder": "اختر الدور"
+            },
+            "btn": {
+                "cancel": "إلغاء",
+                "creating": "جاري إنشاء المستخدم...",
+                "createUser": "إنشاء مستخدم"
+            }
+        },
+        "updateUserPage": {
+            "title": "تحديث المستخدم",
+            "description": "يسمح هذا الصفحة بتحديث المستخدم.",
+            "loading": "جاري تحديث المستخدم...",
+            "form": {
+                "firstName": "الاسم الأول",
+                "firstNamePlaceholder": "أدخل الاسم الأول",
+                "lastName": "الاسم الأخير",
+                "lastNamePlaceholder": "أدخل الاسم الأخير",
+                "email": "البريد الإلكتروني",
+                "emailPlaceholder": "أدخل البريد الإلكتروني",
+                "role": "الدور",
+                "rolePlaceholder": "اختر الدور"
+            },
+            "btn": {
+                "cancel": "إلغاء",
+                "updating": "جاري تحديث المستخدم...",
+                "updateUser": "تحديث المستخدم"
+            }
+        }
     }
 }

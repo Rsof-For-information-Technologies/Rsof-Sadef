@@ -4,13 +4,15 @@ import { Button } from 'rizzui'
 import { useParams, useRouter } from 'next/navigation'
 import { routes } from '@/config/routes';
 import { Params } from '@/types/params';
+import { useTranslations } from 'next-intl';
 
-function NavigateCreateUser() {
+async function NavigateCreateUser() {
+  const t = useTranslations("UserPages.userListPage.navigateCreateUser");
   const router = useRouter();
   const params = useParams<Params>();
 
   return (
-    <Button onClick={() => router.push(`/${params.locale}${routes.user.create}`)}>+ Create User</Button>
+    <Button onClick={() => router.push(`/${params.locale}${routes.user.create}`)}>{t("createUserBtn")}</Button>
   )
 }
 
