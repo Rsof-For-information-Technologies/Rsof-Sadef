@@ -25,13 +25,14 @@ namespace Sadef.Application.Services.Lead
         private readonly IValidator<CreateLeadDto> _createLeadValidator;
         private readonly IValidator<UpdateLeadDto> _updateLeadValidator;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
+        private readonly IPropertyTimeLineService _propertyTimeLineService;
         private readonly IDistributedCache _cache;
         private readonly IStringLocalizer _localizer;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private const string LeadDashboardCacheKey = "lead:dashboard:stats";
         private const string LeadVersionKey = "leads:version";
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IStringLocalizerFactory localizerFactory , IHttpContextAccessor httpContextAccessor)
+        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IStringLocalizerFactory localizerFactory , IHttpContextAccessor httpContextAccessor, IPropertyTimeLineService propertyTimeLineService)
         {
             _uow = uow;
             _mapper = mapper;
@@ -41,6 +42,7 @@ namespace Sadef.Application.Services.Lead
             _cache = cache;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
             _httpContextAccessor = httpContextAccessor;
+            _propertyTimeLineService = propertyTimeLineService;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -55,13 +57,13 @@ namespace Sadef.Application.Services.Lead
                     ValidationResultModel = new ValidationResultModel(validationResult)
                 };
             }
+
+            Property? property = null;
             if (dto.PropertyId.HasValue)
             {
                 var queryRepo = _queryRepositoryFactory.QueryRepository<Property>();
-                var propertyExists = await queryRepo
-                    .Queryable()
-                    .AnyAsync(p => p.Id == dto.PropertyId.Value);
-                if (!propertyExists)
+                property = await queryRepo.Queryable().FirstOrDefaultAsync(p => p.Id == dto.PropertyId.Value);
+                if (property == null)
                     return new Response<LeadDto> { Succeeded = false, Message = _localizer["Lead_InvalidPropertyReference"] };
             }
 
@@ -72,6 +74,10 @@ namespace Sadef.Application.Services.Lead
 
             await _uow.RepositoryAsync<Domain.LeadEntity.Lead>().AddAsync(lead);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            if (property != null)
+            {
+                await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Lead Created for the Property");
+            }
             await CacheHelper.IncrementCacheVersionAsync(_cache, LeadVersionKey);
             await CacheHelper.RemoveCacheKeyAsync(_cache, LeadDashboardCacheKey);
 

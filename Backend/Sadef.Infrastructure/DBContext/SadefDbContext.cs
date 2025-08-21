@@ -55,5 +55,6 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }
+        public DbSet<PropertyTimeLine> PropertyTimeLines { get; set; }
     }
 }
