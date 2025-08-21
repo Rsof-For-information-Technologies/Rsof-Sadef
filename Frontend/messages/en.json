@@ -550,5 +550,92 @@
                 }
             }
         }
+    },
+    "MaintenancePages": {
+        "maintenanceListPage": {
+            "title": "Maintenance List Page",
+            "description": "The Maintenance List Page displays all available maintenance requests with key details for easy browsing.",
+            "navigateCreateMaintenance": {
+                "createMaintenanceBtn": "+ Create Request"
+            },
+            "maintenanceTable": {
+                "title": "Maintenance Table",
+                "searchPlaceholder": "Search maintenance...",
+                "maintenanceHeader": {
+                    "id": "ID",
+                    "leadId": "Lead ID",
+                    "description": "Description",
+                    "status": "Status",
+                    "createdAt": "Created At",
+                    "isActive": "Active",
+                    "published": "Published",
+                    "draft": "Draft",
+                    "actions": "Actions"
+                }
+            }
+        },
+        "maintenanceDetailPage": {
+            "title": "Maintenance Detail Page",
+            "description": "The Maintenance Detail Page displays the details of a maintenance request with key details.",
+            "loading": "Loading maintenance details...",
+            "maintenanceDetails": {
+                "basicInformationCard": {
+                    "title": "Maintenance Information",
+                    "infoCard": {
+                        "id": "ID",
+                        "leadId": "Lead ID",
+                        "status": "Status",
+                        "description": "Description",
+                        "images&Videos": "Images & Videos"
+                    }
+                }
+            }
+        },
+        "createMaintenanceRequestPage": {
+            "title": "Create Maintenance Request Page",
+            "description": "The Create Maintenance Request Page allows you to create a new maintenance request.",
+            "loading": "Loading maintenance request creation...",
+            "createMaintenanceRequest": {
+                "form": {
+                    "leadId": "Lead ID",
+                    "leadIdPlaceholder": "Enter lead ID",
+                    "description": "Description",
+                    "descriptionPlaceholder": "Enter description",
+                    "requestImages": "Request Images",
+                    "uploadImages": "Upload Images",
+                    "noImagesUploaded": "No images uploaded yet",
+                    "clickToUploadImages": "Click Upload Images to add request photos",
+                    "requestVideo": "Request Video",
+                    "uploadVideo": "Upload Video",
+                    "noVideoUploaded": "No video uploaded yet",
+                    "clickToUploadVideo": "Click Upload Video to add request video"
+                },
+                "btn": {
+                    "createRequest": "Create Request"
+                }
+            }
+        },
+        "updateMaintenanceRequestPage": {
+            "title": "Update Maintenance Request Page",
+            "description": "The Update Maintenance Request Page allows you to update a maintenance request.",
+            "loading": "Loading maintenance request updates...",
+            "form": {
+                "leadId": "Lead ID",
+                "leadIdPlaceholder": "Enter lead ID",
+                "description": "Description",
+                "descriptionPlaceholder": "Enter description",
+                "requestImages": "Request Images",
+                "uploadImages": "Upload Images",
+                "noImagesUploaded": "No images uploaded yet",
+                "clickToUploadImages": "Click Upload Images to add request photos",
+                "requestVideo": "Request Video",
+                "uploadVideo": "Upload Video",
+                "noVideoUploaded": "No video uploaded yet",
+                "clickToUploadVideo": "Click Upload Video to add request video"
+            },
+            "btn": {
+                "updateRequest": "Update Request"
+            }
+        }
     }
 }

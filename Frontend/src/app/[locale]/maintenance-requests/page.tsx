@@ -7,6 +7,7 @@ import NavigateCreateRequest from "./(components)/navigateCreateRequest.tsx";
 import { UserRole } from "@/types/userRoles";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Maintenance Request",
@@ -30,27 +31,27 @@ async function getMaintenanceRequests(searchParams: SearchParams) {
 export default async function SearchTablePage() {
   const maintenanceRequest = await getMaintenanceRequests({ pageNumber: 1, pageSize: 10 });
   const activemaintenanceRequest = maintenanceRequest.data.items.filter((item) => item.isActive) || [];
-
+  const t = await getTranslations('MaintenancePages.maintenanceListPage')
   return (
     <Authenticate >
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
         <div className="flex justify-between items-center py-6">
           <div>
-            <h1 className="mb-4 text-2xl font-semibold">Maintenance Request List Page</h1>
-            <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
           </div>
           <div>
             <NavigateCreateRequest/>
           </div>
         </div>
         <BasicTableWidget
-          title="Search Table"
+          title={t('maintenanceTable.title')}
           variant="minimal"
           data={activemaintenanceRequest}
           // @ts-ignore
           getColumns={getMaintenanceRequestColumns}
           enablePagination
-          searchPlaceholder="Search order..."
+          searchPlaceholder={t('maintenanceTable.searchPlaceholder')}
           className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
         />
       </Authorize>

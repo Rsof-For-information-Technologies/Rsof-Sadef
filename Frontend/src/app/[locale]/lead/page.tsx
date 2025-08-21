@@ -28,15 +28,15 @@ async function getLeads(searchParams: SearchParams) {
 }
 
 export default async function SearchTablePage() {
-  const leads = await getLeads({ pageNumber: 1, pageSize: 10 });
+  const leads = await getLeads({ pageNumber: 1, pageSize: 20 });
   const t = await getTranslations('LeadPages.leadListPage')
   return (
     <Authenticate >
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-      <div className="flex justify-between items-center py-6">
+      <div className="flex py-6">
         <div>
           <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
-            <p className="mb-6 text-gray-600">{t('description')}</p>
+          <p className="mb-6 text-gray-600">{t('description')}</p>
         </div>
       </div>
       <BasicTableWidget

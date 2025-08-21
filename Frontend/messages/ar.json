@@ -550,5 +550,92 @@
                 }
             }
         }
+    },
+    "MaintenancePages": {
+        "maintenanceListPage": {
+            "title": "قائمة الطلبات",
+            "description": "يعرض قائمة الطلبات جميع الطلبات المتاحة مع التفاصيل الرئيسية للتصفح السهل.",
+            "navigateCreateMaintenance": {
+                "createMaintenanceBtn": "+ إنشاء طلب"
+            },
+            "maintenanceTable": {
+                "title": "جدول الطلبات",
+                "searchPlaceholder": "ابحث عن طلب...",
+                "maintenanceHeader": {
+                    "id": "الرقم",
+                    "leadId": "رقم الطلب",
+                    "description": "الوصف",
+                    "status": "الحالة",
+                    "createdAt": "تاريخ الطلب",
+                    "isActive": "نشط",
+                    "published": "منشئ",
+                    "draft": "مسودة",
+                    "actions": "الإجراءات"
+                }
+            }
+        },
+        "maintenanceDetailPage": {
+            "title": "تفاصيل الطلب",
+            "description": "يعرض تفاصيل الطلب بالتفاصيل الرئيسية.",
+            "loading": "جاري تحميل تفاصيل الطلب...",
+            "maintenanceDetails": {
+                "basicInformationCard": {
+                    "title": "معلومات الطلب",
+                    "infoCard": {
+                        "id": "الرقم",
+                        "leadId": "رقم الطلب",
+                        "status": "الحالة",
+                        "description": "الوصف",
+                        "images&Videos": "الصور والفيديوهات"
+                    }
+                }
+            }
+        },
+        "createMaintenanceRequestPage": {
+            "title": "إنشاء طلب الصيانة",
+            "description": "يسمح هذا الصفحة بإنشاء طلب الصيانة.",
+            "loading": "جاري إنشاء طلب الصيانة...",
+            "createMaintenanceRequest": {
+                "form": {
+                    "leadId": "رقم الطلب",
+                    "leadIdPlaceholder": "أدخل رقم الطلب",
+                    "description": "الوصف",
+                    "descriptionPlaceholder": "أدخل الوصف",
+                    "requestImages": "الصور المطلوبة",
+                    "uploadImages": "رفع الصور",
+                    "noImagesUploaded": "لا توجد صور مرفوعة بعد",
+                    "clickToUploadImages": "اضافة الصور",
+                    "requestVideo": "الفيديو المطلوب",
+                    "uploadVideo": "رفع الفيديو",
+                    "noVideoUploaded": "لا توجد فيديوهات مرفوعة بعد",
+                    "clickToUploadVideo": "اضافة الفيديو"
+                },
+                "btn": {
+                    "createRequest": "إنشاء طلب"
+                }
+            }
+        },
+        "updateMaintenanceRequestPage": {
+            "title": "تحديث طلب الصيانة",
+            "description": "يسمح هذا الصفحة بتحديث طلب الصيانة.",
+            "loading": "جاري تحديث طلب الصيانة...",
+            "form": {
+                "leadId": "رقم الطلب",
+                "leadIdPlaceholder": "أدخل رقم الطلب",
+                "description": "الوصف",
+                "descriptionPlaceholder": "أدخل الوصف",
+                "requestImages": "الصور المطلوبة",
+                "uploadImages": "رفع الصور",
+                "noImagesUploaded": "لا توجد صور مرفوعة بعد",
+                "clickToUploadImages": "اضافة الصور",
+                "requestVideo": "الفيديو المطلوب",
+                "uploadVideo": "رفع الفيديو",
+                "noVideoUploaded": "لا توجد فيديوهات مرفوعة بعد",
+                "clickToUploadVideo": "اضافة الفيديو"
+            },
+            "btn": {
+                "updateRequest": "تحديث طلب"
+            }
+        }
     }
 }

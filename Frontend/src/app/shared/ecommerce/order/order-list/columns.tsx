@@ -603,9 +603,10 @@ export const getMaintenanceRequestColumns = ({
   onHeaderCellClick,
 }: Columns) => {
   const { locale } = useParams<Params>()
+  const t = useTranslations('MaintenancePages.maintenanceListPage.maintenanceTable.maintenanceHeader')
   return [
     {
-      title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -613,7 +614,7 @@ export const getMaintenanceRequestColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="Lead ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'leadId'} />,
+      title: <HeaderCell title={t('leadId')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'leadId'} />,
       onHeaderCell: () => onHeaderCellClick('leadId'),
       dataIndex: 'leadId',
       key: 'leadId',
@@ -621,7 +622,7 @@ export const getMaintenanceRequestColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="Description" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'description'} />,
+      title: <HeaderCell title={t('description')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'description'} />,
       onHeaderCell: () => onHeaderCellClick('description'),
       dataIndex: 'description',
       key: 'description',
@@ -633,7 +634,7 @@ export const getMaintenanceRequestColumns = ({
       ),
     },
     {
-      title: (<HeaderCell title="Status" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
+      title: (<HeaderCell title={t('status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
       dataIndex: 'status',
       key: 'status',
       width: 120,
@@ -655,7 +656,7 @@ export const getMaintenanceRequestColumns = ({
       },
     },
     {
-      title: (<HeaderCell title="CreatedAt At" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'createdAt'} />),
+      title: (<HeaderCell title={t('createdAt')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'createdAt'} />),
       onHeaderCell: () => onHeaderCellClick('createdAt'),
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -663,7 +664,7 @@ export const getMaintenanceRequestColumns = ({
       render: (value: string) => <DateCell date={new Date(value)} />,
     },
     {
-      title: <HeaderCell title="Active" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isActive'} />,
+      title: <HeaderCell title={t('isActive')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isActive'} />,
       onHeaderCell: () => onHeaderCellClick('isActive'),
       dataIndex: 'isActive',
       key: 'isActive',
@@ -671,15 +672,15 @@ export const getMaintenanceRequestColumns = ({
       render: (value: boolean) => {
         return (
           value === true ? (
-            <Badge color="success">Published</Badge>
+            <Badge color="success">{t('published')}</Badge>
           ) : (
-            <Badge color="warning">Draft</Badge>
+            <Badge color="warning">{t('draft')}</Badge>
           )
         );
       }
     },
     {
-      title: <HeaderCell title="Actions" className='flex justify-end' />,
+      title: <HeaderCell title={t('actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       width: 50,

@@ -8,6 +8,7 @@ import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import { UserRole } from "@/types/userRoles";
 import { maintenanceRequestStatuses } from "@/constants/constants";
+import { getTranslations } from "next-intl/server";
 
 export default async function DetailsMaintenanceRequest({
   params,
@@ -16,6 +17,7 @@ export default async function DetailsMaintenanceRequest({
 }) {
   let data: DataItem | null = null;
   const BASE_URL = process.env.SERVER_BASE_URL || '';
+  const t = await getTranslations('MaintenancePages.maintenanceDetailPage')
 
   try {
     const response = await getMaintenanceRequestById(params.maintenanceRequestId);
@@ -28,26 +30,26 @@ export default async function DetailsMaintenanceRequest({
   return (
     <Authenticate >
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-        <div className="max-w-[900px] w-full mx-auto py-8 px-4">
-          <div className="py-4 text-center">
-            <h1 className="mb-4 text-2xl font-semibold">Details Maintenance Request</h1>
-            <p className="mb-6 text-gray-600"> This page allows you to view the maintenance request details. </p>
+        <div className="flex flex-col py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
           </div>
-          <CollapsibleSection title="Basic Information" defaultOpen>
+          <CollapsibleSection title={t('maintenanceDetails.basicInformationCard.title')} defaultOpen>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
                 <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏷️</span>
-                <span className="font-semibold text-green-700">ID:</span>
+                <span className="font-semibold text-green-700">{t('maintenanceDetails.basicInformationCard.infoCard.id')}:</span>
                 <span className="text-gray-800">{data.id}</span>
               </div>
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
                 <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏷️</span>
-                <span className="font-semibold text-green-700">Lead ID:</span>
+                <span className="font-semibold text-green-700">{t('maintenanceDetails.basicInformationCard.infoCard.leadId')}:</span>
                 <span className="text-gray-800">{data.leadId}</span>
               </div>
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
                 <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">📄</span>
-                <span className="font-semibold text-green-700">Status:</span>
+                <span className="font-semibold text-green-700">{t('maintenanceDetails.basicInformationCard.infoCard.status')}:</span>
                 <span className="text-gray-800">{
                   (() => {
                     const found = maintenanceRequestStatuses.find(
@@ -60,11 +62,11 @@ export default async function DetailsMaintenanceRequest({
             </div>
           </CollapsibleSection>
 
-          <CollapsibleSection title="Description">
+          <CollapsibleSection title={t('maintenanceDetails.basicInformationCard.infoCard.description')}>
             <div dangerouslySetInnerHTML={{ __html: data.description || '<span class="text-gray-400">No description provided.</span>' }} className="prose max-w-none text-gray-700"></div>
           </CollapsibleSection>
 
-          <CollapsibleSection title="Images & Videos">
+          <CollapsibleSection title={t('maintenanceDetails.basicInformationCard.infoCard.images&Videos')}>
             <div className="flex flex-col gap-6 items-start">
               {data.imageUrls && data.imageUrls.length > 0 && (
                 <div className="flex flex-wrap gap-4">
