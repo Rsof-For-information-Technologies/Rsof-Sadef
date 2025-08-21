@@ -4,12 +4,14 @@ import UpdateBlogForm from "./updateBlogForm";
 import Authenticate from "@/components/auth/authenticate";
 import { UserRole } from "@/types/userRoles";
 import Authorize from "@/components/auth/authorize";
+import { getTranslations } from "next-intl/server";
 
 export default async function UpdateBlogPage({
   params,
 }: {
   params: { blogId: string };
 }) {
+  const t = await getTranslations('BlogPages.updateBlogPage');
   try {
     const response = await getBlogById(params.blogId);
 
@@ -32,11 +34,13 @@ export default async function UpdateBlogPage({
     return (
       <Authenticate >
         <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-          <div className="py-4">
-            <h1 className="mb-4 text-2xl font-semibold">Update Blog</h1>
-            <p className="mb-6 text-gray-600"> This page allows you to update the blog post details. </p>
+        <div className="flex flex-col py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
           </div>
           <UpdateBlogForm blogId={params.blogId} initialData={initialData} />
+        </div>
         </Authorize>
       </Authenticate>
     );

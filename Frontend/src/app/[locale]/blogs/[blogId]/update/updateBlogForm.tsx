@@ -9,7 +9,7 @@ import { updateBlog } from "@/utils/api";
 import RichTextEditor from "@/components/textEditor/rich-text-editor";
 import BlogPreview from "../../blogPreview";
 import { BlogFormData } from "@/types/blog";
-
+import { useTranslations } from "next-intl";
 interface UpdateBlogFormProps {
   blogId: string;
   initialData: {
@@ -22,6 +22,7 @@ interface UpdateBlogFormProps {
 }
 
 export default function UpdateBlogForm({ blogId, initialData, }: UpdateBlogFormProps) {
+  const t = useTranslations('BlogPages.updateBlogPage');
   const [error, setError] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>( initialData.previewImage );
   const router = useRouter();
@@ -84,27 +85,27 @@ export default function UpdateBlogForm({ blogId, initialData, }: UpdateBlogFormP
             <div className="flex flex-col gap-3">
               <Input
                 type="text"
-                label="Title"
+                label={t('form.title')}
                 id="title"
-                placeholder="Enter blog title"
+                placeholder={t('form.titlePlaceholder')}
                 className="font-medium"
                 inputClassName="text-sm"
                 error={errors.title?.message}
                 {...register("title")}
               />
               <RichTextEditor
-                label="Content"
+                label={t('form.content')}
                 id="content"
-                placeholder="Enter blog content"
+                placeholder={t('form.contentPlaceholder')}
                 error={errors.content?.message}
                 value={formValues.content}
                 onChange={(content) => setValue("content", content)}
               />
               <FileInput
-                label="Cover Image"
+                label={t('form.coverImage')}
                 variant="outline"
                 accept="image/*"
-                placeholder={previewImage ? "Current Image" : "No file chosen"}
+                placeholder={previewImage ? t('form.currentImage') : t('form.noFileChosen')}
                 onChange={handleImageChange}
               />
             </div>
@@ -118,18 +119,18 @@ export default function UpdateBlogForm({ blogId, initialData, }: UpdateBlogFormP
           </div>
           <Checkbox
             className="m-2"
-            label="Publish"
+            label={t('form.isPublished')}
             size="sm"
             error={errors.isPublished?.message}
             {...register("isPublished")}
           />
           <Button
-            className="bg-[#4675db] hover:bg-[#1d58d8] dark:hover:bg-[#1d58d8] dark:text-white"
+            className="bg-[#000000] hover:bg-[#2e2e2e] dark:hover:bg-[#2b2b2b] dark:text-white"
             type="submit"
-            size="md"
+            size="lg"
             disabled={isSubmitting}
           >
-            <span>Update Blog</span>
+            <span>{t('btn.updateBlog')}</span>
           </Button>
         </div>
       </form>

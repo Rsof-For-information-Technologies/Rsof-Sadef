@@ -23,7 +23,7 @@ export default function TablePagination({
   paginatorClassName = 'mt-5 xs:mt-6 sm:mt-7',
   ...props
 }: TablePaginationProps) {
-  const t = useTranslations('PropertyPages.propertyListPage.propertyTable.propertyFooter');
+  const t = useTranslations('tableFooter');
   if (total && total < pageSize) {
     return null;
   }

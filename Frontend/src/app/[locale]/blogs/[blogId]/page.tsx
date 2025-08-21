@@ -5,8 +5,10 @@ import { notFound } from "next/navigation";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import { UserRole } from "@/types/userRoles";
+import { getTranslations } from "next-intl/server";
 
 async function DetailsBlog({ params }: { params: { blogId: string } }) {
+  const t = await getTranslations('BlogPages.blogDetailPage');
   try {
     const response = await getBlogById(params.blogId);
     if (!response?.data) {
@@ -29,21 +31,19 @@ async function DetailsBlog({ params }: { params: { blogId: string } }) {
     return (
       <Authenticate >
         <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-          <div className="py-4 text-center">
-            <h1 className="mb-4 text-2xl font-semibold">Blog Details</h1>
-            <p className="mb-6 text-gray-600"> This page displays the details of a specific blog post. </p>
+        <div className="flex flex-col justify-between items-start py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
           </div>
-          <div className="space-y-6">
-            <div className="flex max-w-[800px] mx-auto">
-              <BlogPreview
-                title={blogData.title}
-                content={blogData.content}
-                coverImage={blogData.coverImage}
-                previewImage={previewImage}
-                isPublished={blogData.isPublished}
-              />
-            </div>
-          </div>
+            <BlogPreview
+              title={blogData.title}
+              content={blogData.content}
+              coverImage={blogData.coverImage}
+              previewImage={previewImage}
+              isPublished={blogData.isPublished}
+            />
+        </div>
         </Authorize>
       </Authenticate>
     );

@@ -25,7 +25,7 @@ export default async function DetailsPropertyPage({
     return (
       <Authenticate>
         <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-        <div className="flex flex-col justify-between items-start py-6">
+          <div className="flex flex-col justify-between items-start py-6">
             <div>
               <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
               <p className="mb-6 text-gray-600">{t('description')}</p>

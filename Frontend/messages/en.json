@@ -191,6 +191,10 @@
             "noDataAvailable": "No data available"
         }
     },
+    "tableFooter": {
+        "pages": "Pages",
+        "rowsPerPage": "Rows per page"
+    },
     "PropertyPages": {
         "propertyListPage": {
             "title": "Property List Page",
@@ -230,10 +234,6 @@
                     "actions": "Actions",
                     "saving": "Saving...",
                     "save": "Save"
-                },
-                "propertyFooter": {
-                    "pages": "Pages",
-                    "rowsPerPage": "Rows per page"
                 }
             }
         },
@@ -440,6 +440,75 @@
                 "validationErrors": {
                     "title": "Validation Errors"
                 }
+            }
+        }
+    },
+    "BlogPages": {
+        "blogsListPage": {
+            "title": "Blog List Page",
+            "description": "The Blog List Page displays a list of blogs with key details for easy browsing.",
+            "navigateCreateBlog": {
+                "createBlogBtn": "+ Create Blog"
+            },
+            "blogTable": {
+                "title": "Blog Table",
+                "searchPlaceholder": "Search blog...",
+                "blogHeader": {
+                    "id": "ID",
+                    "title": "Title",
+                    "publishedAt": "Published At",
+                    "published": "Published",
+                    "actions": "Actions"
+                }
+            }
+        },
+        "blogDetailPage": {
+            "title": "Blog Detail Page",
+            "description": "The Blog Detail Page displays the details of a blog with key details.",
+            "loading": "Loading blog details..."
+        },
+        "blogPreviewCard": {
+            "preview": "Preview",
+            "title": "Your Blog Title",
+            "coverImagePreview": "Cover Image Preview",
+            "yourBlogContentWillAppearHere": "Your blog content will appear here",
+            "thisPostWillBePublished": "This post will be published",
+            "thisPostWillBeSavedAsDraft": "This post will be saved as draft"
+        },
+        "createBlogPage": {
+            "title": "Create Blog Page",
+            "description": "The Create Blog Page allows you to create a new blog.",
+            "loading": "Loading blog creation...",
+            "form": {
+                "title": "Title",
+                "titlePlaceholder": "Enter blog title",
+                "content": "Content",
+                "contentPlaceholder": "Enter blog content",
+                "coverImage": "Cover Image",
+                "currentImage": "Current Image",
+                "noFileChosen": "No file chosen",
+                "isPublished": "Is Published"
+            },
+            "btn": {
+                "createBlog": "Create Blog"
+            }
+        },
+        "updateBlogPage": {
+            "title": "Update Blog Page",
+            "description": "The Update Blog Page allows you to update a blog.",
+            "loading": "Loading blog updates...",
+            "form": {
+                "title": "Title",
+                "titlePlaceholder": "Enter blog title",
+                "content": "Content",
+                "contentPlaceholder": "Enter blog content",
+                "coverImage": "Cover Image",
+                "currentImage": "Current Image",
+                "noFileChosen": "No file chosen",
+                "isPublished": "Is Published"
+            },
+            "btn": {
+                "updateBlog": "Update Blog"
             }
         }
     }

@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-
+import { useTranslations } from "next-intl";
 interface BlogPreviewProps {
   title: string;
   content: string;
@@ -16,9 +16,10 @@ function BlogPreview({
   previewImage,
   isPublished,
 }: BlogPreviewProps) {
+  const t = useTranslations('BlogPages.blogPreviewCard');
   return (
     <div className="block w-full">
-      <p className="text-[14px] mb-[6px]">Preview</p>
+      <p className="text-[14px] mb-[6px]">{t('preview')}</p>
       <div className="rounded-lg border-2 overflow-hidden">
         <div className="bg-inherit p-2">
           {previewImage ||
@@ -37,29 +38,29 @@ function BlogPreview({
             </div>
           ) : (
             <div className="mb-4 h-60 bg-gray-100 border-1 rounded-lg flex items-center justify-center text-gray-400">
-              Cover Image Preview
+              {t('coverImagePreview')}
             </div>
           )}
           <h2 className="text-xl font-bold mb-2">
-            {title || "Your Blog Title"}
+            {title || t('title')}
           </h2>
           <div className="preview-content prose max-w-none">
             {content ? (
               <div dangerouslySetInnerHTML={{ __html: content }} />
             ) : (
               <p className="text-gray-500">
-                Your blog content will appear here
+                {t('yourBlogContentWillAppearHere')}
               </p>
             )}
           </div>
           <div className="mt-4 pt-4 border-t">
             <p className="text-sm text-gray-500">
               {isPublished
-                ? "This post will be published"
-                : "This post will be saved as draft"}
-            </p>
+                  ? t('thisPostWillBePublished')
+                  : t('thisPostWillBeSavedAsDraft')}
+              </p>
+            </div>
           </div>
-        </div>
       </div>
     </div>
   );

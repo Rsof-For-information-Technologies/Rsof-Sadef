@@ -149,9 +149,10 @@ export const getBlogColumns = ({
   onHeaderCellClick,
 }: Columns) => {
   const { locale } = useParams<Params>()
+  const t = useTranslations('BlogPages.blogsListPage.blogTable.blogHeader');
   return [
     {
-      title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -159,7 +160,7 @@ export const getBlogColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="Title" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'title'} />,
+      title: <HeaderCell title={t('title')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'title'} />,
       onHeaderCell: () => onHeaderCellClick('title'),
       dataIndex: 'title',
       key: 'title',
@@ -169,7 +170,7 @@ export const getBlogColumns = ({
       ),
     },
     {
-      title: (<HeaderCell title="Published At" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'publishedAt'} />),
+      title: (<HeaderCell title={t('publishedAt')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'publishedAt'} />),
       onHeaderCell: () => onHeaderCellClick('publishedAt'),
       dataIndex: 'publishedAt',
       key: 'publishedAt',
@@ -177,7 +178,7 @@ export const getBlogColumns = ({
       render: (value: string) => <DateCell date={new Date(value)} />,
     },
     {
-      title: <HeaderCell title="Published" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isPublished'} />,
+      title: <HeaderCell title={t('published')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isPublished'} />,
       onHeaderCell: () => onHeaderCellClick('isPublished'),
       dataIndex: 'isPublished',
       key: 'isPublished',
@@ -193,7 +194,7 @@ export const getBlogColumns = ({
       }
     },
     {
-      title: <HeaderCell title="Actions" className='flex justify-end' />,
+      title: <HeaderCell title={t('actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       width: 100,

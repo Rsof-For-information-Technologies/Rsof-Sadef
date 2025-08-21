@@ -12,7 +12,7 @@ import { BlogFormData } from "@/types/blog";
 import { UserRole } from "@/types/userRoles";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
-
+import { useTranslations } from "next-intl";
 
 const initialValues = {
   title: "",
@@ -22,6 +22,7 @@ const initialValues = {
 };
 
 function CreateBlog() {
+  const t = useTranslations('BlogPages.createBlogPage');
   const [error, setError] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter();
@@ -74,35 +75,18 @@ function CreateBlog() {
   return (
     <Authenticate >
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-        <div className="mt-2 mb-6">
-          <h2>Create Blog</h2>
+        <div className="flex flex-col py-6">
+          <div>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
+          </div>
         </div>
         {error && (
           <div className="flex justify-center w-full">
-            <div
-              role="alert"
-              className="flex items-center max-w-lg w-full justify-center gap-3 bg-red-100 border border-red-500 text-red-500 pb-2 px-4 py-2 rounded-md font-medium text-center shadow-sm mb-2"
-            >
-              <svg
-                className="w-5 h-5 text-red-500"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  fill="none"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 8v4m0 4h.01"
-                />
+            <div role="alert" className="flex items-center max-w-lg w-full justify-center gap-3 bg-red-100 border border-red-500 text-red-500 pb-2 px-4 py-2 rounded-md font-medium text-center shadow-sm mb-2">
+              <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01"/>
               </svg>
               <span>{error}</span>
             </div>
@@ -114,26 +98,27 @@ function CreateBlog() {
               <div className="flex flex-col gap-3">
                 <Input
                   type="text"
-                  label="Title"
+                  label={t('form.title')}
                   id="title"
-                  placeholder="Enter blog title"
+                  placeholder={t('form.titlePlaceholder')}
                   className="font-medium"
                   inputClassName="text-sm"
                   error={errors.title?.message}
                   {...register("title")}
                 />
                 <RichTextEditor
-                  label="Content"
+                  label={t('form.content')}
                   id="content"
-                  placeholder="Enter blog content"
+                  placeholder={t('form.contentPlaceholder')}
                   error={errors.content?.message}
                   value={formValues.content}
                   onChange={(content) => setValue("content", content)}
                 />
                 <FileInput
-                  label="Cover Image"
+                  label={t('form.coverImage')}
                   variant="outline"
                   accept="image/*"
+                  placeholder={previewImage ? t('form.currentImage') : t('form.noFileChosen')}
                   onChange={handleImageChange}
                 />
               </div>
@@ -148,18 +133,18 @@ function CreateBlog() {
             </div>
             <Checkbox
               className="m-2"
-              label="Publish"
+              label={t('form.isPublished')}
               size="sm"
               error={errors.isPublished?.message}
               {...register("isPublished")}
             />
             <Button
-              className="bg-[#4675db] hover:bg-[#1d58d8] dark:hover:bg-[#1d58d8] dark:text-white"
+              className="bg-[#000000] hover:bg-[#2e2e2e] dark:hover:bg-[#2b2b2b] dark:text-white"
               type="submit"
               size="md"
               disabled={isSubmitting}
             >
-              <span>Create Blog</span>
+              <span>{t('btn.createBlog')}</span>
             </Button>
           </div>
         </form>

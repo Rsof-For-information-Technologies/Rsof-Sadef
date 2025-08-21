@@ -1,7 +1,7 @@
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export default async function Loading() {
-  const t = await getTranslations('BlogPages.blogDetailPage');
+export default function Loading() {
+  const t = useTranslations('BlogPages.createBlogPage');
   return (
     <div className="flex items-center justify-center min-h-[300px]">
       <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mr-3"></div>

@@ -7,6 +7,7 @@ import NavigateCreateBlog from "./(components)/navigateCreateBlog";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import { UserRole } from "@/types/userRoles";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "blogs",
@@ -29,26 +30,27 @@ async function getBlogs(searchParams: SearchParams) {
 
 export default async function SearchTablePage() {
   const blogs = await getBlogs({ pageNumber: 1, pageSize: 10 });
+  const t = await getTranslations('BlogPages.blogsListPage')
   return (
     <Authenticate >
       <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
         <div className="flex justify-between items-center py-6">
           <div>
-            <h1 className="mb-4 text-2xl font-semibold">Blog List Page</h1>
-            <p className="mb-6 text-gray-600"> This page demonstrates a table with search functionality using the BasicTableWidget component. </p>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
           </div>
           <div>
             <NavigateCreateBlog/>
           </div>
         </div>
         <BasicTableWidget
-          title="Search Table"
+          title={t('blogTable.title')}
           variant="minimal"
           data={blogs.data.items}
           // @ts-ignore
           getColumns={getBlogColumns}
           enablePagination
-          searchPlaceholder="Search order..."
+          searchPlaceholder={t('blogTable.searchPlaceholder')}
           className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
         />
       </Authorize>

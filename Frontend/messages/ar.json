@@ -191,6 +191,10 @@
             "noDataAvailable": "لا يوجد بيانات"
         }
     },
+    "tableFooter": {
+        "pages": "الصفحات",
+        "rowsPerPage": "عدد الصفوف في الصفحة"
+    },
     "PropertyPages": {
         "propertyListPage": {
             "title": "قائمة العقارات",
@@ -230,10 +234,6 @@
                     "actions": "الإجراءات",
                     "saving": "الحفظ...",
                     "save": "حفظ"
-                },
-                "propertyFooter": {
-                    "pages": "الصفحات",
-                    "rowsPerPage": "عدد الصفوف في الصفحة"
                 }
             }
         },
@@ -440,6 +440,75 @@
                 "validationErrors": {
                     "title": "أخطاء التحقق"
                 }
+            }
+        }
+    },
+    "BlogPages": {
+        "blogsListPage": {
+            "title": "قائمة المدونات",
+            "description": "يعرض قائمة المدونات جميع المدونات المتاحة مع التفاصيل الرئيسية للتصفح السهل.",
+            "navigateCreateBlog": {
+                "createBlogBtn": "+ إنشاء مدونة"
+            },
+            "blogTable": {
+                "title": "جدول المدونات",
+                "searchPlaceholder": "ابحث عن مدونة...",
+                "blogHeader": {
+                    "id": "الرقم",
+                    "title": "العنوان",
+                    "publishedAt": "تاريخ النشر",
+                    "published": "المنشئ",
+                    "actions": "الإجراءات"
+                }
+            }
+        },
+        "blogDetailPage": {
+            "title": "تفاصيل المدونة",
+            "description": "يعرض تفاصيل المدونة بالتفاصيل الرئيسية.",
+            "loading": "جاري تحميل تفاصيل المدونة..."
+        },
+        "blogPreviewCard": {
+            "preview": "معاينة",
+            "title": "عنوان المدونة",
+            "coverImagePreview": "معاينة صورة الغلاف",
+            "yourBlogContentWillAppearHere": "محتوى المدونة سيظهر هنا",
+            "thisPostWillBePublished": "سيتم نشر هذه المدونة",
+            "thisPostWillBeSavedAsDraft": "سيتم حفظ هذه المدونة كمسودة"
+        },
+        "createBlogPage": {
+            "title": "إنشاء مدونة",
+            "description": "يسمح هذا الصفحة بإنشاء المدونة الجديدة.",
+            "loading": "جاري إنشاء المدونة...",
+            "form": {
+                "title": "العنوان",
+                "titlePlaceholder": "أدخل عنوان المدونة",
+                "content": "المحتوى",
+                "contentPlaceholder": "أدخل محتوى المدونة",
+                "coverImage": "صورة الغلاف",
+                "currentImage": "صورة المعاينة",
+                "noFileChosen": "لم يتم اختيار أي ملف",
+                "isPublished": "المنشئ"
+            },
+            "btn": {
+                "createBlog": "إنشاء مدونة"
+            }
+        },
+        "updateBlogPage": {
+            "title": "تحديث المدونة",
+            "description": "يسمح هذا الصفحة بتحديث المدونة.",
+            "loading": "جاري تحديث المدونة...",
+            "form": {
+                "title": "العنوان",
+                "titlePlaceholder": "أدخل عنوان المدونة",
+                "content": "المحتوى",
+                "contentPlaceholder": "أدخل محتوى المدونة",
+                "coverImage": "صورة الغلاف",
+                "currentImage": "صورة المعاينة",
+                "noFileChosen": "لم يتم اختيار أي ملف",
+                "isPublished": "المنشئ"
+            },
+            "btn": {
+                "updateBlog": "تحديث المدونة"
             }
         }
     }
