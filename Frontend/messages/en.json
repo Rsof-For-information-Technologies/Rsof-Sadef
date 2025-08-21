@@ -511,5 +511,44 @@
                 "updateBlog": "Update Blog"
             }
         }
+    },
+    "LeadPages": {
+        "leadListPage": {
+            "title": "Lead List Page",
+            "description": "The Lead List Page displays a list of leads with key details for easy browsing.",
+            "leadTable": {
+                "title": "Lead Table",
+                "searchPlaceholder": "Search lead...",
+                "leadHeader": {
+                    "id": "ID",
+                    "propertyId": "Property ID",
+                    "fullName": "Full Name",
+                    "email": "Email",
+                    "phone": "Phone",
+                    "message": "Message",
+                    "status": "Status",
+                    "actions": "Actions"
+                }
+            }
+        },
+        "leadDetailPage": {
+            "title": "Lead Detail Page",
+            "description": "The Lead Detail Page displays the details of a lead with key details.",
+            "loading": "Loading lead details...",
+            "leadDetails": {
+                "basicInformationCard": {
+                    "title": "Lead Information",
+                    "infoCard": {
+                        "title": "ID",
+                        "fullName": "Full Name",
+                        "email": "Email",
+                        "phone": "Phone",
+                        "propertyId": "Property ID",
+                        "status": "Status",
+                        "message": "Message"
+                    }
+                }
+            }
+        }
     }
 }

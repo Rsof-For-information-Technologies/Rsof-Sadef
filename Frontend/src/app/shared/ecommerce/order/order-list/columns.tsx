@@ -445,9 +445,11 @@ export const getLeadColumns = ({
   onHeaderCellClick,
 }: Columns) => {
   const { locale } = useParams<Params>()
+  const t = useTranslations('LeadPages.leadListPage.leadTable');
+
   return [
     {
-      title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('leadHeader.id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -455,7 +457,7 @@ export const getLeadColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="Property ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyId'} />,
+      title: <HeaderCell title={t('leadHeader.propertyId')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyId'} />,
       onHeaderCell: () => onHeaderCellClick('propertyId'),
       dataIndex: 'propertyId',
       key: 'propertyId',
@@ -463,7 +465,7 @@ export const getLeadColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="Full Name" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'fullName'} />,
+      title: <HeaderCell title={t('leadHeader.fullName')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'fullName'} />,
       onHeaderCell: () => onHeaderCellClick('fullName'),
       dataIndex: 'fullName',
       key: 'fullName',
@@ -473,7 +475,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Email" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
+      title: <HeaderCell title={t('leadHeader.email')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
       onHeaderCell: () => onHeaderCellClick('email'),
       dataIndex: 'email',
       key: 'email',
@@ -483,7 +485,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Phone" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'phone'} />,
+      title: <HeaderCell title={t('leadHeader.phone')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'phone'} />,
       onHeaderCell: () => onHeaderCellClick('phone'),
       dataIndex: 'phone',
       key: 'phone',
@@ -493,7 +495,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Message" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'message'} />,
+      title: <HeaderCell title={t('leadHeader.message')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'message'} />,
       onHeaderCell: () => onHeaderCellClick('message'),
       dataIndex: 'message',
       key: 'message',
@@ -503,7 +505,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: (<HeaderCell title="Status" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
+      title: (<HeaderCell title={t('leadHeader.status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
       onHeaderCell: () => onHeaderCellClick('status'),
       dataIndex: 'status',
       key: 'status',
@@ -528,7 +530,7 @@ export const getLeadColumns = ({
       },
     },
     {
-      title: <HeaderCell title="Actions" className='flex justify-end' />,
+      title: <HeaderCell title={t('leadHeader.actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       width: 180,
