@@ -5,6 +5,7 @@ using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
 using Sadef.Application.DTOs.AuditLogDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
+using Sadef.Application.DTOs.PropertyTimeLineDtos;
 using Sadef.Application.DTOs.ContactDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Domain.BlogsEntity;
@@ -119,6 +120,10 @@ namespace Sadef.Application.MappingProfile
                     opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<Contact, ContactDto>()
                 .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom<PropertyTitleResolver>());
+
+            // PropertyTimeLine
+            CreateMap<CreatePropertyTimeLineLogDto, PropertyTimeLine>();
+            CreateMap<PropertyTimeLine, PropertyTimeLineLogDto>();
 
         }
     }

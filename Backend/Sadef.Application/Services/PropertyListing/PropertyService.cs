@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Sadef.Application.Abstractions.Interfaces;
+using Sadef.Application.Services.PropertyTimeLine;
+using Sadef.Common.Services.CurrentUser;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.Utils;
 using Sadef.Common.Domain;
@@ -38,9 +40,10 @@ namespace Sadef.Application.Services.PropertyListing
         private readonly IEnumLocalizationService _enumLocalizationService;
         private const string PROPERTY_CACHE_PREFIX = "property";
         private const string PROPERTY_DASHBOARD_CACHE_KEY = "property:dashboard:stats";
+        private readonly IPropertyTimeLineService _propertyTimeLineService;
         private const int CACHE_DURATION_MINUTES = 10;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto, IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService, IConfiguration configuration)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto, IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService, IConfiguration configuration, IPropertyTimeLineService propertyTimeLineService)
         {
             _uow = uow;
             _mapper = mapper;
@@ -54,6 +57,7 @@ namespace Sadef.Application.Services.PropertyListing
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _enumLocalizationService = enumLocalizationService;
+            _propertyTimeLineService = propertyTimeLineService;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -134,6 +138,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             // Save translations
             await SavePropertyTranslationsInternalAsync(property.Id, dto.Translations);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Created");
 
             // Clear relevant caches
             await ClearPropertyCaches();
@@ -242,6 +247,7 @@ namespace Sadef.Application.Services.PropertyListing
 
             await _uow.RepositoryAsync<Property>().UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Soft Deleted");
 
             // Clear all language-specific caches for properties
             await ClearPropertyCaches();
@@ -333,6 +339,7 @@ namespace Sadef.Application.Services.PropertyListing
             {
                 await SavePropertyTranslationsInternalAsync(existing.Id, dto.Translations);
             }
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(existing.Id, existing.Status, "Property Updated");
 
             // Clear all language-specific caches for properties
             await ClearPropertyCaches();
@@ -382,6 +389,7 @@ namespace Sadef.Application.Services.PropertyListing
             property.Status = dto.status;
             await repo.UpdateAsync(property);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "Property Status Updated");
 
             var updatedDto = _mapper.Map<PropertyDto>(property);
 

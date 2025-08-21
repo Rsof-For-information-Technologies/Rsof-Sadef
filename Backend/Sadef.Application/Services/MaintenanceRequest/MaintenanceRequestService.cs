@@ -5,6 +5,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
+using Sadef.Application.Services.PropertyTimeLine;
+using Sadef.Domain.PropertyEntity;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
@@ -29,6 +31,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
         private readonly IConfiguration _configuration;
         private const string MaintenanceCacheVersionKey = "maintenance:version";
         private const string MaintenanceDashboardcacheKey = "maintenancerequest:dashboard:stats";
+        private readonly IPropertyTimeLineService _propertyTimeLineService;
 
         public MaintenanceRequestService(
             IUnitOfWorkAsync uow,
@@ -38,7 +41,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             IQueryRepositoryFactory queryRepositoryFactory,
             IDistributedCache cache,
             IStringLocalizerFactory localizerFactory,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IPropertyTimeLineService propertyTimeLineService
         )
         {
             _uow = uow;
@@ -49,6 +53,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             _cache = cache;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
             _configuration = configuration;
+            _propertyTimeLineService = propertyTimeLineService;
         }
 
         public async Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto)
@@ -105,6 +110,13 @@ namespace Sadef.Application.Services.MaintenanceRequest
 
             await _uow.RepositoryAsync<Domain.MaintenanceRequestEntity.MaintenanceRequest>().AddAsync(request);
             await _uow.SaveChangesAsync(CancellationToken.None);
+            if (lead != null)
+            {
+                var propertyQuery = _queryRepositoryFactory.QueryRepository<Property>();
+                var property = await propertyQuery.Queryable().FirstOrDefaultAsync(p => p.Id == lead.PropertyId);
+                if (property != null)
+                    await _propertyTimeLineService.AddPropertyTimeLineLogAsync(property.Id, property.Status, "A maintenance request has been created for property.");
+            }
             await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
             await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
 

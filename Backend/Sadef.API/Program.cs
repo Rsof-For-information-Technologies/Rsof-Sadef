@@ -24,6 +24,9 @@ using Sadef.Application.Services.Lead;
 using Sadef.Application.Services.MaintenanceRequest;
 using Sadef.Application.Services.Multilingual;
 using Sadef.Application.Services.PropertyListing;
+using Sadef.Application.DTOs.PropertyTimeLineDtos;
+using Sadef.Application.Services.PropertyTimeLine;
+using Sadef.Common.Services.CurrentUser;
 using Sadef.Application.Services.User;
 using Sadef.Application.Services.Whatsapp;
 using Sadef.Application.MappingProfile;
@@ -180,21 +183,22 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        return new UpdateBlogValidator(localizer);
                    });
                    svc.AddScoped<IPropertyService>(provider =>
-{
-    var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
-    var mapper = provider.GetRequiredService<IMapper>();
-    var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
-    var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
-    var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
-    var cache = provider.GetRequiredService<IDistributedCache>();
-    var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
-    var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-    var context = provider.GetRequiredService<SadefDbContext>();
-    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-    var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
-    var configuration = provider.GetRequiredService<IConfiguration>();
-    return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration);
-});
+                   {
+                       var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+                       var mapper = provider.GetRequiredService<IMapper>();
+                       var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+                       var updateValidator = provider.GetRequiredService<IValidator<UpdatePropertyDto>>();
+                       var createValidator = provider.GetRequiredService<IValidator<CreatePropertyDto>>();
+                       var cache = provider.GetRequiredService<IDistributedCache>();
+                       var expireValidator = provider.GetRequiredService<IValidator<PropertyExpiryUpdateDto>>();
+                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var context = provider.GetRequiredService<SadefDbContext>();
+                       var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                       var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
+                       var configuration = provider.GetRequiredService<IConfiguration>();
+                       var propertyTimeLineService = provider.GetRequiredService<IPropertyTimeLineService>();
+                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration, propertyTimeLineService);
+                   });
                    svc.AddScoped<IBlogService>(provider =>
                    {
                        var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
@@ -228,7 +232,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var cache = provider.GetRequiredService<IDistributedCache>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory, contextAccessor);
+                       var propertyTimeLineService = provider.GetRequiredService<IPropertyTimeLineService>();
+                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory, contextAccessor, propertyTimeLineService);
                    });
 
 
@@ -267,9 +272,17 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        return new ContactService(uow, mapper, createValidator, updateValidator, updateStatusValidator, queryFactory, cache, localizerFactory, contextAccessor);
                    });
 
+                   svc.AddScoped<IValidator<CreatePropertyTimeLineLogDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new CreatePropertyTimeLineValidator();
+                   });
+
                    // Register PropertyTitleResolver for AutoMapper
                    svc.AddScoped<PropertyTitleResolver>();
-
+                   svc.AddScoped<IPropertyTimeLineService, PropertyTimeLineService>();
+                   svc.AddScoped<ICurrentUserService, CurrentUserService>();
 
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
