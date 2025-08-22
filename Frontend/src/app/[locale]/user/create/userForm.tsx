@@ -62,7 +62,7 @@ function UserForm() {
                     <p className="mb-6 text-gray-600">{t('description')}</p>
                 </div>
             </div>
-            <div className="bg-gray-50 rounded-lg shadow-md p-6">
+            <div className="bg-gray-50 rounded-lg shadow-md p-6 dark:bg-gray-100">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

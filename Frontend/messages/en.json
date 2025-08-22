@@ -799,5 +799,30 @@
                 }
             }
         }
+    },
+    "ProfilePages": {
+        "changePasswordPage": {
+            "title": "Change Password Page",
+            "description": "The Change Password Page allows you to change your password.",
+            "loading": "Loading password change...",
+            "back": "Back",
+            "form": {
+                "currentPassword": "Current Password",
+                "currentPasswordPlaceholder": "Enter current password",
+                "newPassword": "New Password",
+                "newPasswordPlaceholder": "Enter new password",
+                "confirmPassword": "Confirm New Password",
+                "confirmPasswordPlaceholder": "Confirm new password"
+            },
+            "btn": {
+                "cancel": "Cancel",
+                "updating": "Updating...",
+                "updatePassword": "Update Password"
+            }
+        }
+    },
+    "ProfileMenu": {
+        "changePassword": "Change Password",
+        "signOut": "Sign Out"
     }
 }

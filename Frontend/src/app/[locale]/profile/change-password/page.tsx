@@ -3,17 +3,18 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Password, Title } from "rizzui";
+import { Button, Password } from "rizzui";
 import { UserUpdatePassword } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { ChangePasswordSchema, changePasswordSchema } from "@/validators/updatePaseword.schema";
 import HorizontalFormBlockWrapper from "@/app/shared/modal-views/horiozontal-block";
 import { useUserStore } from "@/store/user.store";
-import { routes } from "@/config/routes";
 import { toast } from "sonner";
 import { PiArrowLeft } from "react-icons/pi";
+import { useTranslations } from "next-intl";
 
 export default function PasswordSettingsView() {
+  const t = useTranslations("ProfilePages.changePasswordPage");
   const [isLoading, setLoading] = useState(false);
   const router = useRouter();
   const { userInfo } = useUserStore();
@@ -78,7 +79,7 @@ export default function PasswordSettingsView() {
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading user information...</p>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -92,86 +93,93 @@ export default function PasswordSettingsView() {
       >
         <span className="flex items-center gap-2">
           <PiArrowLeft className="h-5 w-5" />
-          Back
+          {t('back')}
         </span>
       </button>
-      <Title as="h1" className="text-2xl font-bold mb-6 text-center">Change Password</Title>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="@container"
-        id="password-change-form"
-      >
-        <div className="mx-auto w-full max-w-screen-sm">
-          <HorizontalFormBlockWrapper
-            title="Current Password"
-            titleClassName="text-base font-medium"
-          >
-            <Password
-              id="current-password"
-              {...register("oldPassword")}
-              placeholder="Enter your current password"
-              error={errors.oldPassword?.message}
-            />
-          </HorizontalFormBlockWrapper>
-
-          <HorizontalFormBlockWrapper
-            title="New Password"
-            titleClassName="text-base font-medium"
-          >
-            <Controller
-              control={control}
-              name="newPassword"
-              render={({ field }) => (
-                <Password
-                  {...field}
-                  id="new-password"
-                  placeholder="Enter new password"
-                  error={errors.newPassword?.message}
-                />
-              )}
-            />
-          </HorizontalFormBlockWrapper>
-
-          <HorizontalFormBlockWrapper
-            title="Confirm New Password"
-            titleClassName="text-base font-medium"
-          >
-            <Controller
-              control={control}
-              name="confirmNewPassword"
-              render={({ field }) => (
-                <Password
-                  {...field}
-                  id="confirm-password"
-                  placeholder="Confirm new password"
-                  error={errors.confirmNewPassword?.message}
-                />
-              )}
-            />
-          </HorizontalFormBlockWrapper>
-
-          <div className="mt-6 flex w-auto items-center justify-end gap-3">
-            <Button
-              id="cancel-password-change"
-              type="button"
-              variant="outline"
-              onClick={() => reset()}
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              id="submit-password-change"
-              type="submit"
-              variant="solid"
-              isLoading={isLoading}
-              disabled={isLoading || !userInfo?.id}
-            >
-              Update Password
-            </Button>
-          </div>
+      <div className="flex flex-col py-6">
+        <div>
+            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+            <p className="mb-6 text-gray-600">{t('description')}</p>
         </div>
-      </form>
+      </div>
+      <div className="bg-gray-50 rounded-lg shadow-md p-6 dark:bg-gray-100">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="@container"
+          id="password-change-form"
+        >
+          <div className="mx-auto w-full max-w-screen-sm">
+            <HorizontalFormBlockWrapper
+              title={t('form.currentPassword')}
+              titleClassName="text-base font-medium"
+            >
+              <Password
+                id="current-password"
+                {...register("oldPassword")}
+                placeholder={t('form.currentPasswordPlaceholder')}
+                error={errors.oldPassword?.message}
+              />
+            </HorizontalFormBlockWrapper>
+
+            <HorizontalFormBlockWrapper
+              title={t('form.newPassword')}
+              titleClassName="text-base font-medium"
+            >
+              <Controller
+                control={control}
+                name="newPassword"
+                render={({ field }) => (
+                  <Password
+                    {...field}
+                    id="new-password"
+                    placeholder={t('form.newPasswordPlaceholder')}
+                    error={errors.newPassword?.message}
+                  />
+                )}
+              />
+            </HorizontalFormBlockWrapper>
+
+            <HorizontalFormBlockWrapper
+              title={t('form.confirmPassword')}
+              titleClassName="text-base font-medium"
+            >
+              <Controller
+                control={control}
+                name="confirmNewPassword"
+                render={({ field }) => (
+                  <Password
+                    {...field}
+                    id="confirm-password"
+                    placeholder={t('form.confirmPasswordPlaceholder')}
+                    error={errors.confirmNewPassword?.message}
+                  />
+                )}
+              />
+            </HorizontalFormBlockWrapper>
+
+            <div className="mt-6 flex w-auto items-center justify-end gap-3">
+              <Button
+                id="cancel-password-change"
+                type="button"
+                variant="outline"
+                onClick={() => reset()}
+                disabled={isLoading}
+              >
+                {t('btn.cancel')}
+              </Button>
+              <Button
+                id="submit-password-change"
+                type="submit"
+                variant="solid"
+                isLoading={isLoading}
+                disabled={isLoading || !userInfo?.id}
+              >
+                {t('btn.updatePassword')}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </div>
     </>
   );
 }

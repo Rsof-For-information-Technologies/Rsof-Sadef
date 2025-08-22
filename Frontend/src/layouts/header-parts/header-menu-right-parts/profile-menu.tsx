@@ -9,12 +9,13 @@ import { useUserStore } from "@/store/user.store";
 import { ShadcnAvatar, ShadcnAvatarFallback } from "@/components/shadCn/ui/avatar";
 import { Params } from "@/types/params";
 import { PiLockKey, PiSignOut } from "react-icons/pi";
+import { useTranslations } from "next-intl"; 
 
 function DropdownMenu() {
   const { logOutUser, userInfo } = useUserStore();
   const params = useParams<Params>()
   const router = useRouter();
-
+  const t = useTranslations("ProfileMenu");
   return (
     <div className="w-64 text-left rtl:text-right">
       <div className="flex items-center border-b border-gray-300 px-5 pb-5 pt-6">
@@ -46,7 +47,7 @@ function DropdownMenu() {
           }}
         >
           <PiLockKey className="mr-2 h-5 w-5" />
-          Change Password
+          {t('changePassword')}
         </Button>
       </div>
       <div className="border-t border-gray-300 px-6 pb-5 pt-5">
@@ -59,7 +60,7 @@ function DropdownMenu() {
           }}
         >
           <PiSignOut className="mr-2 h-5 w-5" />
-          Sign Out
+          {t('signOut')}
         </Button>
       </div>
     </div>
