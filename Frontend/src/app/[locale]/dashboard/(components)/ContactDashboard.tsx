@@ -110,7 +110,7 @@ const ContactDashboard: React.FC = () => {
         <div className="space-y-6">
             {/* Stats divs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+                <div className="p-6 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
                     <div className="flex items-center justify-between">
                         <div>
                             <Text className="text-sm font-medium text-blue-600">{t('cards.totalContacts')}</Text>
@@ -124,7 +124,7 @@ const ContactDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 bg-gradient-to-r from-green-50 to-green-100 border-green-200">
+                <div className="p-6 rounded-lg bg-gradient-to-r from-green-50 to-green-100 border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
                     <div className="flex items-center justify-between">
                         <div>
                             <Text className="text-sm font-medium text-green-600">{t('cards.newContacts')}</Text>
@@ -138,7 +138,7 @@ const ContactDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200">
+                <div className="p-6 rounded-lg bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
                     <div className="flex items-center justify-between">
                         <div>
                             <Text className="text-sm font-medium text-yellow-600">{t('cards.inProgress')}</Text>
@@ -152,7 +152,7 @@ const ContactDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-6 bg-gradient-to-r from-red-50 to-red-100 border-red-200">
+                <div className="p-6 rounded-lg bg-gradient-to-r from-red-50 to-red-100 border-red-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
                     <div className="flex items-center justify-between">
                         <div>
                             <Text className="text-sm font-medium text-red-600">{t('cards.urgentContacts')}</Text>
@@ -177,7 +177,7 @@ const ContactDashboard: React.FC = () => {
                 </Title>
                 <div className="space-y-4">
                     {data.recentContacts.map((contact) => (
-                        <div key={contact.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div key={contact.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-10 rounded-lg dark:border dark:border-gray-700">
                             <div className="flex items-center space-x-4">
                                 <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                                     <Text className="text-white font-semibold">
@@ -185,7 +185,7 @@ const ContactDashboard: React.FC = () => {
                                     </Text>
                                 </div>
                                 <div>
-                                    <Text className="font-medium text-gray-900 dark:text-white">
+                                    <Text className="font-medium text-gray-900 dark:text-white ">
                                         {contact.fullName}
                                     </Text>
                                     <Text className="text-sm text-gray-500 dark:text-gray-400">

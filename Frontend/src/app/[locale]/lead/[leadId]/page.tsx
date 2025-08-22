@@ -33,47 +33,35 @@ async function DetailsLead({ params }: DetailsLeadProps) {
           </div>
           <CollapsibleSection title={t('leadDetails.basicInformationCard.title')} defaultOpen>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
-                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">
-                  🏷️
-                </span>
-                <span className="font-semibold text-green-700">{t('leadDetails.basicInformationCard.infoCard.title')}:</span>
-                <span className="text-gray-800">{data?.id}</span>
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏷️</span>
+                <span className="font-semibold text-black dark:text-white">{t('leadDetails.basicInformationCard.infoCard.title')}:</span>
+                <span className="text-gray-800 dark:text-white">{data?.id}</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
-                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">
-                  👤
-                </span>
-                <span className="font-semibold text-green-700">{t('leadDetails.basicInformationCard.infoCard.fullName')}:</span>
-                <span className="text-gray-800">{data?.fullName}</span>
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">👤</span>
+                <span className="font-semibold text-black dark:text-white">{t('leadDetails.basicInformationCard.infoCard.fullName')}:</span>
+                <span className="text-gray-800 dark:text-white">{data?.fullName}</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
-                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">
-                  📧
-                </span>
-                <span className="font-semibold text-green-700">{t('leadDetails.basicInformationCard.infoCard.email')}:</span>
-                <span className="text-gray-800">{data?.email}</span>
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">📧</span>
+                <span className="font-semibold text-black dark:text-white">{t('leadDetails.basicInformationCard.infoCard.email')}:</span>
+                <span className="text-gray-800 dark:text-white">{data?.email}</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
-                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">
-                  📞
-                </span>
-                <span className="font-semibold text-green-700">{t('leadDetails.basicInformationCard.infoCard.phone')}:</span>
-                <span className="text-gray-800">{data?.phone}</span>
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">📞</span>
+                <span className="font-semibold text-black dark:text-white">{t('leadDetails.basicInformationCard.infoCard.phone')}:</span>
+                <span className="text-gray-800 dark:text-white">{data?.phone}</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
-                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">
-                  🏠
-                </span>
-                <span className="font-semibold text-green-700">{t('leadDetails.basicInformationCard.infoCard.propertyId')}:</span>
-                <span className="text-gray-800">{data?.propertyId}</span>
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏠</span>
+                <span className="font-semibold text-black dark:text-white">{t('leadDetails.basicInformationCard.infoCard.propertyId')}:</span>
+                <span className="text-gray-800 dark:text-white">{data?.propertyId}</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
-                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">
-                  📅
-                </span>
-                <span className="font-semibold text-green-700">{t('leadDetails.basicInformationCard.infoCard.status')}:</span>
-                <span className="text-gray-800">
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">📅</span>
+                <span className="font-semibold text-black dark:text-white">{t('leadDetails.basicInformationCard.infoCard.status')}:</span>
+                <span className="text-gray-800 dark:text-white ">
                   {(() => {
                     const found = leadStatuses.find(
                       (opt) => String(opt.value) === String(data?.status)
@@ -83,13 +71,11 @@ async function DetailsLead({ params }: DetailsLeadProps) {
                 </span>
               </div>
             </div>
-            <div className="flex flex-col mt-6 gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
+            <div className="flex flex-col mt-6 gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
               <div className="flex items-center gap-3">
-                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">
-                  💬
-                </span>
-                <span className="font-semibold text-green-700">{t('leadDetails.basicInformationCard.infoCard.message')}:</span>
-                <span className="text-gray-800">{data?.message}</span>
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">💬</span>
+                <span className="font-semibold text-black dark:text-white">{t('leadDetails.basicInformationCard.infoCard.message')}:</span>
+                <span className="text-gray-800 dark:text-white">{data?.message}</span>
               </div>
             </div>
           </CollapsibleSection>

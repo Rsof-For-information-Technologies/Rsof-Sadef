@@ -161,7 +161,7 @@ function UserForm() {
                                 size="lg"
                                 onClick={() => router.push(`/${params.locale}${routes.user.list}`)}
                                 disabled={isLoading}
-                                className="bg-white border-2 border-gray-300 text-gray-900 hover:bg-gray-100"
+                                className="bg-white border-2 border-gray-300 text-gray-900 hover:bg-gray-100 dark:bg-gray-100 dark:text-gray-900 dark:border-gray-500 dark:hover:bg-gray-200"
                             >
                                 {t('btn.cancel')}
                             </FormStatusButton>

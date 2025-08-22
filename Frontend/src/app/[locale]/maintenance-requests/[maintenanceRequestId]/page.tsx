@@ -37,20 +37,20 @@ export default async function DetailsMaintenanceRequest({
           </div>
           <CollapsibleSection title={t('maintenanceDetails.basicInformationCard.title')} defaultOpen>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
                 <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏷️</span>
-                <span className="font-semibold text-green-700">{t('maintenanceDetails.basicInformationCard.infoCard.id')}:</span>
-                <span className="text-gray-800">{data.id}</span>
+                <span className="font-semibold text-black dark:text-white">{t('maintenanceDetails.basicInformationCard.infoCard.id')}:</span>
+                <span className="text-gray-800 dark:text-white">{data.id}</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
                 <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏷️</span>
-                <span className="font-semibold text-green-700">{t('maintenanceDetails.basicInformationCard.infoCard.leadId')}:</span>
-                <span className="text-gray-800">{data.leadId}</span>
+                <span className="font-semibold text-black dark:text-white">{t('maintenanceDetails.basicInformationCard.infoCard.leadId')}:</span>
+                <span className="text-gray-800 dark:text-white">{data.leadId}</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200">
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-white rounded-lg shadow-sm border border-green-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
                 <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">📄</span>
-                <span className="font-semibold text-green-700">{t('maintenanceDetails.basicInformationCard.infoCard.status')}:</span>
-                <span className="text-gray-800">{
+                <span className="font-semibold text-black dark:text-white">{t('maintenanceDetails.basicInformationCard.infoCard.status')}:</span>
+                <span className="text-gray-800 dark:text-white">{
                   (() => {
                     const found = maintenanceRequestStatuses.find(
                       (opt) => String(opt.value) === String(data?.status)
@@ -63,7 +63,7 @@ export default async function DetailsMaintenanceRequest({
           </CollapsibleSection>
 
           <CollapsibleSection title={t('maintenanceDetails.basicInformationCard.infoCard.description')}>
-            <div dangerouslySetInnerHTML={{ __html: data.description || '<span class="text-gray-400">No description provided.</span>' }} className="prose max-w-none text-gray-700"></div>
+            <div dangerouslySetInnerHTML={{ __html: data.description || '<span class="text-gray-400">No description provided.</span>' }} className="prose max-w-none text-gray-700 dark:text-white"></div>
           </CollapsibleSection>
 
           <CollapsibleSection title={t('maintenanceDetails.basicInformationCard.infoCard.images&Videos')}>
@@ -77,7 +77,7 @@ export default async function DetailsMaintenanceRequest({
                       key={idx}
                       src={`${BASE_URL}/${imgSrc}`}
                       alt={`Property Preview ${idx + 1}`}
-                      className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200"
+                      className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200 dark:border-gray-500"
                     />
                   ))}
                 </div>
@@ -89,7 +89,7 @@ export default async function DetailsMaintenanceRequest({
                       key={idx}
                       src={`${BASE_URL}/${video}`}
                       controls
-                      className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200 mb-4"
+                      className="rounded-lg shadow-md w-full md:w-64 h-48 object-cover border border-gray-200 dark:border-gray-500 mb-4"
                     />
                   ))}
                 </div>

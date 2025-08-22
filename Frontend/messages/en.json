@@ -728,5 +728,76 @@
                 "updateUser": "Update User"
             }
         }
+    },
+    "ContactPages": {
+        "contactListPage": {
+            "title": "Contact List Page",
+            "description": "The Contact List Page displays all available contacts with key details for easy browsing.",
+            "contactTable": {
+                "title": "Contact Table",
+                "searchPlaceholder": "Search contact...",
+                "contactHeader": {
+                    "id": "ID",
+                    "fullName": "Full Name",
+                    "email": "Email",
+                    "phone": "Phone",
+                    "subject": "Subject",
+                    "propertyType": "Property Type",
+                    "location": "Location",
+                    "urgent": "Urgent",
+                    "status": "Status",
+                    "createdAt": "Created At",
+                    "actions": "Actions"
+                }
+            }
+        },
+        "contactDetailPage": {
+            "title": "Contact Detail Page",
+            "description": "The Contact Detail Page displays the details of a contact with key details.",
+            "loading": "Loading contact details...",
+            "contactDetails": {
+                "basicInformationCard": {
+                    "title": "Basic Information",
+                    "infoCard": {
+                        "id": "ID",
+                        "fullName": "Full Name",
+                        "email": "Email",
+                        "phone": "Phone",
+                        "propertyId": "Property ID",
+                        "status": "Status",
+                        "urgent": "Urgent"
+                    }
+                },
+                "propertyInformationCard": {
+                    "title": "Property Information",
+                    "infoCard": {
+                        "subject": "Subject",
+                        "propertyType": "Property Type",
+                        "location": "Location",
+                        "budget": "Budget"
+                    }
+                },
+                "contactPreferencesCard": {
+                    "title": "Contact Preferences",
+                    "infoCard": {
+                        "preferredContactMethod": "Preferred Contact Method",
+                        "preferredContactTime": "Preferred Contact Time"
+                    }
+                },
+                "messageDetailsCard": {
+                    "title": "Message Details",
+                    "infoCard": {
+                        "message": "Message"
+                    }
+                },
+                "timestampsCard": {
+                    "title": "Timestamps",
+                    "infoCard": {
+                        "createdAt": "Created At",
+                        "updatedAt": "Updated At"
+                    }
+                }
+            }
+        }
     }
 }

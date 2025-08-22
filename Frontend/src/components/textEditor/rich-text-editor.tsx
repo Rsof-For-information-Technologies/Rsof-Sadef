@@ -47,7 +47,7 @@ export default function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: "min-h-[170px] p-2 border-2 rounded-md bg-white",
+        class: "min-h-[170px] p-2 border-2 rounded-md bg-white dark:bg-gray-100 dark:text-gray-500",
         placeholder: placeholder ?? "",
       },
     },

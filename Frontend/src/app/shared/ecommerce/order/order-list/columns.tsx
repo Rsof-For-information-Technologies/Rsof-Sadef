@@ -398,7 +398,7 @@ export const getPropertyColumns = ({
                     console.error('Failed to update status', error);
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500" style={{ minWidth: 100, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>
@@ -568,7 +568,7 @@ export const getLeadColumns = ({
                     console.error('Failed to update status', error);
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500 " style={{ minWidth: 100, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>
@@ -717,7 +717,7 @@ export const getMaintenanceRequestColumns = ({
                     console.error('Failed to update status', error);
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500" style={{ minWidth: 100, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>
@@ -877,14 +877,14 @@ export const getContactColumns = ({
 }: Columns) => {
   const { locale } = useParams<Params>()
   const { propertyTypes, fetchStaticData } = useStaticDataStore();
-
+  const t = useTranslations('ContactPages.contactListPage.contactTable.contactHeader')
   useEffect(() => {
     fetchStaticData();
   }, [fetchStaticData]);
 
   return [
     {
-      title: <HeaderCell title="ID" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -892,7 +892,7 @@ export const getContactColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title="Full Name" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'fullName'} />,
+      title: <HeaderCell title={t('fullName')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'fullName'} />,
       onHeaderCell: () => onHeaderCellClick('fullName'),
       dataIndex: 'fullName',
       key: 'fullName',
@@ -902,7 +902,7 @@ export const getContactColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Email" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
+      title: <HeaderCell title={t('email')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
       onHeaderCell: () => onHeaderCellClick('email'),
       dataIndex: 'email',
       key: 'email',
@@ -912,7 +912,7 @@ export const getContactColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Phone" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'phone'} />,
+      title: <HeaderCell title={t('phone')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'phone'} />,
       onHeaderCell: () => onHeaderCellClick('phone'),
       dataIndex: 'phone',
       key: 'phone',
@@ -922,7 +922,7 @@ export const getContactColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Subject" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'subject'} />,
+      title: <HeaderCell title={t('subject')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'subject'} />,
       onHeaderCell: () => onHeaderCellClick('subject'),
       dataIndex: 'subject',
       key: 'subject',
@@ -934,7 +934,7 @@ export const getContactColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Property Type" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
+      title: <HeaderCell title={t('propertyType')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
       onHeaderCell: () => onHeaderCellClick('propertyType'),
       dataIndex: 'propertyType',
       key: 'propertyType',
@@ -949,7 +949,7 @@ export const getContactColumns = ({
       },
     },
     {
-      title: <HeaderCell title="Location" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
+      title: <HeaderCell title={t('location')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
       onHeaderCell: () => onHeaderCellClick('location'),
       dataIndex: 'location',
       key: 'location',
@@ -961,7 +961,7 @@ export const getContactColumns = ({
       ),
     },
     {
-      title: <HeaderCell title="Urgent" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isUrgent'} />,
+      title: <HeaderCell title={t('urgent')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isUrgent'} />,
       onHeaderCell: () => onHeaderCellClick('isUrgent'),
       dataIndex: 'isUrgent',
       key: 'isUrgent',
@@ -977,7 +977,7 @@ export const getContactColumns = ({
       }
     },
     {
-      title: (<HeaderCell title="Status" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
+      title: (<HeaderCell title={t('status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
       onHeaderCell: () => onHeaderCellClick('status'),
       dataIndex: 'status',
       key: 'status',
@@ -1004,7 +1004,7 @@ export const getContactColumns = ({
       },
     },
     {
-      title: <HeaderCell title="Created At" sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'createdAt'} />,
+      title: <HeaderCell title={t('createdAt')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'createdAt'} />,
       onHeaderCell: () => onHeaderCellClick('createdAt'),
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -1012,7 +1012,7 @@ export const getContactColumns = ({
       render: (value: string) => <DateCell date={new Date(value)} />,
     },
     {
-      title: <HeaderCell title="Actions" className='flex justify-end' />,
+      title: <HeaderCell title={t('actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       width: 180,
@@ -1053,7 +1053,7 @@ export const getContactColumns = ({
                     toast.error('Failed to update status');
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500" style={{ minWidth: 100, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>

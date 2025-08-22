@@ -728,5 +728,76 @@
                 "updateUser": "تحديث المستخدم"
             }
         }
+    },
+    "ContactPages": {
+        "contactListPage": {
+            "title": "قائمة الاتصالات",
+            "description": "يعرض قائمة الاتصالات جميع الاتصالات المتاحة مع التفاصيل الرئيسية للتصفح السهل.",
+            "contactTable": {
+                "title": "جدول الاتصالات",
+                "searchPlaceholder": "ابحث عن اتصال...",
+                "contactHeader": {
+                    "id": "الرقم",
+                    "fullName": "الاسم الكامل",
+                    "email": "البريد الإلكتروني",
+                    "phone": "الهاتف",
+                    "subject": "الموضوع",
+                    "propertyType": "نوع العقار",
+                    "location": "الموقع",
+                    "urgent": "ملاحظة",
+                    "status": "الحالة",
+                    "createdAt": "تاريخ الإنشاء",
+                    "actions": "الإجراءات"
+                }
+            }
+        },
+        "contactDetailPage": {
+            "title": "تفاصيل الاتصال",
+            "description": "يعرض تفاصيل الاتصال بالتفاصيل الرئيسية.",
+            "loading": "جاري تحميل تفاصيل الاتصال...",
+            "contactDetails": {
+                "basicInformationCard": {
+                    "title": "معلومات الاتصال",
+                    "infoCard": {
+                        "id": "الرقم",
+                        "fullName": "الاسم الكامل",
+                        "email": "البريد الإلكتروني",
+                        "phone": "الهاتف",
+                        "propertyId": "رقم العقار",
+                        "status": "الحالة",
+                        "urgent": "ملاحظة"
+                    }
+                },
+                "propertyInformationCard": {
+                    "title": "معلومات العقار",
+                    "infoCard": {
+                        "subject": "الموضوع",
+                        "propertyType": "نوع العقار",
+                        "location": "الموقع",
+                        "budget": "الميزانية"
+                    }
+                },
+                "contactPreferencesCard": {
+                    "title": "تفضيلات الاتصال",
+                    "infoCard": {
+                        "preferredContactMethod": "طريقة الاتصال المفضلة",
+                        "preferredContactTime": "وقت الاتصال المفضل"
+                    }
+                },
+                "messageDetailsCard": {
+                    "title": "تفاصيل الرسالة",
+                    "infoCard": {
+                        "message": "الرسالة"
+                    }
+                },
+                "timestampsCard": {
+                    "title": "الأوقات",
+                    "infoCard": {
+                        "createdAt": "تاريخ الإنشاء",
+                        "updatedAt": "تاريخ التحديث"
+                    }
+                }
+            }
+        }
     }
 }

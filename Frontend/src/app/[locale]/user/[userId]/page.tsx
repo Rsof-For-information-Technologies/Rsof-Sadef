@@ -34,7 +34,7 @@ export default async function DetailsUser({ params }: DetailsUserProps) {
           <CollapsibleSection title={t('userDetails.basicInformationCard.title')} defaultOpen>
             <div className="grid grid-cols-1 gap-6 mb-6">
             <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-100 to-white dark:from-gray-100 dark:to-gray-100 rounded-lg shadow-sm border border-blue-200 dark:border-gray-200">
-              <span className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-base shadow dark:bg-gray-500">👤</span>
+              <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">👤</span>
                 <span className="font-semibold text-black dark:text-white">{t('userDetails.basicInformationCard.infoCard.fullName')}:</span>
                 <span className="text-gray-800 dark:text-white">{`${data.firstName} ${data.lastName}`}</span>
               </div>
@@ -42,31 +42,31 @@ export default async function DetailsUser({ params }: DetailsUserProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-100 to-white rounded-lg shadow-sm border border-blue-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200	">
-                <span className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏷️</span>
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🏷️</span>
                 <span className="font-semibold text-black dark:text-white">{t('userDetails.basicInformationCard.infoCard.id')}:</span>
-                <span className="text-gray-800">{data.id}</span>
+                <span className="text-gray-800 dark:text-white">{data.id}</span>
               </div>
 
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-100 to-white rounded-lg shadow-sm border border-blue-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
-                <span className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-base shadow">👤</span>
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">👤</span>
                 <span className="font-semibold text-black dark:text-white">{t('userDetails.basicInformationCard.infoCard.firstName')}:</span>
-                <span className="text-gray-800">{data.firstName}</span>
+                <span className="text-gray-800 dark:text-white">{data.firstName}</span>
               </div>
 
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-100 to-white rounded-lg shadow-sm border border-blue-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
-                <span className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-base shadow">👤</span>
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">👤</span>
                 <span className="font-semibold text-black dark:text-white">{t('userDetails.basicInformationCard.infoCard.lastName')}:</span>
-                <span className="text-gray-800">{data.lastName}</span>
+                <span className="text-gray-800 dark:text-white">{data.lastName}</span>
               </div>
 
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-100 to-white rounded-lg shadow-sm border border-blue-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200 dark:bg-gray-100 dark:text-black">
-                <span className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-base shadow">📧</span>
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">📧</span>
                 <span className="font-semibold text-black dark:text-white">{t('userDetails.basicInformationCard.infoCard.email')}:</span>
-                <span className="text-gray-800">{data.email}</span>
+                <span className="text-gray-800 dark:text-white">{data.email}</span>
               </div>
 
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-100 to-white rounded-lg shadow-sm border border-blue-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200">
-                <span className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-base shadow">🔐</span>
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">🔐</span>
                 <span className="font-semibold text-black dark:text-white">{t('userDetails.basicInformationCard.infoCard.role')}:</span>
                 <Badge
                   color={
@@ -82,7 +82,7 @@ export default async function DetailsUser({ params }: DetailsUserProps) {
               </div>
 
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-100 to-white rounded-lg shadow-sm border border-blue-200 dark:from-gray-100 dark:to-gray-100 dark:border-gray-200 dark:bg-gray-100 dark:text-black">
-                <span className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-base shadow">✅</span>
+                <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white font-bold text-base shadow">✅</span>
                 <span className="font-semibold text-black dark:text-white">{t('userDetails.basicInformationCard.infoCard.status')}:</span>
                 <Badge
                   color={data.isActive ? "success" : "warning"}
