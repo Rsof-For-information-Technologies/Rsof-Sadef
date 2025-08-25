@@ -195,6 +195,10 @@
         "pages": "الصفحات",
         "rowsPerPage": "عدد الصفوف في الصفحة"
     },
+    "DeletePopover": {
+        "yes": "نعم",
+        "no": "لا"
+    },
     "PropertyPages": {
         "propertyListPage": {
             "title": "قائمة العقارات",
@@ -233,7 +237,15 @@
                     "investorOnly": "فقط المستثمرين",
                     "actions": "الإجراءات",
                     "saving": "الحفظ...",
-                    "save": "حفظ"
+                    "save": "حفظ",
+                    "propertyDelete": {
+                        "title": "حذف العقار",
+                        "description": "هل أنت متأكد أنك تريد حذف هذا #{id} عقار؟"
+                    },
+                    "propertyToast": {
+                        "statusUpdated": "تم تحديث الحالة بنجاح",
+                        "statusUpdateFailed": "فشل تحديث الحالة"
+                    }
                 }
             }
         },
@@ -458,7 +470,11 @@
                     "title": "العنوان",
                     "publishedAt": "تاريخ النشر",
                     "published": "المنشئ",
-                    "actions": "الإجراءات"
+                    "actions": "الإجراءات",
+                    "blogDelete": {
+                        "title": "حذف المدونة",
+                        "description": "هل أنت متأكد أنك تريد حذف هذا #{id} مدونة؟"
+                    }
                 }
             }
         },
@@ -528,6 +544,10 @@
                     "message": "الرسالة",
                     "status": "الحالة",
                     "actions": "الإجراءات"
+                },
+                "leadToast": {
+                    "statusUpdated": "تم تحديث الحالة بنجاح",
+                    "statusUpdateFailed": "فشل تحديث الحالة"
                 }
             }
         },
@@ -570,7 +590,15 @@
                     "isActive": "نشط",
                     "published": "منشئ",
                     "draft": "مسودة",
-                    "actions": "الإجراءات"
+                    "actions": "الإجراءات",
+                    "maintenanceDelete": {
+                        "title": "حذف طلب الصيانة",
+                        "description": "هل أنت متأكد أنك تريد حذف هذا #{id} طلب الصيانة؟"
+                    },
+                    "maintenanceToast": {
+                        "statusUpdated": "تم تحديث الحالة بنجاح",
+                        "statusUpdateFailed": "فشل تحديث الحالة"
+                    }
                 }
             }
         },
@@ -747,7 +775,15 @@
                     "urgent": "ملاحظة",
                     "status": "الحالة",
                     "createdAt": "تاريخ الإنشاء",
-                    "actions": "الإجراءات"
+                    "actions": "الإجراءات",
+                    "contactToast": {
+                        "statusUpdated": "تم تحديث الحالة بنجاح",
+                        "statusUpdateFailed": "فشل تحديث الحالة"
+                    },
+                    "contactDelete": {
+                        "title": "حذف الاتصال",
+                        "description": "هل أنت متأكد أنك تريد حذف هذا #{id} اتصال؟"
+                    }
                 }
             }
         },

@@ -6,12 +6,16 @@ import { PropertyDashboardData } from '@/types/property';
 import { Title } from 'rizzui';
 import { BsBuilding } from 'react-icons/bs';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import cn from '@/utils/class-names';
+import { Params } from '@/types/params';
 
 export default function PropertyDashboard() {
     const [dashboardData, setDashboardData] = useState<PropertyDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const t = useTranslations('DashboardPage.propertyAnalytics')
+    const params = useParams<Params>();
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -180,7 +184,7 @@ export default function PropertyDashboard() {
                                             className="w-4 h-4 rounded-full"
                                             style={{ backgroundColor: color }}
                                         ></div>
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 ">
+                                        <span className={cn("text-sm font-medium text-gray-700 dark:text-gray-300", params.locale === 'ar' ? "!mr-3 !ml-0" : "ml-3")}>
                                             {category.replace(/([A-Z])/g, ' $1').trim()}
                                         </span>
                                     </div>
@@ -209,29 +213,29 @@ export default function PropertyDashboard() {
                         {t('financialOverviewCard.title')}
                     </Title>
                     <div className="space-y-4">
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <h4 className="font-medium text-blue-900 dark:text-blue-200">{t('financialOverviewCard.content.totalExpectedAnnualRent')}</h4>
-                            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-blue-900 dark:text-blue-200">{t('financialOverviewCard.content.totalExpectedAnnualRent')}</span>
+                            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                                 {formatCurrency(dashboardData.totalExpectedAnnualRent)}
-                            </p>
+                            </span>
                         </div>
-                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <h4 className="font-medium text-green-900 dark:text-green-200">{t('financialOverviewCard.content.totalProjectedResaleValue')}</h4>
-                            <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-green-900 dark:text-green-200">{t('financialOverviewCard.content.totalProjectedResaleValue')}</span>
+                            <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                                 {formatCurrency(dashboardData.totalProjectedResaleValue)}
-                            </p>
+                            </span>
                         </div>
-                        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                            <h4 className="font-medium text-purple-900 dark:text-purple-200">{t('financialOverviewCard.content.propertiesWithInvestmentData')}</h4>
-                            <p className="text-xl font-bold text-purple-600 dark:text-purple-400">
+                        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-purple-900 dark:text-purple-200">{t('financialOverviewCard.content.propertiesWithInvestmentData')}</span>
+                            <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                                 {dashboardData.propertiesWithInvestmentData}
-                            </p>
+                            </span>
                         </div>
-                        <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                            <h4 className="font-medium text-yellow-900 dark:text-yellow-200">{t('financialOverviewCard.content.listedThisWeek')}</h4>
-                            <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
+                            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-yellow-900 dark:text-yellow-200">{t('financialOverviewCard.content.listedThisWeek')}</span>
+                            <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                                 {dashboardData.listedThisWeek}
-                            </p>
+                            </span>
                         </div>
                     </div>
                 </div>

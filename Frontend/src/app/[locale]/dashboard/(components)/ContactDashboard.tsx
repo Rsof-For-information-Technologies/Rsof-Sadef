@@ -12,6 +12,7 @@ import { useParams } from 'next/navigation';
 import { Params } from '@/types/params';
 import { contactStatuses } from '@/constants/constants';
 import { useTranslations } from 'next-intl';
+import cn from '@/utils/class-names';
 
 const ContactDashboard: React.FC = () => {
     const [data, setData] = useState<ContactDashboardStats | null>(null);
@@ -177,8 +178,8 @@ const ContactDashboard: React.FC = () => {
                 </Title>
                 <div className="space-y-4">
                     {data.recentContacts.map((contact) => (
-                        <div key={contact.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-10 rounded-lg dark:border dark:border-gray-700">
-                            <div className="flex items-center space-x-4">
+                        <div key={contact.id} className="flex items-start md:items-center justify-start md:justify-between  md:flex-row flex-col gap-4 md:gap-0 p-4 bg-gray-50 dark:bg-gray-10 rounded-lg dark:border dark:border-gray-700">
+                            <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                                     <Text className="text-white font-semibold">
                                         {contact.fullName.charAt(0).toUpperCase()}
@@ -196,7 +197,7 @@ const ContactDashboard: React.FC = () => {
                                     </Text>
                                 </div>
                             </div>
-                            <div className="flex items-center space-x-4">
+                            <div className="flex items-center gap-4">
                                 <div className="text-right">
                                     <Text className="text-sm font-medium text-gray-900 dark:text-white">
                                         {contact.subject}
@@ -205,7 +206,7 @@ const ContactDashboard: React.FC = () => {
                                         {new Date(contact.createdAt).toLocaleDateString()}
                                     </Text>
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center gap-4">
                                     <Badge
                                         color={getStatusColor(contact.status)}
                                         className="min-w-[80px] text-center"

@@ -1,6 +1,7 @@
 import { Title, Text, ActionIcon, Button, Popover } from 'rizzui';
 import { PiTrashFill } from 'react-icons/pi';
 import TrashIcon from '@/components/icons/trash';
+import { useTranslations } from 'next-intl';
 
 type DeletePopoverProps = {
   title: string;
@@ -13,6 +14,7 @@ export default function DeletePopover({
   description,
   onDelete,
 }: DeletePopoverProps) {
+  const t = useTranslations('DeletePopover');
   return (
     <Popover placement="left">
       <Popover.Trigger>
@@ -39,7 +41,7 @@ export default function DeletePopover({
             </Text>
             <div className="flex items-center justify-end">
               <Button size="sm" className="me-1.5 h-7" onClick={onDelete}>
-                Yes
+                {t('yes')}
               </Button>
               <Button
                 size="sm"
@@ -47,7 +49,7 @@ export default function DeletePopover({
                 className="h-7"
                 onClick={() => setOpen(false)}
               >
-                No
+                {t('no')}
               </Button>
             </div>
           </div>

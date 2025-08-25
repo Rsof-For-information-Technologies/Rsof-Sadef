@@ -3,12 +3,18 @@
 import { LeadDashboardData } from '@/types/lead';
 import { Title } from 'rizzui';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import cn from '@/utils/class-names';
+import { Params } from '@/types/params';
+
 interface LeadChartProps {
     data: LeadDashboardData;
 }
 
 export default function LeadChart({ data }: LeadChartProps) {
     const t = useTranslations('DashboardPage.leadAnalytics')
+    const params = useParams<Params>();
+
     const chartData = [
         { label: t('leadDistributionCard.new'), value: data.newLeads, color: '#10B981' },
         { label: t('leadDistributionCard.contacted'), value: data.contacted, color: '#F59E0B' },
@@ -36,7 +42,7 @@ export default function LeadChart({ data }: LeadChartProps) {
                                     className="w-4 h-4 rounded-full"
                                     style={{ backgroundColor: item.color }}
                                 ></div>
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <span className={cn("text-sm font-medium text-gray-700 dark:text-gray-300", params.locale === 'ar' ? "!mr-3 !ml-0" : "ml-3")}>
                                     {item.label}
                                 </span>
                             </div>

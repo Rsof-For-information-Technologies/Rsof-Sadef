@@ -154,24 +154,23 @@ export default function LeadDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Lead Distribution Chart */}
                 <LeadChart data={dashboardData} />
-                
                 {/* Summary Card */}
                 <div className="p-6 bg-white dark:bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-200">
                     <Title as="h5" className="mb-4 text-gray-900 dark:text-white">
                         {t('leadSummaryCard.title')}
                     </Title>
                     <div className="space-y-4">
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <h4 className="font-medium text-blue-900 dark:text-blue-200">{t('leadSummaryCard.content.totalLeads')}</h4>
-                            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dashboardData.totalLeads}</p>
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-blue-900 dark:text-blue-200">{t('leadSummaryCard.content.totalLeads')}</span>
+                            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dashboardData.totalLeads}</span>
                         </div>
-                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <h4 className="font-medium text-green-900 dark:text-green-200">{t('leadSummaryCard.content.activeLeads')}</h4>
-                            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{dashboardData.activeLeads}</p>
+                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-green-900 dark:text-green-200">{t('leadSummaryCard.content.activeLeads')}</span>
+                            <span className="text-2xl font-bold text-green-600 dark:text-green-400">{dashboardData.activeLeads}</span>
                         </div>
-                        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                            <h4 className="font-medium text-purple-900 dark:text-purple-200">{t('leadSummaryCard.content.converted')}</h4>
-                            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{dashboardData.converted}</p>
+                        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-purple-900 dark:text-purple-200">{t('leadSummaryCard.content.converted')}</span>
+                            <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">{dashboardData.converted}</span>
                         </div>
                     </div>
                 </div>

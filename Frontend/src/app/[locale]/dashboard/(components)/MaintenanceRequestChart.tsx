@@ -3,12 +3,17 @@
 import { MaintenanceRequestDashboardData } from '@/types/maintenanceRequest';
 import { Title } from 'rizzui';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import cn from '@/utils/class-names';
+import { Params } from '@/types/params';
 interface MaintenanceRequestChartProps {
     data: MaintenanceRequestDashboardData;
 }
 
 export default function MaintenanceRequestChart({ data }: MaintenanceRequestChartProps) {
     const t = useTranslations('DashboardPage.maintenanceRequestAnalytics')
+    const params = useParams<Params>();
+
     const chartData = [
         { label: t('requestStatusDistributionCard.pending'), value: data.pending, color: '#F59E0B' },
         { label: t('requestStatusDistributionCard.inProgress'), value: data.inProgress, color: '#F97316' },
@@ -34,7 +39,7 @@ export default function MaintenanceRequestChart({ data }: MaintenanceRequestChar
                                     className="w-4 h-4 rounded-full"
                                     style={{ backgroundColor: item.color }}
                                 ></div>
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <span className={cn("text-sm font-medium text-gray-700 dark:text-gray-300", params.locale === 'ar' ? "!mr-3 !ml-0" : "ml-2")}>
                                     {item.label}
                                 </span>
                             </div>

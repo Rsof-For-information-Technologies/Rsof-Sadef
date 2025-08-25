@@ -18,6 +18,7 @@ import { useStaticDataStore } from '@/store/static-data.store';
 import { useParams } from 'next/navigation';
 import { Params } from "@/types/params";
 import { useTranslations } from 'next-intl';
+import cn from '@/utils/class-names';
 
 type Columns = {
   sortConfig?: any;
@@ -215,8 +216,8 @@ export const getBlogColumns = ({
             </Link>
           </Tooltip>
           <DeletePopover
-            title={`Delete the blog`}
-            description={`Are you sure you want to delete this #${row.id} blog?`}
+            title={t('blogDelete.title')}
+            description={t('blogDelete.description', { id: row.id })}
             onDelete={() => onDeleteBlog(row.id)}
           />
         </div>
@@ -233,7 +234,7 @@ export const getPropertyColumns = ({
 }: Columns) => {
   const { locale } = useParams<Params>()
   const { propertyTypes, fetchStaticData } = useStaticDataStore();
-  const t = useTranslations('PropertyPages.propertyListPage.propertyTable');
+  const t = useTranslations('PropertyPages.propertyListPage.propertyTable.propertyHeader');
 
   useEffect(() => {
     fetchStaticData();
@@ -246,7 +247,7 @@ export const getPropertyColumns = ({
 
   return [
     {
-      title: <HeaderCell title={t('propertyHeader.id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -254,7 +255,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.title')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'title'} />,
+      title: <HeaderCell title={t('title')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'title'} />,
       onHeaderCell: () => onHeaderCellClick('title'),
       dataIndex: 'title',
       key: 'title',
@@ -262,7 +263,7 @@ export const getPropertyColumns = ({
       render: (value: string) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.price')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'price'} />,
+      title: <HeaderCell title={t('price')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'price'} />,
       onHeaderCell: () => onHeaderCellClick('price'),
       dataIndex: 'price',
       key: 'price',
@@ -270,7 +271,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>${value}</Text>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.city')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'city'} />,
+      title: <HeaderCell title={t('city')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'city'} />,
       onHeaderCell: () => onHeaderCellClick('city'),
       dataIndex: 'city',
       key: 'city',
@@ -278,7 +279,7 @@ export const getPropertyColumns = ({
       render: (value: string) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.location')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
+      title: <HeaderCell title={t('location')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'location'} />,
       onHeaderCell: () => onHeaderCellClick('location'),
       dataIndex: 'location',
       key: 'location',
@@ -286,7 +287,7 @@ export const getPropertyColumns = ({
       render: (value: string) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.areaSize')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'areaSize'} />,
+      title: <HeaderCell title={t('areaSize')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'areaSize'} />,
       onHeaderCell: () => onHeaderCellClick('areaSize'),
       dataIndex: 'areaSize',
       key: 'areaSize',
@@ -294,7 +295,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.bedrooms')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bedrooms'} />,
+      title: <HeaderCell title={t('bedrooms')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bedrooms'} />,
       onHeaderCell: () => onHeaderCellClick('bedrooms'),
       dataIndex: 'bedrooms',
       key: 'bedrooms',
@@ -302,7 +303,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.bathrooms')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bathrooms'} />,
+      title: <HeaderCell title={t('bathrooms')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'bathrooms'} />,
       onHeaderCell: () => onHeaderCellClick('bathrooms'),
       dataIndex: 'bathrooms',
       key: 'bathrooms',
@@ -310,7 +311,7 @@ export const getPropertyColumns = ({
       render: (value: number) => <Text>{value}</Text>,
     },
     {
-      title: (<HeaderCell title={t('propertyHeader.status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
+      title: (<HeaderCell title={t('status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
       dataIndex: 'status',
       key: 'status',
       minWidth: 120,
@@ -333,7 +334,7 @@ export const getPropertyColumns = ({
       },
     },
     {
-      title: <HeaderCell title={t('propertyHeader.propertyType')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
+      title: <HeaderCell title={t('propertyType')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyType'} />,
       onHeaderCell: () => onHeaderCellClick('propertyType'),
       dataIndex: 'propertyType',
       key: 'propertyType',
@@ -344,7 +345,7 @@ export const getPropertyColumns = ({
       },
     },
     {
-      title: <HeaderCell title={t('propertyHeader.expiryDate')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'} />,
+      title: <HeaderCell title={t('expiryDate')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'expiryDate'} />,
       onHeaderCell: () => onHeaderCellClick('expiryDate'),
       dataIndex: 'expiryDate',
       key: 'expiryDate',
@@ -352,7 +353,7 @@ export const getPropertyColumns = ({
       render: (_: string | null, row: any) => <ExpiryDateDuration row={row} />,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.investorOnly')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isInvestorOnly'} />,
+      title: <HeaderCell title={t('investorOnly')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'isInvestorOnly'} />,
       onHeaderCell: () => onHeaderCellClick('isInvestorOnly'),
       dataIndex: 'isInvestorOnly',
       key: 'isInvestorOnly',
@@ -360,7 +361,7 @@ export const getPropertyColumns = ({
       render: (value: boolean) => value ? <Badge color="info">Yes</Badge> : <Badge color="secondary">No</Badge>,
     },
     {
-      title: <HeaderCell title={t('propertyHeader.actions')} className='flex justify-end' />,
+      title: <HeaderCell title={t('actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       minWidth: 50,
@@ -389,16 +390,16 @@ export const getPropertyColumns = ({
                   try {
                     const response = await PropertyUpdateStatus(row.id, newStatus);
                     if (response.succeeded) {
-                      toast.success(`Status updated successfully`);
+                      toast.success(t('propertyToast.statusUpdated'));
                     } else {
-                      toast.error(`Failed to update status: ${response.message}`);
+                      toast.error(t('propertyToast.statusUpdateFailed', { message: response.message }));
                       console.error('Failed to update status:', response);
                     }
                   } catch (error) {
                     console.error('Failed to update status', error);
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+                className={cn("appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500", locale === 'ar' ? "text-right" : "text-left")} style={{ minWidth: 110, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>
@@ -427,8 +428,8 @@ export const getPropertyColumns = ({
               </Link>
             </Tooltip>
             <DeletePopover
-              title={`Delete the property`}
-              description={`Are you sure you want to delete this #${row.id} property?`}
+              title={t('propertyDelete.title')}
+              description={t('propertyDelete.description', { id: row.id })}
               onDelete={() => onDeleteProperty(row.id)}
             />
           </div>
@@ -445,6 +446,7 @@ export const getLeadColumns = ({
   onHeaderCellClick,
 }: Columns) => {
   const { locale } = useParams<Params>()
+  const params = useParams<Params>()
   const t = useTranslations('LeadPages.leadListPage.leadTable');
 
   return [
@@ -559,16 +561,16 @@ export const getLeadColumns = ({
                   try {
                     const response = await LeadUpdateStatus(row.id, newStatus);
                     if (response.succeeded) {
-                      toast.success(`Status updated successfully`);
+                      toast.success(t('leadToast.statusUpdated'));
                     } else {
-                      toast.error(`Failed to update status: ${response.message}`);
+                      toast.error(t('leadToast.statusUpdateFailed', { message: response.message }));
                       console.error('Failed to update status:', response);
                     }
                   } catch (error) {
                     console.error('Failed to update status', error);
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500 " style={{ minWidth: 100, cursor: 'pointer' }} >
+                className={cn("appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500", params.locale === 'ar' ? "text-right" : "text-left")} style={{ minWidth: 110, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>
@@ -708,16 +710,16 @@ export const getMaintenanceRequestColumns = ({
                   try {
                     const response = await MaintenanceRequestUpdateStatus(row.id, newStatus);
                     if (response.succeeded) {
-                      toast.success(`Status updated successfully`);
+                      toast.success(t('maintenanceToast.statusUpdated'));
                     } else {
-                      toast.error(`Failed to update status: ${response.message}`);
+                      toast.error(t('maintenanceToast.statusUpdateFailed', { message: response.message }));
                       console.error('Failed to update status:', response);
                     }
                   } catch (error) {
                     console.error('Failed to update status', error);
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+                className={cn("appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500", locale === 'ar' ? "text-right" : "text-left")} style={{ minWidth: 110, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>
@@ -746,8 +748,8 @@ export const getMaintenanceRequestColumns = ({
               </Link>
             </Tooltip>
             <DeletePopover
-              title={`Delete the Maintenance Request`}
-              description={`Are you sure you want to delete this #${row.id} Maintenance Request?`}
+              title={t('maintenanceDelete.title')}
+              description={t('maintenanceDelete.description', { id: row.id })}
               onDelete={() => onDeleteMaintenanceRequest(row.id)}
             />
           </div>
@@ -1043,17 +1045,17 @@ export const getContactColumns = ({
                   try {
                     const response = await updateContactStatus(row.id, newStatus);
                     if (response.succeeded) {
-                      toast.success(`Status updated successfully`);
+                      toast.success(t('contactToast.statusUpdated'));
                     } else {
-                      toast.error(`Failed to update status: ${response.message}`);
+                      toast.error(t('contactToast.statusUpdateFailed', { message: response.message }));
                       console.error('Failed to update status:', response);
                     }
                   } catch (error) {
                     console.error('Failed to update status', error);
-                    toast.error('Failed to update status');
+                    toast.error(t('contactToast.statusUpdateFailed'));
                   }
                 }}
-                className="appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500" style={{ minWidth: 100, cursor: 'pointer' }} >
+                className={cn("appearance-none h-[29px] border border-gray-300 rounded-md px-3 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition shadow-sm hover:border-primary-500 dark:border-gray-500 dark:bg-gray-100 dark:text-gray-500", locale === 'ar' ? "text-right" : "text-left")} style={{ minWidth: 110, cursor: 'pointer' }} >
                 <option value={row.status} disabled>
                   {status?.label}
                 </option>
@@ -1063,9 +1065,6 @@ export const getContactColumns = ({
                   </option>
                 ))}
               </select>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">
-                <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
             </div>
             <Tooltip size="sm" content={'View Contact'} placement="top" color="invert">
               <Link href={`/${locale}${routes.contact.contactDetails(row.id)}`}>
@@ -1075,8 +1074,8 @@ export const getContactColumns = ({
               </Link>
             </Tooltip>
             <DeletePopover
-              title={`Delete the Contact`}
-              description={`Are you sure you want to delete this #${row.id} Contact?`}
+              title={t('contactDelete.title')}
+              description={t('contactDelete.description', { id: row.id })}
               onDelete={() => onDeleteContact(row.id)}
             />
           </div>

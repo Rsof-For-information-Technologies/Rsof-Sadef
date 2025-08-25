@@ -2,12 +2,17 @@ import React from 'react';
 import { Title } from 'rizzui';
 import { ContactDashboardStats } from '@/types/contact';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import cn from '@/utils/class-names';
+import { Params } from '@/types/params';
 interface ContactChartProps {
   data: ContactDashboardStats;
 }
 
 const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
   const t = useTranslations('DashboardPage.contactAnalytics')
+  const params = useParams<Params>();
+
   // Calculate percentages for the pie chart
   const totalByType = Object.values(data.contactsByType).reduce((sum, count) => sum + count, 0);
   const totalByStatus = Object.values(data.contactsByStatus).reduce((sum, count) => sum + count, 0);
@@ -47,7 +52,7 @@ const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
                     ][index % 5]
                   }}
                 />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className={cn("text-sm font-medium text-gray-700 dark:text-gray-300", params.locale === 'ar' ? "!mr-3 !ml-0" : "ml-3")}>
                   {item.name}
                 </span>
               </div>
@@ -55,7 +60,7 @@ const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {item.value}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className={cn("text-xs text-gray-500 dark:text-gray-400", params.locale === 'ar' ? "!mr-3 !ml-0" : "ml-3")}>
                   ({item.percentage}%)
                 </span>
               </div>
@@ -85,7 +90,7 @@ const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
                     ][index % 5]
                   }}
                 />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className={cn("text-sm font-medium text-gray-700 dark:text-gray-300", params.locale === 'ar' ? "!mr-3 !ml-0" : "ml-3")}>
                   {item.name}
                 </span>
               </div>
@@ -93,7 +98,7 @@ const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {item.value}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className={cn("text-xs text-gray-500 dark:text-gray-400", params.locale === 'ar' ? "!mr-3 !ml-0" : "ml-3")}>
                   ({item.percentage}%)
                 </span>
               </div>

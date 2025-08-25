@@ -195,6 +195,10 @@
         "pages": "Pages",
         "rowsPerPage": "Rows per page"
     },
+    "DeletePopover": {
+        "yes": "Yes",
+        "no": "No"
+    },
     "PropertyPages": {
         "propertyListPage": {
             "title": "Property List Page",
@@ -233,7 +237,15 @@
                     "investorOnly": "Investor Only",
                     "actions": "Actions",
                     "saving": "Saving...",
-                    "save": "Save"
+                    "save": "Save",
+                    "propertyDelete": {
+                        "title": "Delete the Property",
+                        "description": "Are you sure you want to delete this #{id} property?"
+                    },
+                    "propertyToast": {
+                        "statusUpdated": "Status updated successfully",
+                        "statusUpdateFailed": "Failed to update status"
+                    }
                 }
             }
         },
@@ -458,7 +470,11 @@
                     "title": "Title",
                     "publishedAt": "Published At",
                     "published": "Published",
-                    "actions": "Actions"
+                    "actions": "Actions",
+                    "blogDelete": {
+                        "title": "Delete the Blog",
+                        "description": "Are you sure you want to delete this #{id} blog?"
+                    }
                 }
             }
         },
@@ -528,6 +544,10 @@
                     "message": "Message",
                     "status": "Status",
                     "actions": "Actions"
+                },
+                "leadToast": {
+                    "statusUpdated": "Status updated successfully",
+                    "statusUpdateFailed": "Failed to update status"
                 }
             }
         },
@@ -570,7 +590,15 @@
                     "isActive": "Active",
                     "published": "Published",
                     "draft": "Draft",
-                    "actions": "Actions"
+                    "actions": "Actions",
+                    "maintenanceDelete": {
+                        "title": "Delete the Maintenance Request",
+                        "description": "Are you sure you want to delete this #{id} maintenance request?"
+                    },
+                    "maintenanceToast": {
+                        "statusUpdated": "Status updated successfully",
+                        "statusUpdateFailed": "Failed to update status"
+                    }
                 }
             }
         },
@@ -747,7 +775,15 @@
                     "urgent": "Urgent",
                     "status": "Status",
                     "createdAt": "Created At",
-                    "actions": "Actions"
+                    "actions": "Actions",
+                    "contactToast": {
+                        "statusUpdated": "Status updated successfully",
+                        "statusUpdateFailed": "Failed to update status"
+                    },
+                    "contactDelete": {
+                        "title": "Delete the Contact",
+                        "description": "Are you sure you want to delete this #{id} Contact?"
+                    }
                 }
             }
         },

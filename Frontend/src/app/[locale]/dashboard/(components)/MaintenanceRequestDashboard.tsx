@@ -132,24 +132,23 @@ export default function MaintenanceRequestDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Request Status Chart */}
                 <MaintenanceRequestChart data={dashboardData} />
-                
                 {/* Summary Card */}
                 <div className="p-6 bg-white dark:bg-gray-50 rounded-lg border border-gray-200 dark:border-gray-200">
                     <Title as="h5" className="mb-4 text-gray-900 dark:text-white">
                         {t('maintenanceRequestSummaryCard.title')}
                     </Title>
                     <div className="space-y-4">
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <h4 className="font-medium text-blue-900 dark:text-blue-200">{t('maintenanceRequestSummaryCard.content.totalRequests')}</h4>
-                            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dashboardData.totalRequests}</p>
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-blue-900 dark:text-blue-200">{t('maintenanceRequestSummaryCard.content.totalRequests')}</span>
+                            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dashboardData.totalRequests}</span>
                         </div>
-                        <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                            <h4 className="font-medium text-yellow-900 dark:text-yellow-200">{t('maintenanceRequestSummaryCard.content.pending')}</h4>
-                            <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{dashboardData.pending}</p>
+                        <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-yellow-900 dark:text-yellow-200">{t('maintenanceRequestSummaryCard.content.pending')}</span>
+                            <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{dashboardData.pending}</span>
                         </div>
-                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <h4 className="font-medium text-green-900 dark:text-green-200">{t('maintenanceRequestSummaryCard.content.resolved')}</h4>
-                            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{dashboardData.resolved}</p>
+                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-between">
+                            <span className="font-bold text-lg text-green-900 dark:text-green-200">{t('maintenanceRequestSummaryCard.content.resolved')}</span>
+                            <span className="text-2xl font-bold text-green-600 dark:text-green-400">{dashboardData.resolved}</span>
                         </div>
                     </div>
                 </div>
