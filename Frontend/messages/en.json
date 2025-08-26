@@ -350,6 +350,11 @@
                 },
                 "imagesVideosCard": {
                     "title": "Images & Videos"
+                },
+                "timelineCard": {
+                    "title": "Property Timeline",
+                    "actionTakenBy": "Action taken by",
+                    "noTimeline": "No timeline data available for this property."
                 }
             }
         },

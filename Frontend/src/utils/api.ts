@@ -6,6 +6,7 @@ import { PropertyFormData, CreatePropertyResponse, GetProperties, PropertyFilter
 import { UpdatePasswordResponse } from '@/types/updatePassword';
 import { GetUsers, GetUserById, UpdateUserRequest, UpdateUserResponse } from '@/types/user';
 import { GetContacts, GetContactById, UpdateContactStatusResponse, GetContactDashboardStats } from '@/types/contact';
+import { PropertyTimelineResponse } from '@/types/propertyTimeline';
 import { ChangePasswordSchema } from '@/validators/updatePaseword.schema';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -694,3 +695,16 @@ export const deleteContact = async (id: string | number) => {
     throw error;
   }
 }
+
+// Property Timeline API functions
+
+export const getPropertyTimeline = async (propertyId: string | number): Promise<PropertyTimelineResponse> => {
+  const api = apiCall();
+  try {
+    const { data } = await api.get<PropertyTimelineResponse>(`/api/v1/propertytimeline?propertyId=${propertyId}`);
+    return data;
+  } catch (error) {
+    console.error('Get property timeline failed:', error);
+    throw error;
+  }
+};
