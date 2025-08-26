@@ -19,7 +19,7 @@ const ContactDashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const params = useParams<Params>();
-    const t = useTranslations('DashboardPage.contactAnalytics')
+    const t = useTranslations('Dashboard.contactAnalytics')
     useEffect(() => {
         const fetchData = async () => {
             try {

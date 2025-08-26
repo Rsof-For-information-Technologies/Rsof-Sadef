@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { toast } from "react-hot-toast"
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { StepIndicator } from "../(components)/step-indicator"
@@ -20,9 +20,12 @@ import Authorize from "@/components/auth/authorize"
 import { UserRole } from "@/types/userRoles"
 import { convertNumberToLocalFormat } from "@/utils/convertNumberToLocalFormat"
 import { useTranslations } from "next-intl"
+import { Params } from "@/types/params";
+import cn from "@/utils/class-names";
 
 export default function CreatePropertyPage() {
   const t = useTranslations('PropertyPages.createPropertyPage')
+  const params = useParams<Params>()
 
   const STEPS = [
     { title: t('createProperty.steps.basicInfo'), component: BasicInfoStep, schema: basicInfoSchema },
@@ -147,14 +150,14 @@ export default function CreatePropertyPage() {
                 disabled={currentStep === 1}
                 className="flex items-center gap-2"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className={cn("h-4 w-4", params.locale === 'ar' ? "rotate-180" : "rotate-0")} />
                 {t('createProperty.btn.previous')}
               </Button>
 
               {currentStep < STEPS.length ? (
                 <Button type="button" onClick={nextStep} className="flex items-center gap-2">
                   {t('createProperty.btn.next')}
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className={cn("h-4 w-4", params.locale === 'ar' ? "rotate-180" : "rotate-0")} />
                 </Button>
               ) : (
                 <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">

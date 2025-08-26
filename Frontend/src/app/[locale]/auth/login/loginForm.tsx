@@ -15,6 +15,7 @@ import { useForm } from 'react-hook-form'
 import { PiArrowRightBold } from 'react-icons/pi'
 import useMedia from 'react-use/lib/useMedia'
 import { Checkbox, Input, Password } from 'rizzui'
+import cn from '@/utils/class-names'
 
 const initialValues = {
     email: "",
@@ -129,8 +130,8 @@ function LoginForm() {
                     className="group w-full @xl:w-full dark:bg-[#090909] dark:text-white hover:dark:bg-black "
                     type="submit"
                     size={isMedium ? 'lg' : 'lg'}>
-                    <span>{t('login')}</span>
-                    <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5 group-hover:translate-x-1 group-hover:scale-105 transition-transform transform-all" />
+                    <span>{t('loginBtn')}</span>
+                    <PiArrowRightBold className={cn("ms-2 mt-0.5 h-5 w-5", params.locale === 'ar' ? 'rotate-180' : 'rotate-0')} />
                 </FormStatusButton>
             </div>
         </form>

@@ -10,7 +10,7 @@ interface ContactChartProps {
 }
 
 const ContactChart: React.FC<ContactChartProps> = ({ data }) => {
-  const t = useTranslations('DashboardPage.contactAnalytics')
+  const t = useTranslations('Dashboard.contactAnalytics')
   const params = useParams<Params>();
 
   // Calculate percentages for the pie chart

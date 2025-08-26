@@ -12,7 +12,7 @@ export default function LeadDashboard() {
     const [dashboardData, setDashboardData] = useState<LeadDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const t = useTranslations('DashboardPage.leadAnalytics')
+    const t = useTranslations('Dashboard.leadAnalytics')
 
     useEffect(() => {
         const fetchDashboardData = async () => {

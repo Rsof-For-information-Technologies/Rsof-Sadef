@@ -11,7 +11,7 @@ interface MaintenanceRequestChartProps {
 }
 
 export default function MaintenanceRequestChart({ data }: MaintenanceRequestChartProps) {
-    const t = useTranslations('DashboardPage.maintenanceRequestAnalytics')
+    const t = useTranslations('Dashboard.maintenanceRequestAnalytics')
     const params = useParams<Params>();
 
     const chartData = [

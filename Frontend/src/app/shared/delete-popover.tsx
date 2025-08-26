@@ -1,4 +1,4 @@
-import { Title, Text, ActionIcon, Button, Popover } from 'rizzui';
+import { Title, Text, ActionIcon, Button, Popover, Tooltip } from 'rizzui';
 import { PiTrashFill } from 'react-icons/pi';
 import TrashIcon from '@/components/icons/trash';
 import { useTranslations } from 'next-intl';
@@ -18,14 +18,17 @@ export default function DeletePopover({
   return (
     <Popover placement="left">
       <Popover.Trigger>
-        <ActionIcon
-          size="sm"
-          variant="outline"
-          aria-label={'Delete Item'}
-          className="cursor-pointer hover:!border-gray-900 hover:text-gray-700"
-        >
-          <TrashIcon className="h-4 w-4" />
-        </ActionIcon>
+        <Tooltip size="sm" content={t('deleteItem')} placement="top" color="invert">
+          <ActionIcon
+            size="sm"
+            variant="outline"
+            color="danger"
+            aria-label={'Delete Item'}
+            className="cursor-pointer hover:!border-gray-900 hover:text-gray-700"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </ActionIcon>
+        </Tooltip>
       </Popover.Trigger>
       <Popover.Content className="z-0">
         {({ setOpen }) => (

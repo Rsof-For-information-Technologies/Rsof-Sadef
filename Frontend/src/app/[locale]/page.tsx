@@ -1,9 +1,8 @@
-import { getTranslations } from "next-intl/server";
-import { Title } from "rizzui";
+import { routes } from "@/config/routes";
+import { Params } from "@/types/params";
+import { redirect } from "next/navigation";
 
-export default async function Home() {
-  const t = await getTranslations("landingPage");
-  return (
-    <Title>{t("title")}</Title>
-  );
+export default function Home({ params }: { params: Params }) {
+  const { locale } = params;
+  redirect(`/${locale}${routes.dashboard}`);
 }

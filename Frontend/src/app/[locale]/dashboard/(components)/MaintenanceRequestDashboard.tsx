@@ -12,7 +12,7 @@ export default function MaintenanceRequestDashboard() {
     const [dashboardData, setDashboardData] = useState<MaintenanceRequestDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const t = useTranslations('DashboardPage.maintenanceRequestAnalytics')
+    const t = useTranslations('Dashboard.maintenanceRequestAnalytics')
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {

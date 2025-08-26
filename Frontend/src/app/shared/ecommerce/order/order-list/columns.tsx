@@ -201,14 +201,14 @@ export const getBlogColumns = ({
       width: 100,
       render: (_: string, row: any) => (
         <div className="flex items-center justify-end gap-3">
-          <Tooltip size="sm" content={'Edit Blog'} placement="top" color="invert">
+          <Tooltip size="sm" content={t('editTooltip')} placement="top" color="invert">
             <Link href={`/${locale}${routes.blog.editBlog(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <PencilIcon className="h-4 w-4" />
               </ActionIcon>
             </Link>
           </Tooltip>
-          <Tooltip size="sm" content={'View Blog'} placement="top" color="invert">
+          <Tooltip size="sm" content={t('viewTooltip')} placement="top" color="invert">
             <Link href={`/${locale}${routes.blog.blogDetails(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <EyeIcon className="h-4 w-4" />
@@ -291,7 +291,7 @@ export const getPropertyColumns = ({
       onHeaderCell: () => onHeaderCellClick('areaSize'),
       dataIndex: 'areaSize',
       key: 'areaSize',
-      minWidth: 100,
+      minWidth: 120,
       render: (value: number) => <Text>{value}</Text>,
     },
     {
@@ -409,18 +409,18 @@ export const getPropertyColumns = ({
                   </option>
                 ))}
               </select>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">
+              {/* <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
+              </span> */}
             </div>
-            <Tooltip size="sm" content={'Edit Property'} placement="top" color="invert">
+            <Tooltip size="sm" content={t('editTooltip')} placement="top" color="invert">
               <Link href={`/${locale}${routes.property.editProperty(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <PencilIcon className="h-4 w-4" />
                 </ActionIcon>
               </Link>
             </Tooltip>
-            <Tooltip size="sm" content={'View Property'} placement="top" color="invert">
+            <Tooltip size="sm" content={t('viewTooltip')} placement="top" color="invert">
               <Link href={`/${locale}${routes.property.propertyDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />
@@ -447,11 +447,11 @@ export const getLeadColumns = ({
 }: Columns) => {
   const { locale } = useParams<Params>()
   const params = useParams<Params>()
-  const t = useTranslations('LeadPages.leadListPage.leadTable');
+  const t = useTranslations('LeadPages.leadListPage.leadTable.leadHeader');
 
   return [
     {
-      title: <HeaderCell title={t('leadHeader.id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
+      title: <HeaderCell title={t('id')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'id'} />,
       onHeaderCell: () => onHeaderCellClick('id'),
       dataIndex: 'id',
       key: 'id',
@@ -459,7 +459,7 @@ export const getLeadColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('leadHeader.propertyId')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyId'} />,
+      title: <HeaderCell title={t('propertyId')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'propertyId'} />,
       onHeaderCell: () => onHeaderCellClick('propertyId'),
       dataIndex: 'propertyId',
       key: 'propertyId',
@@ -467,7 +467,7 @@ export const getLeadColumns = ({
       render: (value: number) => <Text>#{value}</Text>,
     },
     {
-      title: <HeaderCell title={t('leadHeader.fullName')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'fullName'} />,
+      title: <HeaderCell title={t('fullName')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'fullName'} />,
       onHeaderCell: () => onHeaderCellClick('fullName'),
       dataIndex: 'fullName',
       key: 'fullName',
@@ -477,7 +477,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: <HeaderCell title={t('leadHeader.email')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
+      title: <HeaderCell title={t('email')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'email'} />,
       onHeaderCell: () => onHeaderCellClick('email'),
       dataIndex: 'email',
       key: 'email',
@@ -487,7 +487,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: <HeaderCell title={t('leadHeader.phone')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'phone'} />,
+      title: <HeaderCell title={t('phone')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'phone'} />,
       onHeaderCell: () => onHeaderCellClick('phone'),
       dataIndex: 'phone',
       key: 'phone',
@@ -497,7 +497,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: <HeaderCell title={t('leadHeader.message')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'message'} />,
+      title: <HeaderCell title={t('message')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'message'} />,
       onHeaderCell: () => onHeaderCellClick('message'),
       dataIndex: 'message',
       key: 'message',
@@ -507,7 +507,7 @@ export const getLeadColumns = ({
       ),
     },
     {
-      title: (<HeaderCell title={t('leadHeader.status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
+      title: (<HeaderCell title={t('status')} sortable ascending={sortConfig?.direction === 'asc' && sortConfig?.key === 'status'} />),
       onHeaderCell: () => onHeaderCellClick('status'),
       dataIndex: 'status',
       key: 'status',
@@ -532,7 +532,7 @@ export const getLeadColumns = ({
       },
     },
     {
-      title: <HeaderCell title={t('leadHeader.actions')} className='flex justify-end' />,
+      title: <HeaderCell title={t('actions')} className='flex justify-end' />,
       dataIndex: 'action',
       key: 'action',
       width: 180,
@@ -584,7 +584,7 @@ export const getLeadColumns = ({
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </span>
             </div>
-            <Tooltip size="sm" content={'View Lead'} placement="top" color="invert">
+            <Tooltip size="sm" content={t('viewTooltip')} placement="top" color="invert">
               <Link href={`/${locale}${routes.lead.leadDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />
@@ -733,14 +733,14 @@ export const getMaintenanceRequestColumns = ({
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </span>
             </div>
-            <Tooltip size="sm" content={'Edit Maintenance Request'} placement="top" color="invert">
+            <Tooltip size="sm" content={t('editTooltip')} placement="top" color="invert">
               <Link href={`/${locale}${routes.maintenanceRequest.editMaintenance(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <PencilIcon className="h-4 w-4" />
                 </ActionIcon>
               </Link>
             </Tooltip>
-            <Tooltip size="sm" content={'View Maintenance Request'} placement="top" color="invert">
+            <Tooltip size="sm" content={t('viewTooltip')} placement="top" color="invert">
               <Link href={`/${locale}${routes.maintenanceRequest.maintenanceDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />
@@ -851,14 +851,14 @@ export const getUserColumns = ({
       width: 100,
       render: (_: string, row: any) => (
         <div className="flex items-center justify-end gap-3">
-          <Tooltip size="sm" content={'Edit User'} placement="top" color="invert">
+          <Tooltip size="sm" content={t('editTooltip')} placement="top" color="invert">
             <Link href={`/${locale}${routes.user.editUser(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <PencilIcon className="h-4 w-4" />
               </ActionIcon>
             </Link>
           </Tooltip>
-          <Tooltip size="sm" content={'View User'} placement="top" color="invert">
+          <Tooltip size="sm" content={t('viewTooltip')} placement="top" color="invert">
             <Link href={`/${locale}${routes.user.userDetails(row.id)}`}>
               <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                 <EyeIcon className="h-4 w-4" />
@@ -1066,7 +1066,7 @@ export const getContactColumns = ({
                 ))}
               </select>
             </div>
-            <Tooltip size="sm" content={'View Contact'} placement="top" color="invert">
+            <Tooltip size="sm" content={t('viewTooltip')} placement="top" color="invert">
               <Link href={`/${locale}${routes.contact.contactDetails(row.id)}`}>
                 <ActionIcon as="span" size="sm" variant="outline" className="hover:text-gray-700">
                   <EyeIcon className="h-4 w-4" />

@@ -2,6 +2,10 @@
     "landingPage": {
         "title": "Welcome to Sadef Admin Site"
     },
+    "AuthHeader": {
+        "login": "Login",
+        "signup": "Sign Up"
+    },
     "SignInPage": {
         "title": {
             "line1": "Welcome Back!",
@@ -15,7 +19,28 @@
             "submit": "Log In",
             "rememberMe": "Remember Me",
             "forgotPassword": "Forgot Password",
-            "login": "Log In"
+            "loginBtn": "Log In"
+        }
+    },
+    "SignUpPage": {
+        "title": {
+            "line1": "Welcome!",
+            "line2": "Join us today! Get special benefits and stay up-to-date."
+        },
+        "form": {
+            "firstName": "First Name",
+            "firstNamePlaceholder": "Enter your first name",
+            "lastName": "Last Name",
+            "lastNamePlaceholder": "Enter your last name",
+            "email": "Email",
+            "emailPlaceholder": "Enter your email",
+            "password": "Password",
+            "passwordPlaceholder": "Enter your password",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Confirm your password",
+            "role": "Role",
+            "rolePlaceholder": "Select role",
+            "signupBtn": "Sign Up"
         }
     },
     "ForgotPasswordPage": {
@@ -31,6 +56,22 @@
         "footer": {
             "text1": "Don't want to reset?",
             "text2": "Sign in"
+        }
+    },
+    "ResetPasswordPage": {
+        "title": {
+            "line1": "Reset Password",
+            "line2": "Enter your new password."
+        },
+        "form": {
+            "newPassword": "New Password",
+            "newPasswordPlaceholder": "Enter your new password",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Confirm your password",
+            "resetButton": "Reset Password",
+            "description": {
+                "line1": "Enter a new password for your."
+            }
         }
     },
     "SideMenu": {
@@ -79,8 +120,9 @@
     "loading": {
         "title": "Loading..."
     },
-    "DashboardPage": {
+    "Dashboard": {
         "title": "Dashboard",
+        "description": "Welcome to the dashboard of Sadef Admin Site",
         "propertyAnalytics": {
             "title": "Property Analytics",
             "cards": {
@@ -193,11 +235,13 @@
     },
     "tableFooter": {
         "pages": "Pages",
+        "of": "of",
         "rowsPerPage": "Rows per page"
     },
     "DeletePopover": {
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "deleteItem": "Delete Item"
     },
     "PropertyPages": {
         "propertyListPage": {
@@ -238,6 +282,8 @@
                     "actions": "Actions",
                     "saving": "Saving...",
                     "save": "Save",
+                    "editTooltip": "Edit Property",
+                    "viewTooltip": "View Property",
                     "propertyDelete": {
                         "title": "Delete the Property",
                         "description": "Are you sure you want to delete this #{id} property?"
@@ -471,6 +517,8 @@
                     "publishedAt": "Published At",
                     "published": "Published",
                     "actions": "Actions",
+                    "editTooltip": "Edit Blog",
+                    "viewTooltip": "View Blog",
                     "blogDelete": {
                         "title": "Delete the Blog",
                         "description": "Are you sure you want to delete this #{id} blog?"
@@ -543,11 +591,12 @@
                     "phone": "Phone",
                     "message": "Message",
                     "status": "Status",
-                    "actions": "Actions"
-                },
-                "leadToast": {
-                    "statusUpdated": "Status updated successfully",
-                    "statusUpdateFailed": "Failed to update status"
+                    "actions": "Actions",
+                    "viewTooltip": "View Lead",
+                    "leadToast": {
+                        "statusUpdated": "Status updated successfully",
+                        "statusUpdateFailed": "Failed to update status"
+                    }
                 }
             }
         },
@@ -591,6 +640,8 @@
                     "published": "Published",
                     "draft": "Draft",
                     "actions": "Actions",
+                    "editTooltip": "Edit Maintenance Request",
+                    "viewTooltip": "View Maintenance Request",
                     "maintenanceDelete": {
                         "title": "Delete the Maintenance Request",
                         "description": "Are you sure you want to delete this #{id} maintenance request?"
@@ -685,7 +736,9 @@
                     "isActive": "Active",
                     "active": "Active",
                     "inactive": "Inactive",
-                    "actions": "Actions"
+                    "actions": "Actions",
+                    "editTooltip": "Edit User",
+                    "viewTooltip": "View User"
                 }
             }
         },
@@ -776,6 +829,8 @@
                     "status": "Status",
                     "createdAt": "Created At",
                     "actions": "Actions",
+                    "editTooltip": "Edit Contact",
+                    "viewTooltip": "View Contact",
                     "contactToast": {
                         "statusUpdated": "Status updated successfully",
                         "statusUpdateFailed": "Failed to update status"

@@ -4,11 +4,15 @@ import { siteConfig } from '@/config/site.config';
 import cn from '@/utils/class-names';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { BsFacebook } from 'react-icons/bs';
 import { FcGoogle } from 'react-icons/fc';
 import { Button, Title } from 'rizzui';
 import OrSeparation from './or-separation';
+import { PiArrowLineRight } from 'react-icons/pi';
+import { PiUserCirclePlus } from 'react-icons/pi';
+import { routes } from '@/config/routes';
+import { useTranslations } from 'next-intl';
 
 function AuthNavLink({
   href,
@@ -51,9 +55,8 @@ export default function AuthWrapper({
   className?: string;
 }) {
   return (
-    <div className="flex min-h-screen w-full flex-col justify-between">
-      {/* <AuthHeader /> */}
-
+    <div className="flex min-h-screen w-full flex-col gap-8">
+      <AuthHeader />
       <div className="flex w-full flex-col justify-center px-5">
         <div
           className={cn(
@@ -62,7 +65,13 @@ export default function AuthWrapper({
           )}
         >
           <div className="flex flex-col items-center">
-            <Image src={siteConfig.icon} alt={siteConfig.title} className="mb-7 inline-block max-w-[64px] lg:mb-9" />
+            <Image
+              src={"/short-logo.png"}
+              alt="Short Logo"
+              height={45}
+              width={45}
+              priority
+            />
             <Title
               as="h2"
               className="mb-7 text-center text-[28px] font-bold leading-snug md:text-3xl md:!leading-normal lg:mb-10 lg:text-4xl"
@@ -100,26 +109,30 @@ export default function AuthWrapper({
 }
 
 function AuthHeader() {
+  const params = useParams();
+  const t = useTranslations('AuthHeader');
   return (
     <header className="flex items-center justify-between p-4 lg:px-16 lg:py-6 2xl:px-24">
       <Link href={'/'}>
         <Image
-          src={siteConfig.logo}
-          alt={siteConfig.title}
-          className="dark:invert"
+          src={"/sadef-logo.png"}
+          alt="Sadef Logo"
+          height={200}
+          width={200}
           priority
+          className="w-[60px] sm:w-[120px]"
         />
       </Link>
-      {/* <div className="flex items-center space-x-2 md:space-x-4">
+      <div className="flex items-center space-x-2 md:space-x-4">
         <AuthNavLink href={`/${params.locale}${routes.auth.login}`}>
-          <PiArrowLineRight className="h-4 w-4" />
-          <span>Login</span>
+          <PiArrowLineRight className={cn("h-4 w-4", params.locale === 'ar' ? 'rotate-180' : 'rotate-0')} />
+          <span>{t('login')}</span>
         </AuthNavLink>
         <AuthNavLink href={`/${params.locale}${routes.auth.signup}`}>
-          <PiUserCirclePlus className="h-4 w-4" />
-          <span>Sign Up</span>
+          <PiUserCirclePlus className="h-5 !w-5" />
+          <span>{t('signup')}</span>
         </AuthNavLink>
-      </div> */}
+      </div>
     </header>
   );
 }

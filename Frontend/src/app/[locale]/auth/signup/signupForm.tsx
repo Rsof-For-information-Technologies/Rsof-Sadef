@@ -12,6 +12,8 @@ import { FormStatusButton } from "@/components/formStatusButton";
 import { Signup, signup } from "@/validators/signup.validator";
 import { UserRegisterForm } from "@/utils/api";
 import { Params } from "@/types/params";
+import cn from '@/utils/class-names'
+import { useTranslations } from 'next-intl'
 
 const initialValues = {
     firstName: "",
@@ -28,7 +30,7 @@ function SignupForm() {
     const params = useParams<Params>();
     const [serverError, setServerError] = useState<string | null>(null);
     const isMedium = useMedia("(max-width: 1200px)", false);
-
+    const t = useTranslations('SignUpPage.form');
     const { register, handleSubmit, formState: { errors }, setError, } = useForm<Signup>({
         resolver: zodResolver(signup),
         defaultValues: { ...initialValues },
@@ -75,9 +77,9 @@ function SignupForm() {
                 <Input
                     type="text"
                     size="lg"
-                    label="First Name"
+                    label={t('firstName')}
                     id="firstName"
-                    placeholder="Enter your first name"
+                    placeholder={t('firstNamePlaceholder')}
                     className="[&>label>span]:font-medium"
                     inputClassName="text-sm"
                     error={errors.firstName?.message}
@@ -86,9 +88,9 @@ function SignupForm() {
                 <Input
                     type="text"
                     size="lg"
-                    label="Last Name"
+                    label={t('lastName')}
                     id="lastName"
-                    placeholder="Enter your last name"
+                    placeholder={t('lastNamePlaceholder')}
                     className="[&>label>span]:font-medium"
                     inputClassName="text-sm"
                     error={errors.lastName?.message}
@@ -97,18 +99,18 @@ function SignupForm() {
                 <Input
                     type="email"
                     size="lg"
-                    label="Email"
+                    label={t('email')}
                     id="email"
-                    placeholder="Enter your email"
+                    placeholder={t('emailPlaceholder')}
                     className="[&>label>span]:font-medium"
                     inputClassName="text-sm"
                     error={errors.email?.message}
                     {...register("email")}
                 />
                 <Password
-                    label="Password"
+                    label={t('password')}
                     id="password"
-                    placeholder="Enter your password"
+                    placeholder={t('passwordPlaceholder')}
                     size="lg"
                     className="[&>label>span]:font-medium"
                     inputClassName="text-sm"
@@ -116,9 +118,9 @@ function SignupForm() {
                     {...register("password")}
                 />
                 <Password
-                    label="Confirm Password"
+                    label={t('confirmPassword')}
                     id="confirmPassword"
-                    placeholder="Confirm your password"
+                    placeholder={t('confirmPasswordPlaceholder')}
                     size="lg"
                     className="[&>label>span]:font-medium"
                     inputClassName="text-sm"
@@ -126,9 +128,9 @@ function SignupForm() {
                     {...register("confirmPassword")}
                 />
                 <Input
-                    label="Role"
+                    label={t('role')}
                     id="role"
-                    placeholder="Enter your role"
+                    placeholder={t('rolePlaceholder')}
                     size="lg"
                     className="[&>label>span]:font-medium"
                     inputClassName="text-sm"
@@ -149,8 +151,8 @@ function SignupForm() {
                     className="w-full @xl:w-full dark:bg-[#090909] dark:text-white hover:dark:bg-black"
                     type="submit"
                     size={isMedium ? "lg" : "lg"}>
-                    <span>Signup</span>
-                    <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
+                    <span>{t('signupBtn')}</span>
+                    <PiArrowRightBold className={cn("ms-2 mt-0.5 h-5 w-5", params.locale === 'ar' ? 'rotate-180' : 'rotate-0')} />
                 </FormStatusButton>
             </div>
         </form>

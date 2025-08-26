@@ -6,6 +6,7 @@ import { AxiosError } from "axios";
 import { Metadata } from "next";
 import ResetPasswordForm from "./resetPasswordForm";
 import { Params } from "@/types/params";
+import { getTranslations } from "next-intl/server";
 
 type QueryParams = T_SearchParams & {
     token: string
@@ -39,17 +40,20 @@ export default async function Page({
     searchParams: QueryParams;
     params: Params
 }) {
-
+    const t = await getTranslations("ResetPasswordPage");
     return (
         <AuthWrapper
             title={
                 <>
-                    Having trouble to sign in? <br className="hidden sm:inline-block" />{' '}
-                    Reset your password.
+                    {t('title.line1')} <br /> {t('title.line2')}
                 </>
             }
+            isSignIn
+            isSocialLoginActive={false}
         >
-            <ResetPasswordForm email={"email" as string} />
+            <div className="mx-auto w-full max-w-md py-12 md:max-w-lg lg:max-w-xl 2xl:pb-8 2xl:pt-2">
+                <ResetPasswordForm email={"email" as string} />
+            </div>
         </AuthWrapper>
     )
 

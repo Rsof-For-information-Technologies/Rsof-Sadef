@@ -14,7 +14,7 @@ export default function PropertyDashboard() {
     const [dashboardData, setDashboardData] = useState<PropertyDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const t = useTranslations('DashboardPage.propertyAnalytics')
+    const t = useTranslations('Dashboard.propertyAnalytics')
     const params = useParams<Params>();
 
     useEffect(() => {

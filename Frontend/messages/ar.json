@@ -2,6 +2,10 @@
     "landingPage": {
         "title": "مرحبًا بكم في موقع إدارة صادف"
     },
+    "AuthHeader": {
+        "login": "تسجيل الدخول",
+        "signup": "تسجيل الإنضمام"
+    },
     "SignInPage": {
         "title": {
             "line1": "مرحبًا بعودتك!",
@@ -15,7 +19,28 @@
             "submit": "تسجيل الدخول",
             "rememberMe": "تذكرني",
             "forgotPassword": "نسيت كلمة المرور",
-            "login": "تسجيل الدخول"
+            "loginBtn": "تسجيل الدخول"
+        }
+    },
+    "SignUpPage": {
+        "title": {
+            "line1": "مرحبًا!",
+            "line2": "انضم إلينا اليوم! احصل على الفوائد الخاصة وابقى على اطلاع على التحديثات."
+        },
+        "form": {
+            "firstName": "الاسم الأول",
+            "firstNamePlaceholder": "أدخل اسمك الأول",
+            "lastName": "الاسم الأخير",
+            "lastNamePlaceholder": "أدخل اسمك الأخير",
+            "email": "البريد الإلكتروني",
+            "emailPlaceholder": "أدخل بريدك الإلكتروني",
+            "password": "كلمة المرور",
+            "passwordPlaceholder": "أدخل كلمة المرور",
+            "confirmPassword": "تأكيد كلمة المرور",
+            "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
+            "role": "الدور",
+            "rolePlaceholder": "اختر الدور",
+            "signupBtn": "تسجيل الإنضمام"
         }
     },
     "ForgotPasswordPage": {
@@ -31,6 +56,22 @@
         "footer": {
             "text1": "لا تريد إعادة التعيين؟",
             "text2": "تسجيل الدخول"
+        }
+    },
+    "ResetPasswordPage": {
+        "title": {
+            "line1": "إعادة تعيين كلمة المرور",
+            "line2": "أدخل كلمة المرور الجديدة."
+        },
+        "form": {
+            "newPassword": "كلمة المرور الجديدة",
+            "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+            "confirmPassword": "تأكيد كلمة المرور",
+            "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
+            "resetButton": "إعادة تعيين كلمة المرور",
+            "description": {
+                "line1": "أدخل كلمة المرور الجديدة."
+            }
         }
     },
     "SideMenu": {
@@ -79,8 +120,9 @@
     "loading": {
         "title": "جاري التحميل..."
     },
-    "DashboardPage": {
+    "Dashboard": {
         "title": "لوحة التحكم",
+        "description": "مرحبًا بك في لوحة التحكم لموقع إدارة صادف",
         "propertyAnalytics": {
             "title": "تحليلات العقارات",
             "cards": {
@@ -193,11 +235,13 @@
     },
     "tableFooter": {
         "pages": "الصفحات",
+        "of": "من",
         "rowsPerPage": "عدد الصفوف في الصفحة"
     },
     "DeletePopover": {
         "yes": "نعم",
-        "no": "لا"
+        "no": "لا",
+        "deleteItem": "حذف العنصر"
     },
     "PropertyPages": {
         "propertyListPage": {
@@ -238,6 +282,8 @@
                     "actions": "الإجراءات",
                     "saving": "الحفظ...",
                     "save": "حفظ",
+                    "editTooltip": "تعديل العقار",
+                    "viewTooltip": "عرض العقار",
                     "propertyDelete": {
                         "title": "حذف العقار",
                         "description": "هل أنت متأكد أنك تريد حذف هذا #{id} عقار؟"
@@ -471,6 +517,8 @@
                     "publishedAt": "تاريخ النشر",
                     "published": "المنشئ",
                     "actions": "الإجراءات",
+                    "editTooltip": "تعديل المدونة",
+                    "viewTooltip": "عرض المدونة",
                     "blogDelete": {
                         "title": "حذف المدونة",
                         "description": "هل أنت متأكد أنك تريد حذف هذا #{id} مدونة؟"
@@ -543,11 +591,12 @@
                     "phone": "الهاتف",
                     "message": "الرسالة",
                     "status": "الحالة",
-                    "actions": "الإجراءات"
-                },
-                "leadToast": {
-                    "statusUpdated": "تم تحديث الحالة بنجاح",
-                    "statusUpdateFailed": "فشل تحديث الحالة"
+                    "actions": "الإجراءات",
+                    "viewTooltip": "عرض الطلب",
+                    "leadToast": {
+                        "statusUpdated": "تم تحديث الحالة بنجاح",
+                        "statusUpdateFailed": "فشل تحديث الحالة"
+                    }
                 }
             }
         },
@@ -591,6 +640,8 @@
                     "published": "منشئ",
                     "draft": "مسودة",
                     "actions": "الإجراءات",
+                    "editTooltip": "تعديل طلب الصيانة",
+                    "viewTooltip": "عرض طلب الصيانة",
                     "maintenanceDelete": {
                         "title": "حذف طلب الصيانة",
                         "description": "هل أنت متأكد أنك تريد حذف هذا #{id} طلب الصيانة؟"
@@ -685,7 +736,9 @@
                     "isActive": "نشط",
                     "active": "نشط",
                     "inactive": "غير نشط",
-                    "actions": "الإجراءات"
+                    "actions": "الإجراءات",
+                    "editTooltip": "تعديل المستخدم",
+                    "viewTooltip": "عرض المستخدم"
                 }
             }
         },
@@ -776,6 +829,8 @@
                     "status": "الحالة",
                     "createdAt": "تاريخ الإنشاء",
                     "actions": "الإجراءات",
+                    "editTooltip": "تعديل الاتصال",
+                    "viewTooltip": "عرض الاتصال",
                     "contactToast": {
                         "statusUpdated": "تم تحديث الحالة بنجاح",
                         "statusUpdateFailed": "فشل تحديث الحالة"

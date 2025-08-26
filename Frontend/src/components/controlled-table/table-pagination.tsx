@@ -31,14 +31,14 @@ export default function TablePagination({
   return (
     <div
       className={cn(
-        'table-pagination flex items-center justify-center sm:justify-between',
+        'table-pagination flex items-center justify-between',
         paginatorClassName
       )}
     >
       {!setPageSize ? (
         total && (
-          <div className="hidden text-gray-500 sm:inline-flex">
-            {props.current} of {Math.ceil(total / pageSize)} {t('pages')}
+          <div className="text-gray-500">
+            {props.current} {t('of')} {Math.ceil(total / pageSize)} {t('pages')}
           </div>
         )
       ) : (

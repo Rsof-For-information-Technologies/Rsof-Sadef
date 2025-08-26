@@ -13,6 +13,7 @@ import { UserForgotPasswordForm } from "@/utils/api";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { Params } from "@/types/params";
+import cn from '@/utils/class-names'
 
 const initialValues = {
     email: "",
@@ -21,7 +22,8 @@ const initialValues = {
 export default function ForgotPasswordForm() {
     const isMedium = useMedia("(max-width: 1200px)", false);
     const t = useTranslations("ForgotPasswordPage");
-    const { locale } = useParams<Params>()
+    const { locale } = useParams<Params>();
+    const params = useParams();
 
     const { register, handleSubmit, formState: { errors }, setError, reset, } = useForm<ForgetPassword>({
         resolver: zodResolver(forgetPasswordValidator),
@@ -80,7 +82,7 @@ export default function ForgotPasswordForm() {
                                 type="submit"
                                 size={isMedium ? 'lg' : 'xl'}>
                                 <span>{t('form.resetButton')}</span>
-                                <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5 group-hover:translate-x-1 group-hover:scale-105 transition-transform transform-all" />
+                                <PiArrowRightBold className={cn("ms-2 mt-0.5 h-5 w-5", params.locale === 'ar' ? 'rotate-180' : 'rotate-0')} />
                             </FormStatusButton>
                         </div>
                     </form>

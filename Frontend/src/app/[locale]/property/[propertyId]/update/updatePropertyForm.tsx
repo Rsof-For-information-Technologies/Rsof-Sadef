@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { StepIndicator } from "../../(components)/step-indicator";
@@ -17,6 +17,8 @@ import { UserRole } from "@/types/userRoles";
 import Authenticate from "@/components/auth/authenticate";
 import Authorize from "@/components/auth/authorize";
 import { useTranslations } from "next-intl"
+import { Params } from "@/types/params";
+import cn from "@/utils/class-names";
 
 interface UpdatePropertyFormProps {
   propertyId: string;
@@ -28,11 +30,10 @@ export default function UpdatePropertyForm({
   initialData,
 }: UpdatePropertyFormProps) {
   const t = useTranslations('PropertyPages.updatePropertyPage.updateProperty')
-  console.log({ propertyId, initialData });
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
+  const params = useParams<Params>()
   const form = useForm<CreatePropertyFormData>({
     resolver: zodResolver(createPropertySchema),
     defaultValues: {
@@ -143,7 +144,7 @@ export default function UpdatePropertyForm({
                 disabled={currentStep === 1}
                 className="flex items-center gap-2"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className={cn("h-4 w-4", params.locale === 'ar' ? "rotate-180" : "rotate-0")} />
                 {t('btn.previous')}
               </Button>
 
@@ -154,7 +155,7 @@ export default function UpdatePropertyForm({
                   className="flex items-center gap-2"
                 >
                   {t('btn.next')}
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className={cn("h-4 w-4", params.locale === 'ar' ? "rotate-180" : "rotate-0")} />
                 </Button>
               ) : (
                 <Button

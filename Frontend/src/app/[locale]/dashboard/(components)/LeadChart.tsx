@@ -12,7 +12,7 @@ interface LeadChartProps {
 }
 
 export default function LeadChart({ data }: LeadChartProps) {
-    const t = useTranslations('DashboardPage.leadAnalytics')
+    const t = useTranslations('Dashboard.leadAnalytics')
     const params = useParams<Params>();
 
     const chartData = [

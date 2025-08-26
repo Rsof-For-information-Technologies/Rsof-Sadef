@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiArrowRightBold } from "react-icons/pi";
-import { Password, Input, Select } from "rizzui";
+import { Password, Input, Select, cn } from "rizzui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
@@ -170,10 +170,10 @@ function UserForm() {
                                 type="submit"
                                 size="lg"
                                 disabled={isLoading}
-                                className="flex items-center justify-center"
+                                className="flex items-center justify-center gap-2"
                             >
                                 {isLoading ? t('btn.creating') : t('btn.createUser')}
-                                <PiArrowRightBold className="ml-2 mt-0.5 h-5 w-5" />
+                                <PiArrowRightBold className={cn("h-5 w-5", params.locale === 'ar' ? 'rotate-180 mt-0.5' : 'rotate-0 mt-0.5')} />
                             </FormStatusButton>
                         </div>
                     </div>

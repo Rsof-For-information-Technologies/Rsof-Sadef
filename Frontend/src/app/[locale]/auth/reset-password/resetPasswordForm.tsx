@@ -12,6 +12,8 @@ import { Password } from 'rizzui';
 import { toast } from 'sonner';
 import { UserResetPasswordForm } from '@/utils/api';
 import { routes } from '@/config/routes';
+import { useTranslations } from 'next-intl';
+import cn from '@/utils/class-names'
 
 const initialValues = {
     newPassword: "",
@@ -23,6 +25,7 @@ function ResetPasswordForm({ email }: { email: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const params = useParams<Params>();
+    const t = useTranslations("ResetPasswordPage.form");
 
     const { register, formState: { errors }, reset, setError, handleSubmit } = useForm<ResetPassword>({
         resolver: zodResolver(resetPasswordValidator),
@@ -78,45 +81,41 @@ function ResetPasswordForm({ email }: { email: string }) {
 
     return (
         <div className="flex w-full flex-col justify-between">
-            <div className="flex w-full flex-col justify-center px-5">
-                <div className="mx-auto w-full max-w-md py-12 md:max-w-lg lg:max-w-xl 2xl:pb-8 2xl:pt-2">
-                    <p className="text-center mb-10">
-                        Enter a new password for your {email}
-                    </p>
-                    <form action={() => handleSubmit(submitForm)()}>
-                        <div className="space-y-6">
-                        <Password
-                            label="New Password"
-                            id="newPassword"
-                            placeholder="Enter your password"
-                            size="lg"
-                            className="[&>label>span]:font-medium"
-                            inputClassName="text-sm"
-                            error={errors.newPassword?.message}
-                            {...register("newPassword")}
-                        />
-                        <Password
-                            label="Confirm Password"
-                            id="confirmNewPassword"
-                            placeholder="Enter your password"
-                            size="lg"
-                            className="[&>label>span]:font-medium"
-                            inputClassName="text-sm"
-                            error={errors.confirmNewPassword?.message}
-                            {...register("confirmNewPassword")}
-                        />
-                        <p className="text-red-500 text-sm">{(errors as any)?.message?.message}</p>
-                        <FormStatusButton
-                            className="w-full @xl:w-full dark:bg-[#090909] dark:text-white hover:dark:bg-black"
-                            type="submit"
-                            size={isMedium ? 'lg' : 'lg'}>
-                            <span> Reset password </span>
-                            <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
-                        </FormStatusButton>
-                        </div>
-                    </form>
+            <p className="text-center mb-10">
+                {t('description.line1', { email })}
+            </p>
+            <form action={() => handleSubmit(submitForm)()}>
+                <div className="space-y-6">
+                <Password
+                    label={t('newPassword')}
+                    id="newPassword"
+                    placeholder={t('newPasswordPlaceholder')}
+                    size="lg"
+                    className="[&>label>span]:font-medium"
+                    inputClassName="text-sm"
+                    error={errors.newPassword?.message}
+                    {...register("newPassword")}
+                />
+                <Password
+                    label={t('confirmPassword')}
+                    id="confirmNewPassword"
+                    placeholder={t('confirmPasswordPlaceholder')}
+                    size="lg"
+                    className="[&>label>span]:font-medium"
+                    inputClassName="text-sm"
+                    error={errors.confirmNewPassword?.message}
+                    {...register("confirmNewPassword")}
+                />
+                <p className="text-red-500 text-sm">{(errors as any)?.message?.message}</p>
+                <FormStatusButton
+                    className="w-full @xl:w-full dark:bg-[#090909] dark:text-white hover:dark:bg-black"
+                    type="submit"
+                    size={isMedium ? 'lg' : 'lg'}>
+                    <span>{t('resetButton')}</span>
+                    <PiArrowRightBold className={cn("ms-2 mt-0.5 h-5 w-5", params.locale === 'ar' ? 'rotate-180' : 'rotate-0')} />
+                </FormStatusButton>
                 </div>
-            </div>
+            </form>
         </div>
     );
 }
