@@ -522,5 +522,15 @@ namespace Sadef.Application.Services.User
             return new Response<UserLoginResultDTO>(resultDTO, _localizer["User_TokenRefreshed"]);
         }
 
+        public async Task<List<string>> GetAdminAndSuperAdminUserIdsAsync()
+        {
+            var adminRoles = new[] { "Admin", "SuperAdmin" };
+            var users = await _userManager.Users
+                .Where(u => adminRoles.Contains(u.Role))
+                .Select(u => u.Id.ToString())
+                .ToListAsync();
+            return users;
+        }
+
     }
 }

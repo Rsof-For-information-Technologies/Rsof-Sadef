@@ -31,8 +31,9 @@ namespace Sadef.Application.Services.Lead
         private readonly IHttpContextAccessor _httpContextAccessor;
         private const string LeadDashboardCacheKey = "lead:dashboard:stats";
         private const string LeadVersionKey = "leads:version";
+        private readonly IFirebaseNotificationService _firebaseNotificationService;
 
-        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IStringLocalizerFactory localizerFactory , IHttpContextAccessor httpContextAccessor, IPropertyTimeLineService propertyTimeLineService)
+        public LeadService(IUnitOfWorkAsync uow, IMapper mapper, IValidator<CreateLeadDto> createLeadValidator, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdateLeadDto> updateLeadValidator, IDistributedCache cache, IStringLocalizerFactory localizerFactory , IHttpContextAccessor httpContextAccessor, IPropertyTimeLineService propertyTimeLineService, IFirebaseNotificationService firebaseNotificationService)
         {
             _uow = uow;
             _mapper = mapper;
@@ -43,6 +44,7 @@ namespace Sadef.Application.Services.Lead
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
             _httpContextAccessor = httpContextAccessor;
             _propertyTimeLineService = propertyTimeLineService;
+            _firebaseNotificationService = firebaseNotificationService;
         }
 
         public async Task<Response<LeadDto>> CreateLeadAsync(CreateLeadDto dto)
@@ -80,6 +82,10 @@ namespace Sadef.Application.Services.Lead
             }
             await CacheHelper.IncrementCacheVersionAsync(_cache, LeadVersionKey);
             await CacheHelper.RemoveCacheKeyAsync(_cache, LeadDashboardCacheKey);
+
+            await _firebaseNotificationService.SendLeadCreatedNotificationToAdminsAsync(
+                "New Lead Created",
+                "A new lead has been generated.");
 
             var responseDto = _mapper.Map<LeadDto>(lead);
             return new Response<LeadDto>(responseDto, _localizer["Lead_Created"]);

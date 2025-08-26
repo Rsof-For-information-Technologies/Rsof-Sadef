@@ -27,6 +27,7 @@ using Sadef.Application.Services.PropertyListing;
 using Sadef.Application.DTOs.PropertyTimeLineDtos;
 using Sadef.Application.Services.PropertyTimeLine;
 using Sadef.Common.Services.CurrentUser;
+using Sadef.Application.Services.Notification;
 using Sadef.Application.Services.User;
 using Sadef.Application.Services.Whatsapp;
 using Sadef.Application.MappingProfile;
@@ -233,7 +234,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var contextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
                        var propertyTimeLineService = provider.GetRequiredService<IPropertyTimeLineService>();
-                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory, contextAccessor, propertyTimeLineService);
+                       var firebaseNotificationService = provider.GetRequiredService<IFirebaseNotificationService>();
+                       return new LeadService(uow, mapper, createValidator, queryFactory, updateValidator, cache, localizerFactory, contextAccessor, propertyTimeLineService, firebaseNotificationService);
                    });
 
 
@@ -285,6 +287,7 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<ICurrentUserService, CurrentUserService>();
 
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
+                   svc.AddScoped<IFirebaseNotificationService, FirebaseNotificationService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
 
                    svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
