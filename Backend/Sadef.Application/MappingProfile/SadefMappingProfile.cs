@@ -8,6 +8,8 @@ using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyTimeLineDtos;
 using Sadef.Application.DTOs.ContactDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
+using Sadef.Application.DTOs.NotificationDtos;
+using Sadef.Domain.Users;
 using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
@@ -124,6 +126,10 @@ namespace Sadef.Application.MappingProfile
             // PropertyTimeLine
             CreateMap<CreatePropertyTimeLineLogDto, PropertyTimeLine>();
             CreateMap<PropertyTimeLine, PropertyTimeLineLogDto>();
+
+            // Notifications
+            CreateMap<RegisterDeviceTokenDto, UserDeviceToken>();
+            CreateMap<UserDeviceToken, DeviceTokenDto>();
 
         }
     }
