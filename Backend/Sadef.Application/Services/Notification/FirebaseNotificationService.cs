@@ -16,7 +16,6 @@ namespace Sadef.Application.Services.Notification
     {
         private readonly IMapper _mapper;
         private readonly string _projectId;
-        private readonly string _accessToken;
         private readonly IUnitOfWorkAsync _uow;
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _config;
@@ -33,7 +32,6 @@ namespace Sadef.Application.Services.Notification
             _projectId = _config["Firebase:ProjectId"];
             _userManagementService = userManagementService;
             _queryRepositoryFactory = queryRepositoryFactory;
-            _accessToken = FirebaseNotificationHelper.GetAccessToken(_config["Firebase:ServiceAccountJson"]);
         }
 
         public async Task<bool> SendNotificationAsync(string title, string body, string deviceToken, IDictionary<string, string>? data = null)
@@ -115,7 +113,8 @@ namespace Sadef.Application.Services.Notification
             {
                 Content = new StringContent(json, Encoding.UTF8, "application/json")
             };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            var accessToken = await FirebaseNotificationHelper.GetAccessTokenAsync();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             // Log the request details
             Console.WriteLine($"[FirebaseNotificationService] FCM Request URL: {url}");
