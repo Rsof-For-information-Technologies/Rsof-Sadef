@@ -13,6 +13,7 @@ import { toast } from 'react-hot-toast';
 import { getCookie, removeCookie } from '@/utils/cookieStorage';
 import { convertNumberToLocalFormat } from './convertNumberToLocalFormat';
 import { GetPropertyCities, GetPropertyFeatures, GetPropertyStatuses, GetPropertyTypes, GetPropertyUnitCategories } from '@/types/staticData';
+import { BlogForm } from '@/validators/createBlog';
 
 const apiCall = () => {
   const instance = axios.create({
@@ -58,18 +59,20 @@ const apiCall = () => {
 
 // Blog API functions
 
-export const createBlog = async (data: BlogFormData) => {
+export const createBlog = async (data: BlogForm) => {
   const api = apiCall();
   const formData = new FormData();
-  formData.append('Title', data.title);
-  formData.append('Content', data.content);
+  formData.append('TranslationsJson', JSON.stringify(data.TranslationsJson));
   if (data.coverImage) {
     formData.append('CoverImage', data.coverImage);
   }
   formData.append('IsPublished', String(data.isPublished));
   try {
     const response = await api.post<CreateBlogResponse>('/api/v1/blog', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Accept-Language': 'en'
+      },
     });
     return response.data;
   } catch (error) {
@@ -78,21 +81,23 @@ export const createBlog = async (data: BlogFormData) => {
   }
 };
 
-export const updateBlog = async (data: BlogFormData) => {
+export const updateBlog = async (data: BlogForm) => {
   const api = apiCall();
   const formData = new FormData();
+  formData.append('TranslationsJson', JSON.stringify(data.TranslationsJson));
   if (data.id !== undefined && data.id !== null) {
     formData.append('Id', String(data.id));
   }
-  formData.append('Title', data.title);
-  formData.append('Content', data.content);
   if (data.coverImage) {
     formData.append('CoverImage', data.coverImage);
   }
   formData.append('IsPublished', String(data.isPublished));
   try {
     const response = await api.put('/api/v1/blog', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Accept-Language': 'en'
+      },
     });
     return response.data;
   } catch (error) {
