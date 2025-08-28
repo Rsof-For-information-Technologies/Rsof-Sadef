@@ -5,11 +5,16 @@ import Authenticate from "@/components/auth/authenticate";
 import { UserRole } from "@/types/userRoles";
 import Authorize from "@/components/auth/authorize";
 import { getTranslations } from "next-intl/server";
+import { Params } from "@/types/params";
+
+type UpdateBlogParams = Params & {
+  blogId: string;
+};
 
 export default async function UpdateBlogPage({
   params,
 }: {
-  params: { blogId: string };
+  params: UpdateBlogParams;
 }) {
   const t = await getTranslations('BlogPages.updateBlogPage');
   try {
@@ -22,8 +27,12 @@ export default async function UpdateBlogPage({
     const BASE_URL = process.env.SERVER_BASE_URL || '';
 
     const initialData = {
-      title: response.data.title || "",
-      content: response.data.content || "",
+      TranslationsJson: {
+        [params.locale]: {
+          title: response.data.title || "",
+          content: response.data.content || "",
+        },
+      },
       coverImage: null,
       isPublished: response.data.isPublished || false,
       previewImage: response.data.coverImage
@@ -34,13 +43,13 @@ export default async function UpdateBlogPage({
     return (
       <Authenticate >
         <Authorize allowedRoles={[UserRole.SuperAdmin, UserRole.Admin]} navigate={true}>
-        <div className="flex flex-col py-6">
-          <div>
-            <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
-            <p className="mb-6 text-gray-600">{t('description')}</p>
+          <div className="flex flex-col py-6">
+            <div>
+              <h1 className="mb-4 text-2xl font-semibold">{t('title')}</h1>
+              <p className="mb-6 text-gray-600">{t('description')}</p>
+            </div>
+            <UpdateBlogForm blogId={params.blogId} initialData={initialData} />
           </div>
-          <UpdateBlogForm blogId={params.blogId} initialData={initialData} />
-        </div>
         </Authorize>
       </Authenticate>
     );
