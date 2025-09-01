@@ -28,12 +28,13 @@ namespace Sadef.Application.Services.User
         private readonly IValidator<UpdateUserDto> _updateUserValidator;
         private readonly IValidator<UpdateUserPasswordDto> _updateUserPasswordValidator;
         private readonly IValidator<RefreshTokenDto> _refreshTokendValidator;
+        private readonly IFirebaseNotificationService _fcmService;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmailService _emailService;
         private readonly IStringLocalizer _localizer;
 
-        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IValidator<RegisterUserWithEmailDto> registerValidator, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IValidator<LoginUserDto> loginValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<UpdateUserDto> updateUserValidator, IValidator<UpdateUserPasswordDto> updateUserPasswordValidator, IValidator<RefreshTokenDto> refreshTokendValidator, IStringLocalizerFactory localizerFactory)
+        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IValidator<RegisterUserWithEmailDto> registerValidator, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IValidator<LoginUserDto> loginValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<UpdateUserDto> updateUserValidator, IValidator<UpdateUserPasswordDto> updateUserPasswordValidator, IValidator<RefreshTokenDto> refreshTokendValidator, IStringLocalizerFactory localizerFactory, IFirebaseNotificationService fcmService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -48,6 +49,7 @@ namespace Sadef.Application.Services.User
             _updateUserPasswordValidator = updateUserPasswordValidator;
             _refreshTokendValidator = refreshTokendValidator;
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
+            _fcmService = fcmService;
         }
 
         public async Task<Response<bool>> CreateUserAsync(RegisterUserWithEmailDto request)
@@ -206,10 +208,9 @@ namespace Sadef.Application.Services.User
             await _userManager.SetAuthenticationTokenAsync(user, "Default", "RefreshTokenExpiry", refreshTokenExpiry);
 
             UserLoginResultDTO? resultDTO = null;
-            resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, refreshToken);
-
+            var fcmToken = await _fcmService.RegisterDeviceToken(user.Id, request.FcmToken, request.DeviceType);
+            resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, refreshToken, fcmToken.Data.DeviceToken);
             return new Response<UserLoginResultDTO>(resultDTO, _localizer["User_LoginSuccessful"]);
-
         }
 
         public async Task<Response<bool>> ForgotPasswordAsync(ForgotPasswordDto request)
@@ -517,19 +518,9 @@ namespace Sadef.Application.Services.User
             await _userManager.SetAuthenticationTokenAsync(user, "Default", "RefreshTokenExpiry", newRefreshTokenExpiry);
 
             UserLoginResultDTO? resultDTO = null;
-            resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, newRefreshToken);
+            resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, newRefreshToken, null);
 
             return new Response<UserLoginResultDTO>(resultDTO, _localizer["User_TokenRefreshed"]);
-        }
-
-        public async Task<List<string>> GetAdminAndSuperAdminUserIdsAsync()
-        {
-            var adminRoles = new[] { "Admin", "SuperAdmin" };
-            var users = await _userManager.Users
-                .Where(u => adminRoles.Contains(u.Role))
-                .Select(u => u.Id.ToString())
-                .ToListAsync();
-            return users;
         }
 
     }

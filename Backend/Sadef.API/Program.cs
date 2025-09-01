@@ -88,7 +88,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var updateUserPasswordValidator = provider.GetRequiredService<IValidator<UpdateUserPasswordDto>>();
                        var refreshTokenValidator = provider.GetRequiredService<IValidator<RefreshTokenDto>>();
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
-                       return new UserManagementService(userManager, roleManager, registerValidator, configuration, httpContextAccessor, emailService, loginValidator, resetPasswordValidator, forgotPasswordValidator, updateUserValidator, updateUserPasswordValidator, refreshTokenValidator, localizerFactory);
+                       var firebaseNotificationService = provider.GetRequiredService<IFirebaseNotificationService>();
+                       return new UserManagementService(userManager, roleManager, registerValidator, configuration, httpContextAccessor, emailService, loginValidator, resetPasswordValidator, forgotPasswordValidator, updateUserValidator, updateUserPasswordValidator, refreshTokenValidator, localizerFactory, firebaseNotificationService);
                    });
                    // User validators
                    svc.AddScoped<IValidator<RegisterUserWithEmailDto>>(provider =>

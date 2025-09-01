@@ -8,6 +8,7 @@
      string LastName,
      string Email,
      string Role,
-     string RefreshToken
-     );
+     string RefreshToken,
+     string FcmToken
+    );
 }
