@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Sadef.Common.Infrastructure.EFCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Sadef.Application.Abstractions.Interfaces;
@@ -19,18 +21,18 @@ namespace Sadef.Application.Services.Notification
         private readonly IUnitOfWorkAsync _uow;
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _config;
-        private readonly IUserManagementService _userManagementService;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IQueryRepositoryFactory _queryRepositoryFactory;
 
 
-        public FirebaseNotificationService(IConfiguration config, IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IUserManagementService userManagementService)
+        public FirebaseNotificationService(IConfiguration config, IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, UserManager<ApplicationUser> userManager)
         {
             _uow = uow;
             _mapper = mapper;
             _config = config;
             _httpClient = new HttpClient();
             _projectId = _config["Firebase:ProjectId"];
-            _userManagementService = userManagementService;
+            _userManager = userManager;
             _queryRepositoryFactory = queryRepositoryFactory;
         }
 
@@ -126,14 +128,18 @@ namespace Sadef.Application.Services.Notification
             Console.WriteLine($"[FirebaseNotificationService] FCM Response Body: {responseBody}");
             return response.IsSuccessStatusCode;
         }
-        public async Task<Response<DeviceTokenDto>> RegisterDeviceToken(RegisterDeviceTokenDto dto)
+
+        public async Task<Response<DeviceTokenDto>> RegisterDeviceToken(string UserID, string FcmToken, string DeviceType)
         {
+            var dto = new RegisterDeviceTokenDto
+            {
+                UserId = UserID,
+                DeviceToken = FcmToken,
+                DeviceType = DeviceType
+            };
+
             if (string.IsNullOrWhiteSpace(dto.UserId) || string.IsNullOrWhiteSpace(dto.DeviceToken))
                 return new Response<DeviceTokenDto>("UserId and DeviceToken are required.");
-
-            var userResponse = await _userManagementService.GetUserByIdAsync(Guid.Parse(dto.UserId));
-            if (userResponse == null || userResponse.Data == null)
-                return new Response<DeviceTokenDto>("User not found");
 
             var repo = _queryRepositoryFactory.QueryRepository<Domain.Users.UserDeviceToken>();
             var existing = await repo.Queryable().FirstOrDefaultAsync(x => x.UserId == dto.UserId && x.DeviceToken == dto.DeviceToken);
@@ -169,7 +175,7 @@ namespace Sadef.Application.Services.Notification
 
         public async Task SendLeadCreatedNotificationToAdminsAsync(string title, string body, IDictionary<string, string>? data = null)
         {
-            var adminUserIds = await _userManagementService.GetAdminAndSuperAdminUserIdsAsync();
+            var adminUserIds = await GetAdminAndSuperAdminUserIdsAsync();
             var repo = _queryRepositoryFactory.QueryRepository<Domain.Users.UserDeviceToken>();
             var tokens = await repo.Queryable()
                 .Where(t => adminUserIds.Contains(t.UserId))
@@ -180,6 +186,16 @@ namespace Sadef.Application.Services.Notification
             {
                 await SendNotificationToMultipleAsync(title, body, tokens, data);
             }
+        }
+
+        public async Task<List<string>> GetAdminAndSuperAdminUserIdsAsync()
+        {
+            var adminRoles = new[] { "Admin", "SuperAdmin" };
+            var users = await _userManager.Users
+                .Where(u => adminRoles.Contains(u.Role))
+                .Select(u => u.Id.ToString())
+                .ToListAsync();
+            return users;
         }
     }
 }
