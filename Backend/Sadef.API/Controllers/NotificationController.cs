@@ -15,9 +15,9 @@ namespace Sadef.API.Controllers
         }
 
         [HttpPost("register-token")]
-        public async Task<IActionResult> RegisterDeviceToken([FromBody] string UserID, string FcmToken, string DeviceType)
+        public async Task<IActionResult> RegisterDeviceToken([FromBody] RegisterDeviceTokenDto request)
         {
-            var result = await _fcmService.RegisterDeviceToken(UserID, FcmToken, DeviceType);
+            var result = await _fcmService.RegisterDeviceToken(request.UserId, request.DeviceToken, request.DeviceType);
             return Ok(result);
         }
 

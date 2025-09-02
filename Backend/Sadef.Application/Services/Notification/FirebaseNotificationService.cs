@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Identity;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,99 +37,13 @@ namespace Sadef.Application.Services.Notification
             _projectId = _config["Firebase:ProjectId"];
             _userManager = userManager;
             _queryRepositoryFactory = queryRepositoryFactory;
-        }
-
-        public async Task<bool> SendNotificationAsync(string title, string body, string deviceToken, IDictionary<string, string>? data = null)
-        {
-            var message = new
+            if (FirebaseApp.DefaultInstance == null)
             {
-                message = new
+                FirebaseApp.Create(new AppOptions()
                 {
-                    token = deviceToken,
-                    notification = new { title, body },
-                    data = data
-                }
-            };
-            return await SendFcmMessageAsync(message);
-        }
-
-        public async Task<bool> TestSendNotificationToMultipleAsync(string title, string body, string userId, IDictionary<string, string>? data = null)
-        {
-            var repo = _queryRepositoryFactory.QueryRepository<Domain.Users.UserDeviceToken>();
-            var tokens = await repo.Queryable().Where(x => x.UserId == userId).Select(x => x.DeviceToken).ToListAsync();
-
-            if (!tokens.Any())
-                return false;
-
-            bool allSucceeded = true;
-            foreach (var token in tokens)
-            {
-                var message = new
-                {
-                    message = new
-                    {
-                        token = token,
-                        notification = new { title, body },
-                        data = data
-                    }
-                };
-                var success = await SendFcmMessageAsync(message);
-                if (!success) allSucceeded = false;
+                    Credential = GoogleCredential.FromFile("./sadef-push-notifcation-334e08b65082.json")
+                });
             }
-            return allSucceeded;
-        }
-
-        public async Task<bool> SendNotificationToMultipleAsync(string title, string body, List<string> deviceTokens, IDictionary<string, string>? data = null)
-        {
-            if (!deviceTokens.Any())
-                return false;
-
-            var message = new
-            {
-                message = new
-                {
-                    tokens = deviceTokens,
-                    notification = new { title, body },
-                    data = data
-                }
-            };
-            return await SendFcmMessageAsync(message);
-        }
-
-        public async Task<bool> SendNotificationToTopicAsync(string title, string body, string topic, IDictionary<string, string>? data = null)
-        {
-            var message = new
-            {
-                message = new
-                {
-                    topic = topic,
-                    notification = new { title, body },
-                    data = data
-                }
-            };
-            return await SendFcmMessageAsync(message);
-        }
-
-        private async Task<bool> SendFcmMessageAsync(object message)
-        {
-            var url = $"https://fcm.googleapis.com/v1/projects/{_projectId}/messages:send";
-            var json = JsonSerializer.Serialize(message);
-            var request = new HttpRequestMessage(HttpMethod.Post, url)
-            {
-                Content = new StringContent(json, Encoding.UTF8, "application/json")
-            };
-            var accessToken = await FirebaseNotificationHelper.GetAccessTokenAsync();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            // Log the request details
-            Console.WriteLine($"[FirebaseNotificationService] FCM Request URL: {url}");
-            Console.WriteLine($"[FirebaseNotificationService] FCM Request Payload: {json}");
-
-            var response = await _httpClient.SendAsync(request);
-            var responseBody = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"[FirebaseNotificationService] FCM Response Status: {response.StatusCode}");
-            Console.WriteLine($"[FirebaseNotificationService] FCM Response Body: {responseBody}");
-            return response.IsSuccessStatusCode;
         }
 
         public async Task<Response<DeviceTokenDto>> RegisterDeviceToken(string UserID, string FcmToken, string DeviceType)
@@ -173,7 +90,37 @@ namespace Sadef.Application.Services.Notification
             return new Response<string>("Token Unregistered successfully.");
         }
 
-        public async Task SendLeadCreatedNotificationToAdminsAsync(string title, string body, IDictionary<string, string>? data = null)
+        public async Task<bool> TestSendNotificationToMultipleAsync(string title, string body, string userId, IDictionary<string, string>? data = null)
+        {
+            var repo = _queryRepositoryFactory.QueryRepository<Domain.Users.UserDeviceToken>();
+            var tokens = await repo.Queryable()
+                .Where(x => x.UserId == userId)
+                .Select(x => x.DeviceToken)
+                .ToListAsync();
+
+            if (!tokens.Any())
+                return false;
+
+            var multicastMessage = new MulticastMessage
+            {
+                Tokens = tokens,
+                Notification = new FirebaseAdmin.Messaging.Notification
+                {
+                    Title = title,
+                    Body = body
+                },
+                Data = data != null
+                    ? new Dictionary<string, string>(data)
+                    : new Dictionary<string, string>()
+            };
+
+            var response = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(multicastMessage);
+
+            Console.WriteLine($"Sent {response.SuccessCount} notifications, {response.FailureCount} failed.");
+            return response.FailureCount == 0;
+        }
+
+        public async Task<bool> SendLeadCreatedNotificationToAdminsAsync(string title, string body, IDictionary<string, string>? data = null)
         {
             var adminUserIds = await GetAdminAndSuperAdminUserIdsAsync();
             var repo = _queryRepositoryFactory.QueryRepository<Domain.Users.UserDeviceToken>();
@@ -182,10 +129,26 @@ namespace Sadef.Application.Services.Notification
                 .Select(t => t.DeviceToken)
                 .ToListAsync();
 
-            if (tokens.Any())
+            if (!tokens.Any())
+                return false;
+
+            var multicastMessage = new MulticastMessage
             {
-                await SendNotificationToMultipleAsync(title, body, tokens, data);
-            }
+                Tokens = tokens,
+                Notification = new FirebaseAdmin.Messaging.Notification
+                {
+                    Title = title,
+                    Body = body
+                },
+                Data = data != null
+            ? new Dictionary<string, string>(data)
+            : new Dictionary<string, string>()
+            };
+
+            var response = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(multicastMessage);
+
+            Console.WriteLine($"Sent {response.SuccessCount} notifications, {response.FailureCount} failed.");
+            return response.FailureCount == 0;
         }
 
         public async Task<List<string>> GetAdminAndSuperAdminUserIdsAsync()
@@ -197,5 +160,46 @@ namespace Sadef.Application.Services.Notification
                 .ToListAsync();
             return users;
         }
+
+        public async Task SubscribeToTopicAsync(string token, string topic)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return;
+
+            var response = await FirebaseMessaging.DefaultInstance
+                .SubscribeToTopicAsync(new List<string> { token }, topic);
+
+            Console.WriteLine($"{response.SuccessCount} token(s) subscribed to {topic}");
+        }
+
+        public async Task<bool> SendNotificationToTopicAsync(string topic, string title, string body, IDictionary<string, string>? data = null)
+        {
+            var message = new Message
+            {
+                Topic = topic,
+                Notification = new FirebaseAdmin.Messaging.Notification
+                {
+                    Title = title,
+                    Body = body
+                },
+                Data = data != null
+                    ? new Dictionary<string, string>(data)
+                    : new Dictionary<string, string>()
+            };
+
+            try
+            {
+                var response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+
+                Console.WriteLine($"Successfully sent message to topic '{topic}': {response}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message to topic '{topic}': {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }
