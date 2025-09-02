@@ -209,6 +209,13 @@ namespace Sadef.Application.Services.User
 
             UserLoginResultDTO? resultDTO = null;
             var fcmToken = await _fcmService.RegisterDeviceToken(user.Id, request.FcmToken, request.DeviceType);
+            await _fcmService.SubscribeToTopicAsync(request.FcmToken, "all");
+            if (role == "Admin")
+            {
+                await _fcmService.SubscribeToTopicAsync(request.FcmToken, "admins");
+            } else {
+                await _fcmService.SubscribeToTopicAsync(request.FcmToken, "publicUsers");
+            }
             resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, refreshToken, fcmToken.Data.DeviceToken);
             return new Response<UserLoginResultDTO>(resultDTO, _localizer["User_LoginSuccessful"]);
         }

@@ -32,6 +32,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
         private const string MaintenanceCacheVersionKey = "maintenance:version";
         private const string MaintenanceDashboardcacheKey = "maintenancerequest:dashboard:stats";
         private readonly IPropertyTimeLineService _propertyTimeLineService;
+        private readonly IFirebaseNotificationService _fcmService;
 
         public MaintenanceRequestService(
             IUnitOfWorkAsync uow,
@@ -42,7 +43,8 @@ namespace Sadef.Application.Services.MaintenanceRequest
             IDistributedCache cache,
             IStringLocalizerFactory localizerFactory,
             IConfiguration configuration,
-            IPropertyTimeLineService propertyTimeLineService
+            IPropertyTimeLineService propertyTimeLineService,
+            IFirebaseNotificationService fcmService
         )
         {
             _uow = uow;
@@ -54,6 +56,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             _localizer = localizerFactory.Create("Messages", "Sadef.Application");
             _configuration = configuration;
             _propertyTimeLineService = propertyTimeLineService;
+            _fcmService = fcmService;
         }
 
         public async Task<Response<MaintenanceRequestDto>> CreateRequestAsync(CreateMaintenanceRequestDto dto)
@@ -119,6 +122,7 @@ namespace Sadef.Application.Services.MaintenanceRequest
             }
             await CacheHelper.RemoveCacheKeyAsync(_cache, MaintenanceDashboardcacheKey);
             await CacheHelper.IncrementCacheVersionAsync(_cache, MaintenanceCacheVersionKey);
+            await _fcmService.SendAdminMaintenanceRequestCreatedAsync("New MaintenanceRequest Created", "A new request has been generated.");
 
             var responseDto = _mapper.Map<MaintenanceRequestDto>(request);
             return new Response<MaintenanceRequestDto>(responseDto, _localizer["MaintenanceRequest_Created"]);

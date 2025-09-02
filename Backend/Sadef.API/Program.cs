@@ -199,7 +199,8 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var enumLocalizationService = provider.GetRequiredService<IEnumLocalizationService>();
                        var configuration = provider.GetRequiredService<IConfiguration>();
                        var propertyTimeLineService = provider.GetRequiredService<IPropertyTimeLineService>();
-                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration, propertyTimeLineService);
+                       var firebaseNotificationService = provider.GetRequiredService<IFirebaseNotificationService>();
+                       return new PropertyService(uow, mapper, queryFactory, updateValidator, createValidator, cache, expireValidator, localizerFactory, context, httpContextAccessor, enumLocalizationService, configuration, propertyTimeLineService, firebaseNotificationService);
                    });
                    svc.AddScoped<IBlogService>(provider =>
                    {

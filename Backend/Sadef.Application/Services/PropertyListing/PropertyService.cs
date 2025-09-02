@@ -42,8 +42,9 @@ namespace Sadef.Application.Services.PropertyListing
         private const string PROPERTY_DASHBOARD_CACHE_KEY = "property:dashboard:stats";
         private readonly IPropertyTimeLineService _propertyTimeLineService;
         private const int CACHE_DURATION_MINUTES = 10;
+        private readonly IFirebaseNotificationService _fcmService;
 
-        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto, IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService, IConfiguration configuration, IPropertyTimeLineService propertyTimeLineService)
+        public PropertyService(IUnitOfWorkAsync uow, IMapper mapper, IQueryRepositoryFactory queryRepositoryFactory, IValidator<UpdatePropertyDto> updatePropertyValidator, IValidator<CreatePropertyDto> createPropertyDto, IDistributedCache cache, IValidator<PropertyExpiryUpdateDto> expireValidator, IStringLocalizerFactory localizerFactory, SadefDbContext context, IHttpContextAccessor httpContextAccessor, IEnumLocalizationService enumLocalizationService, IConfiguration configuration, IPropertyTimeLineService propertyTimeLineService, IFirebaseNotificationService fcmService)
         {
             _uow = uow;
             _mapper = mapper;
@@ -58,6 +59,7 @@ namespace Sadef.Application.Services.PropertyListing
             _httpContextAccessor = httpContextAccessor;
             _enumLocalizationService = enumLocalizationService;
             _propertyTimeLineService = propertyTimeLineService;
+            _fcmService = fcmService;
         }
 
         public async Task<Response<PropertyDto>> CreatePropertyAsync(CreatePropertyDto dto)
@@ -147,6 +149,7 @@ namespace Sadef.Application.Services.PropertyListing
             var createdDto = _mapper.Map<PropertyDto>(property);
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(createdDto, property.Id, currentLanguage);
+            await _fcmService.SendPropertyCreatedNotificationToAdminsAsync("New Property Listed", "A new property has been Listed please review.");
 
             return new Response<PropertyDto>(createdDto, _localizer["Property_Created"]);
         }
