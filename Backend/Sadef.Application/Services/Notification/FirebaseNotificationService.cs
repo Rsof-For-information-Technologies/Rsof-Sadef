@@ -122,33 +122,7 @@ namespace Sadef.Application.Services.Notification
 
         public async Task<bool> SendLeadCreatedNotificationToAdminsAsync(string title, string body, IDictionary<string, string>? data = null)
         {
-            var adminUserIds = await GetAdminAndSuperAdminUserIdsAsync();
-            var repo = _queryRepositoryFactory.QueryRepository<Domain.Users.UserDeviceToken>();
-            var tokens = await repo.Queryable()
-                .Where(t => adminUserIds.Contains(t.UserId))
-                .Select(t => t.DeviceToken)
-                .ToListAsync();
-
-            if (!tokens.Any())
-                return false;
-
-            var multicastMessage = new MulticastMessage
-            {
-                Tokens = tokens,
-                Notification = new FirebaseAdmin.Messaging.Notification
-                {
-                    Title = title,
-                    Body = body
-                },
-                Data = data != null
-            ? new Dictionary<string, string>(data)
-            : new Dictionary<string, string>()
-            };
-
-            var response = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(multicastMessage);
-
-            Console.WriteLine($"Sent {response.SuccessCount} notifications, {response.FailureCount} failed.");
-            return response.FailureCount == 0;
+            return await SendNotificationToTopicAsync("admins", title, body, data);
         }
 
         public async Task<List<string>> GetAdminAndSuperAdminUserIdsAsync()
@@ -199,6 +173,15 @@ namespace Sadef.Application.Services.Notification
                 Console.WriteLine($"Error sending message to topic '{topic}': {ex.Message}");
                 return false;
             }
+        }
+
+        public async Task<bool> SendPropertyCreatedNotificationToAdminsAsync(string title, string body, IDictionary<string, string>? data = null)
+        {
+            return await SendNotificationToTopicAsync("all", title, body, data);
+        }
+        public async Task<bool> SendAdminMaintenanceRequestCreatedAsync(string title, string body, IDictionary<string, string>? data = null)
+        {
+            return await SendNotificationToTopicAsync("admins", title, body, data);
         }
 
     }
