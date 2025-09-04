@@ -18,17 +18,16 @@ export default function DeletePopover({
   return (
     <Popover placement="left">
       <Popover.Trigger>
-        <Tooltip size="sm" content={t('deleteItem')} placement="top" color="invert">
           <ActionIcon
             size="sm"
             variant="outline"
             color="danger"
-            aria-label={'Delete Item'}
+            aria-label={t('deleteItem')}
+            title={t('deleteItem')}
             className="cursor-pointer hover:!border-gray-900 hover:text-gray-700"
           >
             <TrashIcon className="h-4 w-4" />
           </ActionIcon>
-        </Tooltip>
       </Popover.Trigger>
       <Popover.Content className="z-0">
         {({ setOpen }) => (
