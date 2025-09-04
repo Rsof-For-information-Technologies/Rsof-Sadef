@@ -16,10 +16,13 @@ import { PiArrowRightBold } from 'react-icons/pi'
 import useMedia from 'react-use/lib/useMedia'
 import { Checkbox, Input, Password } from 'rizzui'
 import cn from '@/utils/class-names'
+import { useFCM } from '@/hooks/useFCM'
 
 const initialValues = {
     email: "",
     password: "",
+    fcmToken: "",
+    deviceType: "",
     rememberMe: true,
 }
 
@@ -30,14 +33,52 @@ function LoginForm() {
     const [serverError, setServerError] = useState<string | null>(null);
     const isMedium = useMedia('(max-width: 1200px)', false);
     const t = useTranslations("SignInPage.form");
+    
+    // Use FCM hook
+    const { fcmToken, deviceType, isLoading: isLoadingFCM, error: fcmError, refreshToken, hasPermission } = useFCM();
 
-    const { register, handleSubmit, formState: { errors }, setError, } = useForm<Login>({
+    const { register, handleSubmit, formState: { errors }, setError, setValue, watch } = useForm<Login>({
         resolver: zodResolver(login),
         defaultValues: { ...initialValues }
     })
 
+    // Update form values when FCM data is ready
+    useEffect(() => {
+        if (fcmToken && deviceType) {
+            setValue('fcmToken', fcmToken);
+            setValue('deviceType', deviceType);
+        }
+    }, [fcmToken, deviceType, setValue]);
+
+    // Handle FCM errors
+    useEffect(() => {
+        if (fcmError) {
+            setServerError(fcmError);
+        }
+    }, [fcmError]);
+
     const onSubmit = async (state: Login) => {
         try {
+            // Clear any previous server errors
+            setServerError(null);
+
+            // Ensure we have FCM token and device type
+            if (!state.fcmToken) {
+                setServerError('FCM token is required. Please enable notifications or refresh the page.');
+                return;
+            }
+            
+            if (!state.deviceType) {
+                setServerError('Unable to detect device type. Please try again.');
+                return;
+            }
+
+            console.log('Submitting login with:', {
+                email: state.email,
+                deviceType: state.deviceType,
+                hasToken: !!state.fcmToken
+            });
+
             const response = await UserLoginForm(state);
             if (response.succeeded) {
                 setLocalStorage("user-info", {
@@ -123,14 +164,63 @@ function LoginForm() {
                 {serverError && (
                     <div className="border border-red-300 p-3 rounded-md bg-red-50 dark:bg-red-100/10">
                         <p className="text-red-600 text-sm font-medium">{serverError}</p>
+                        {fcmError && (
+                            <button 
+                                type="button"
+                                onClick={refreshToken}
+                                className="mt-2 text-xs text-blue-600 hover:text-blue-800 underline"
+                            >
+                                Try to fix notification issues
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                {/* FCM Status Indicator */}
+                {!isLoadingFCM && (
+                    <div className={`border p-3 rounded-md text-sm ${
+                        fcmToken 
+                            ? 'border-green-300 bg-green-50 text-green-700' 
+                            : 'border-yellow-300 bg-yellow-50 text-yellow-700'
+                    }`}>
+                        {fcmToken ? (
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                                Notifications enabled
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                                Notifications required for login
+                                <button 
+                                    type="button"
+                                    onClick={refreshToken}
+                                    className="ml-auto text-xs bg-yellow-100 hover:bg-yellow-200 px-2 py-1 rounded"
+                                >
+                                    Enable
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Debug info in development */}
+                {process.env.NODE_ENV === 'development' && (
+                    <div className="border border-blue-300 p-3 rounded-md bg-blue-50 dark:bg-blue-100/10">
+                        <p className="text-blue-600 text-xs">
+                            Device: {watch('deviceType')} | FCM: {watch('fcmToken') ? 'Ready' : 'Loading...'}
+                            <br />
+                            Permission: {hasPermission ? 'Granted' : 'Not granted'}
+                        </p>
                     </div>
                 )}
 
                 <FormStatusButton
                     className="group w-full @xl:w-full dark:bg-[#090909] dark:text-white hover:dark:bg-black "
                     type="submit"
-                    size={isMedium ? 'lg' : 'lg'}>
-                    <span>{t('loginBtn')}</span>
+                    size={isMedium ? 'lg' : 'lg'}
+                    disabled={isLoadingFCM}>
+                    <span>{isLoadingFCM ? 'Initializing...' : t('loginBtn')}</span>
                     <PiArrowRightBold className={cn("ms-2 mt-0.5 h-5 w-5", params.locale === 'ar' ? 'rotate-180' : 'rotate-0')} />
                 </FormStatusButton>
             </div>

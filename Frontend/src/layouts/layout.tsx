@@ -5,7 +5,8 @@ import Header from '@/layouts/header';
 import Sidebar from '@/layouts/sideBar/sidebar';
 import { Params } from '@/types/params';
 import { useParams, usePathname } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
+import { ensureServiceWorkerActive } from '@/libs/firebase';
 
 export default function HydrogenLayout({
   children,
@@ -17,6 +18,12 @@ export default function HydrogenLayout({
   const params = useParams<Params>()
   const authRoutes = [`/${params.locale}${routes.auth.login}`, `/${params.locale}${routes.auth.signup}`, `/${params.locale}${routes.auth.forgotPassword}`, `/${params.locale}${routes.auth.resetPassword}`];
   const isAuthPage = authRoutes.includes(pathname);
+
+  // Ensure service worker is active for background notifications
+  useEffect(() => {
+    ensureServiceWorkerActive();
+  }, []);
+
   return (
     <main className={`flex min-h-screen flex-grow ${isAuthPage ? "pt-[80px]" : "pt-[80px]"}`}>
 

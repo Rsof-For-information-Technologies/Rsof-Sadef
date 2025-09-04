@@ -5,6 +5,10 @@ export const login = z.object({
         .min(1, "Email is required."),
     password: z.string({ required_error: "Password is required." })
         .min(1, "Password is required."),
+    fcmToken: z.string({ required_error: "FCM token is required." })
+        .min(1, "FCM token is required."),
+    deviceType: z.string({ required_error: "Device type is required." })
+        .min(1, "Device type is required."),
     rememberMe: z.boolean().optional(),
 });
 

@@ -483,7 +483,9 @@ export const getLeadDashboard = async () => {
 
 export const UserLoginForm = async (state: {
   email: string;
-  password: string
+  password: string;
+  fcmToken: string;
+  deviceType: string;
 }) => {
   const api = apiCall();
   try {
