@@ -208,15 +208,21 @@ namespace Sadef.Application.Services.User
             await _userManager.SetAuthenticationTokenAsync(user, "Default", "RefreshTokenExpiry", refreshTokenExpiry);
 
             UserLoginResultDTO? resultDTO = null;
-            var fcmToken = await _fcmService.RegisterDeviceToken(user.Id, request.FcmToken, request.DeviceType);
-            await _fcmService.SubscribeToTopicAsync(request.FcmToken, "all");
-            if (role == "Admin")
+            string? registeredDeviceToken = null;
+            if (!string.IsNullOrWhiteSpace(request.FcmToken))
             {
-                await _fcmService.SubscribeToTopicAsync(request.FcmToken, "admins");
-            } else {
-                await _fcmService.SubscribeToTopicAsync(request.FcmToken, "publicUsers");
+                var registerResponse = await _fcmService.RegisterDeviceToken(user.Id, request.FcmToken, request.DeviceType);
+                if (registerResponse.Succeeded && registerResponse.Data != null)
+                {
+                    registeredDeviceToken = registerResponse.Data.DeviceToken;
+                    await _fcmService.SubscribeToTopicAsync(request.FcmToken, "all");
+
+                    // Subscribe based on role
+                    var topic = role == "Admin" ? "admins" : "publicUsers";
+                    await _fcmService.SubscribeToTopicAsync(request.FcmToken, topic);
+                }
             }
-            resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, refreshToken, fcmToken.Data.DeviceToken);
+            resultDTO = new UserLoginResultDTO(accessToken, user.Id, user.FirstName, user.LastName, user.Email, role, refreshToken, registeredDeviceToken);
             return new Response<UserLoginResultDTO>(resultDTO, _localizer["User_LoginSuccessful"]);
         }
 
