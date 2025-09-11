@@ -352,7 +352,7 @@ namespace Sadef.Application.Services.PropertyListing
             // Apply localization to DTO
             var currentLanguage = GetCurrentLanguage();
             await ApplyLocalizationToDtoAsync(updatedDto, existing.Id, currentLanguage);
-
+            await _fcmService.SendPropertyUpdatedNotificationToAdminsAsync("Property Updated", "A property has been updated please review.");
             // Set enum values as integers
             //updatedDto.PropertyType = existing.PropertyType;
             //updatedDto.UnitCategory = existing.UnitCategory;

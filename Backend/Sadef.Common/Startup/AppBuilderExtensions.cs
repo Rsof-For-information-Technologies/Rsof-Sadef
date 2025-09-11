@@ -83,6 +83,7 @@ namespace Sadef.Common.RestTemplate
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
+               
             });
 
             return app;
