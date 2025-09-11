@@ -183,6 +183,14 @@ namespace Sadef.Application.Services.Notification
         {
             return await SendNotificationToTopicAsync("admins", title, body, data);
         }
-
+        public async Task<bool> SendPropertyUpdatedNotificationToAdminAsync(string title, string body, IDictionary<string, string>? data = null)
+        {
+            return await SendNotificationToTopicAsync("admins", title, body, data);
+        }
+        public async Task<bool> SendTestNotif(string title, string body)
+        {
+            return await SendNotificationToTopicAsync("admins", title, body);
+        }
     }
 }
+

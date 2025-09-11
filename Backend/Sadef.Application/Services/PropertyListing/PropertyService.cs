@@ -357,7 +357,7 @@ namespace Sadef.Application.Services.PropertyListing
             //updatedDto.PropertyType = existing.PropertyType;
             //updatedDto.UnitCategory = existing.UnitCategory;
             //updatedDto.Status = existing.Status;
-
+            await _fcmService.SendPropertyUpdatedNotificationToAdminAsync("Property Updated", "Existing property updated please check");
             return new Response<PropertyDto>(updatedDto, _localizer["Property_Updated"]);
         }
 
@@ -764,6 +764,11 @@ namespace Sadef.Application.Services.PropertyListing
             {
                 await _cache.RemoveAsync(key);
             }
+        }
+        public async Task<Response<string>> SendTest()
+        {
+            await _fcmService.SendTestNotif("This is Test", "Test Test Test");
+            return new Response<string>("Test Notification Sent");
         }
     }
 }
