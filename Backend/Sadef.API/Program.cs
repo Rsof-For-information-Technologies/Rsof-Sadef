@@ -329,14 +329,11 @@ if (locOptions != null)
 }
 
 app.UseCors("AllowFrontend");
-var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-Directory.CreateDirectory(uploadsPath);
-
+app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.GetFullPath(uploadsPath)),
+    FileProvider = new PhysicalFileProvider(@"D:\app\Sadef\uploads"),
     RequestPath = "/uploads"
 });
 app.UseCustomTemplate();
 app.Run();
-
