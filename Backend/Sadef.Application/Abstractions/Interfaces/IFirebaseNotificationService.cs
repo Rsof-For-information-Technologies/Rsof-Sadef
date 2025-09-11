@@ -13,5 +13,7 @@ namespace Sadef.Application.Abstractions.Interfaces
         Task<bool> SendAdminMaintenanceRequestCreatedAsync(string title, string body, IDictionary<string, string>? data = null);
         Task<bool> SendNotificationToTopicAsync(string title, string body, string topic, IDictionary<string, string>? data = null);
         Task<bool> TestSendNotificationToMultipleAsync(string title, string body, string userId, IDictionary<string, string>? data = null);
+        Task<bool> SendPropertyUpdatedNotificationToAdminAsync(string title, string body, IDictionary<string, string>? data = null);
+        Task<bool> SendTestNotif(string title, string body);
     }
 }

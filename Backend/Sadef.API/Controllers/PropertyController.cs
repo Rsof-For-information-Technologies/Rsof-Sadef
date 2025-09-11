@@ -74,6 +74,11 @@ namespace Sadef.API.Controllers
             var result = await _propertyService.GetPropertyDashboardStatsAsync();
             return Ok(result);
         }
-
+        [HttpGet("test")]
+        public async Task<ActionResult<string>> Test()
+        {
+            var result = await _propertyService.SendTest();
+            return Ok(result);
+        }
     }
 }
