@@ -12,6 +12,5 @@ namespace Sadef.Application.DTOs.FormSubmissionDtos
         public string? PreviousProjects { get; set; }
         public string? PastSpeakingExperience { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; } = string.Empty;
     }
 }

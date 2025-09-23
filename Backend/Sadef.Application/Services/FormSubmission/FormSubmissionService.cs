@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -51,21 +51,19 @@ namespace Sadef.Application.Services.FormSubmission
                 return new Response<FormSubmissionDto>
                 {
                     Succeeded = false,
-                    Message = "Validation Failed",
+                    Message = "فشل التحقق من صحة البيانات",
                     ValidationResultModel = new ValidationResultModel(validationResult)
                 };
             }
 
             var formSubmission = _mapper.Map<Sadef.Domain.FormSubmissionEntity.FormSubmission>(dto);
             formSubmission.CreatedAt = DateTime.UtcNow;
-            formSubmission.CreatedBy = "system";
 
-            // Handle CV file upload if provided
             if (dto.CV != null)
             {
                 var basePath = _configuration["UploadSettings:Paths:FormSubmissions"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "forms");
                 var virtualPathBase = _configuration["UploadSettings:RelativePaths:FormSubmissions"] ?? "/uploads/forms";
-                
+
                 var savedFiles = await FileUploadHelper.SaveFilesAsync(new[] { dto.CV }, basePath, "cv", virtualPathBase);
                 if (savedFiles.Any())
                 {
@@ -76,23 +74,22 @@ namespace Sadef.Application.Services.FormSubmission
             await _uow.RepositoryAsync<Sadef.Domain.FormSubmissionEntity.FormSubmission>().AddAsync(formSubmission);
             await _uow.SaveChangesAsync(CancellationToken.None);
 
-            // Clear cache
             await ClearFormSubmissionCaches();
 
             var responseDto = _mapper.Map<FormSubmissionDto>(formSubmission);
-            return new Response<FormSubmissionDto>(responseDto, "Form submitted successfully");
+            return new Response<FormSubmissionDto>(responseDto, "تم إرسال النموذج بنجاح");
         }
 
         public async Task<Response<PaginatedResponse<FormSubmissionDto>>> GetPaginatedAsync(int pageNumber, int pageSize)
         {
             var cacheKey = $"formsubmissions:page={pageNumber}&size={pageSize}";
             var cachedResult = await _cache.GetStringAsync(cacheKey);
-            
+
             if (!string.IsNullOrEmpty(cachedResult))
             {
                 var cachedData = System.Text.Json.JsonSerializer.Deserialize<PaginatedResponse<FormSubmissionDto>>(cachedResult);
                 if (cachedData != null)
-                    return new Response<PaginatedResponse<FormSubmissionDto>>(cachedData, "Form submissions retrieved successfully");
+                    return new Response<PaginatedResponse<FormSubmissionDto>>(cachedData, "تم استرجاع النماذج بنجاح");
             }
 
             var queryRepo = _queryRepositoryFactory.QueryRepository<Sadef.Domain.FormSubmissionEntity.FormSubmission>();
@@ -107,14 +104,13 @@ namespace Sadef.Application.Services.FormSubmission
             var dtos = _mapper.Map<List<FormSubmissionDto>>(items);
             var result = new PaginatedResponse<FormSubmissionDto>(dtos, totalCount, pageNumber, pageSize);
 
-            // Cache the result
             var cacheOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
             };
             await _cache.SetStringAsync(cacheKey, System.Text.Json.JsonSerializer.Serialize(result), cacheOptions);
 
-            return new Response<PaginatedResponse<FormSubmissionDto>>(result, "Form submissions retrieved successfully");
+            return new Response<PaginatedResponse<FormSubmissionDto>>(result, "تم استرجاع النماذج بنجاح");
         }
 
         public async Task<Response<FormSubmissionDto>> GetByIdAsync(int id)
@@ -123,19 +119,19 @@ namespace Sadef.Application.Services.FormSubmission
             var formSubmission = await queryRepo.Queryable().FirstOrDefaultAsync(f => f.Id == id);
 
             if (formSubmission == null)
-                return new Response<FormSubmissionDto> { Succeeded = false, Message = "Form submission not found" };
+                return new Response<FormSubmissionDto> { Succeeded = false, Message = "النموذج غير موجود" };
 
             var dto = _mapper.Map<FormSubmissionDto>(formSubmission);
-            return new Response<FormSubmissionDto>(dto, "Form submission retrieved successfully");
+            return new Response<FormSubmissionDto>(dto, "تم استرجاع النموذج بنجاح");
         }
+
 
         private async Task ClearFormSubmissionCaches()
         {
-            // Clear pagination caches
             var keys = new List<string>();
-            for (int page = 1; page <= 10; page++) // Clear first 10 pages
+            for (int page = 1; page <= 10; page++) 
             {
-                for (int size = 10; size <= 50; size += 10) // Common page sizes
+                for (int size = 10; size <= 50; size += 10) 
                 {
                     keys.Add($"formsubmissions:page={page}&size={size}");
                 }
