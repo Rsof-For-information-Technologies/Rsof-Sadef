@@ -7,6 +7,7 @@ using Sadef.Application.DTOs.AuditLogDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyTimeLineDtos;
 using Sadef.Application.DTOs.ContactDtos;
+using Sadef.Application.DTOs.FormSubmissionDtos;
 using Sadef.Common.Infrastructure.EFCore.Identity;
 using Sadef.Application.DTOs.NotificationDtos;
 using Sadef.Domain.Users;
@@ -14,6 +15,7 @@ using Sadef.Domain.BlogsEntity;
 using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
 using Sadef.Domain.ContactEntity;
+using Sadef.Domain.FormSubmissionEntity;
 using Sadef.Common.Domain;
 using Sadef.Domain.MaintenanceRequestEntity;
 using Microsoft.AspNetCore.Http;
@@ -130,6 +132,11 @@ namespace Sadef.Application.MappingProfile
             // Notifications
             CreateMap<RegisterDeviceTokenDto, UserDeviceToken>();
             CreateMap<UserDeviceToken, DeviceTokenDto>();
+
+            // FormSubmission
+            CreateMap<SubmitFormDto, FormSubmission>()
+                .ForMember(dest => dest.CVUrl, opt => opt.Ignore());
+            CreateMap<FormSubmission, FormSubmissionDto>();
 
         }
     }
