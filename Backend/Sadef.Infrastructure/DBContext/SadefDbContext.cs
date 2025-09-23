@@ -7,6 +7,7 @@ using Sadef.Domain.PropertyEntity;
 using Sadef.Domain.LeadEntity;
 using Sadef.Domain.ContactEntity;
 using Sadef.Domain.MaintenanceRequestEntity;
+using Sadef.Domain.FormSubmissionEntity;
 using Sadef.Domain.Users;
 using Sadef.Common.Domain;
 using Sadef.Domain;
@@ -57,6 +58,7 @@ namespace Sadef.Infrastructure.DBContext
         public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }
         public DbSet<PropertyTimeLine> PropertyTimeLines { get; set; }
         public DbSet<UserDeviceToken> UserDeviceTokens { get; set; }
+        public DbSet<FormSubmission> FormSubmissions { get; set; }
 
     }
 }

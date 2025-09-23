@@ -15,11 +15,13 @@ using Sadef.Application.DTOs.LeadDtos;
 using Sadef.Application.DTOs.MaintenanceRequestDtos;
 using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
+using Sadef.Application.DTOs.FormSubmissionDtos;
 using Sadef.Application.Services.AuditLog;
 using Sadef.Application.Services.Blogs;
 using Sadef.Application.Services.Contact;
 using Sadef.Application.Services.Email;
 using Sadef.Application.Services.Favorites;
+using Sadef.Application.Services.FormSubmission;
 using Sadef.Application.Services.Lead;
 using Sadef.Application.Services.MaintenanceRequest;
 using Sadef.Application.Services.Multilingual;
@@ -291,6 +293,27 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                    svc.AddScoped<IMaintenanceRequestService, MaintenanceRequestService>();
                    svc.AddScoped<IFirebaseNotificationService, FirebaseNotificationService>();
                    svc.AddScoped<IAuditLogService, AuditLogService>();
+
+                   // Form Submission validators
+                   svc.AddScoped<IValidator<SubmitFormDto>>(provider =>
+                   {
+                       var factory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var localizer = factory.Create("Validation", "Sadef.Application");
+                       return new SubmitFormValidator();
+                   });
+
+                   // Form Submission service
+                   svc.AddScoped<IFormSubmissionService>(provider =>
+                   {
+                       var uow = provider.GetRequiredService<IUnitOfWorkAsync>();
+                       var mapper = provider.GetRequiredService<IMapper>();
+                       var submitFormValidator = provider.GetRequiredService<IValidator<SubmitFormDto>>();
+                       var queryFactory = provider.GetRequiredService<IQueryRepositoryFactory>();
+                       var cache = provider.GetRequiredService<IDistributedCache>();
+                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       var configuration = provider.GetRequiredService<IConfiguration>();
+                       return new FormSubmissionService(uow, mapper, submitFormValidator, queryFactory, cache, localizerFactory, configuration);
+                   });
 
                    svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
                    svc.AddCors(options =>
