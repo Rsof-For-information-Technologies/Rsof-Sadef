@@ -85,23 +85,6 @@ namespace Sadef.Application.Services.FormSubmission
                 .EmailAddress().WithMessage("صيغة البريد الإلكتروني غير صحيحة")
                 .MaximumLength(100).WithMessage("البريد الإلكتروني لا يمكن أن يتجاوز 100 خانة");
 
-            RuleFor(x => x.VisitorOrMember)
-                .NotEmpty().WithMessage("حالة الزائر أو العضو مطلوبة")
-                .Must(x => x == "Visitor" || x == "Member")
-                .WithMessage("يجب أن تكون القيمة إما 'Visitor' أو 'Member'");
-
-            RuleFor(x => x.CurrentOrganization)
-                .NotEmpty().WithMessage("اسم المؤسسة الحالية مطلوب")
-                .MaximumLength(200).WithMessage("اسم المؤسسة لا يمكن أن يتجاوز 200 خانة");
-
-            RuleFor(x => x.PreviousProjects)
-                .MaximumLength(1000).WithMessage("المشاريع السابقة لا يمكن أن تتجاوز 1000 خانة")
-                .When(x => !string.IsNullOrEmpty(x.PreviousProjects));
-
-            RuleFor(x => x.PastSpeakingExperience)
-                .MaximumLength(1000).WithMessage("خبرات التحدث السابقة لا يمكن أن تتجاوز 1000 خانة")
-                .When(x => !string.IsNullOrEmpty(x.PastSpeakingExperience));
-
             RuleFor(x => x.CV)
                 .Must(BeValidFileType).WithMessage("يجب أن يكون الملف بتنسيق صحيح (PDF, DOC, DOCX)")
                 .Must(BeValidFileSize).WithMessage("حجم الملف لا يمكن أن يتجاوز 10 ميجابايت")
