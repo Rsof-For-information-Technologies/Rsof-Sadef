@@ -17,6 +17,7 @@ using Sadef.Application.DTOs.PropertyDtos;
 using Sadef.Application.DTOs.UserDtos;
 using Sadef.Application.DTOs.FormSubmissionDtos;
 using Sadef.Application.Services.AuditLog;
+using Sadef.Application.Services.EmailForm;
 using Sadef.Application.Services.Blogs;
 using Sadef.Application.Services.Contact;
 using Sadef.Application.Services.Email;
@@ -313,6 +314,14 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
                        var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
                        var configuration = provider.GetRequiredService<IConfiguration>();
                        return new FormSubmissionService(uow, mapper, submitFormValidator, queryFactory, cache, localizerFactory, configuration);
+                   });
+
+                   // Email Form service
+                   svc.AddScoped<IEmailFormService>(provider =>
+                   {
+                       var emailService = provider.GetRequiredService<IEmailService>();
+                       var localizerFactory = provider.GetRequiredService<IStringLocalizerFactory>();
+                       return new EmailFormService(emailService, localizerFactory);
                    });
 
                    svc.AddScoped<IEnumLocalizationService, EnumLocalizationService>();
