@@ -19,19 +19,6 @@ namespace Sadef.Application.DTOs.FormSubmissionDtos
         public required string Email { get; set; }
 
         public IFormFile? CV { get; set; }
-
-        [Required(ErrorMessage = "Visitor or Member status is required")]
-        [RegularExpression("^(Visitor|Member)$", ErrorMessage = "VisitorOrMember must be either 'Visitor' or 'Member'")]
-        public required string VisitorOrMember { get; set; }
-
-        [Required(ErrorMessage = "Current organization is required")]
-        [StringLength(200, ErrorMessage = "Current organization cannot exceed 200 characters")]
-        public required string CurrentOrganization { get; set; }
-
-        [StringLength(1000, ErrorMessage = "Previous projects cannot exceed 1000 characters")]
-        public string? PreviousProjects { get; set; }
-
-        [StringLength(1000, ErrorMessage = "Past speaking experience cannot exceed 1000 characters")]
-        public string? PastSpeakingExperience { get; set; }
+        public required string MemberType { get; set; }
     }
 }

@@ -8,9 +8,7 @@ namespace Sadef.Domain.FormSubmissionEntity
         public required string MobileNumber { get; set; }
         public required string Email { get; set; }
         public string? CVUrl { get; set; }
-        public required string VisitorOrMember { get; set; }
-        public required string CurrentOrganization { get; set; }
-        public string? PreviousProjects { get; set; }
-        public string? PastSpeakingExperience { get; set; }
+        public required string MemberType { get; set; }
+
     }
 }
