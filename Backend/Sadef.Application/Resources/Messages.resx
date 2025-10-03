@@ -18,6 +18,12 @@
   <data name="Error_Unexpected" xml:space="preserve">
     <value>An unexpected error occurred.</value>
   </data>
+  <data name="Email_SentSuccessfully" xml:space="preserve">
+    <value>Email sent successfully.</value>
+  </data>
+  <data name="Email_SendFailed" xml:space="preserve">
+    <value>Failed to send email.</value>
+  </data>
   <data name="Notification_Welcome" xml:space="preserve">
     <value>Welcome to Sadef!</value>
   </data>
