@@ -32,4 +32,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  db_data:
+  mssql_data:
