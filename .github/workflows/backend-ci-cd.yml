@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-backend
+  IMAGE_NAME: rsof-for-information-technologies/rsof-sadef-backend
   API_SERVICE: api
 
 jobs:
@@ -42,8 +42,8 @@ jobs:
           file: ./Backend/Sadef.API/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}-backend:latest
-            ghcr.io/${{ github.repository }}-backend:${{ github.run_number }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ github.run_number }}
 
       - name: Deploy to VPS (API container only)
         uses: appleboy/ssh-action@v1.2.0
