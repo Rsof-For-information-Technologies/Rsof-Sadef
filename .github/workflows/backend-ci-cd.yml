@@ -22,7 +22,7 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
@@ -44,6 +44,8 @@ jobs:
           tags: |
             ghcr.io/${{ env.IMAGE_NAME }}:latest
             ghcr.io/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          build-args: |
+            BUILD_CONFIGURATION=Release
 
       - name: Deploy to VPS (API container only)
         uses: appleboy/ssh-action@v1.2.0
@@ -51,17 +53,21 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
+          script_stop: true
           script: |
-            set -e
             echo "Logging into GHCR..."
             echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            cd /root/sadef/Backend || exit 1
+            echo "Switching to project directory..."
+            cd /root/sadef/Backend || { echo "Directory not found!"; exit 1; }
 
             echo "Pulling latest API image..."
             docker compose pull api
 
-            echo "Restarting only API container..."
+            echo "Restarting API container..."
             docker compose up -d --no-deps api
+
+            echo "Removing unused images..."
+            docker image prune -af
 
             echo "API successfully deployed!"

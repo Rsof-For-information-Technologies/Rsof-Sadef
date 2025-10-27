@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Quartz;
+using Sadef.API.Configs;
 using Sadef.Application.Abstractions.Interfaces;
 using Sadef.Application.DTOs.BlogDtos;
 using Sadef.Application.DTOs.ContactDtos;
@@ -352,6 +353,7 @@ builder.Services.AddCustomTemplate<SadefDbContext>(
            );
 
 var app = builder.Build();
+app.AppUse();
 
 // Use localization middleware
 var locOptions = app.Services.GetService<Microsoft.Extensions.Options.IOptions<RequestLocalizationOptions>>()?.Value;
