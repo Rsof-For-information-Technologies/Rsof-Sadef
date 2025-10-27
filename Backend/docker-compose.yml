@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: ghcr.io/${GH_OWNER}/${GH_REPO}-api:${IMAGE_TAG:-latest}
+    image: ghcr.io/${GH_OWNER}/${GH_REPO}-backend:${IMAGE_TAG:-latest}
     container_name: sadef_api
     depends_on:
       - mssql
@@ -33,4 +33,3 @@ services:
 
 volumes:
   mssql_data:
- 
