@@ -1,14 +1,17 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+# Create non-root user for security
+ARG APP_UID=1000
+ARG APP_GID=1000
+RUN addgroup --gid $APP_GID appgroup \
+    && adduser --disabled-password --gecos "" --uid $APP_UID --gid $APP_GID appuser
+
 WORKDIR /app
 EXPOSE 9000
 EXPOSE 8080
 
+USER appuser
 
-# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -31,4 +34,12 @@ RUN dotnet publish "./Sadef.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Run as root to set permissions
+USER root
+RUN mkdir -p /app/uploads && chown -R appuser:appgroup /app/uploads
+
+# Switch back to appuser
+USER appuser
+
 ENTRYPOINT ["dotnet", "Sadef.API.dll"]

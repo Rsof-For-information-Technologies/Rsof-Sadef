@@ -1,0 +1,35 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
+
+  api:
+    image: ghcr.io/${GH_OWNER}/${GH_REPO}-api:${IMAGE_TAG:-latest}
+    container_name: sadef_api
+    depends_on:
+      - mssql
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__mssqldb=Server=mssql,1433;Database=${APP_DB_NAME};User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;
+      - ASPNETCORE_URLS=http://+:8080
+      - UploadSettings__Paths__MaintenanceRequestMedia=/app/uploads/maintenance
+      - UploadSettings__Paths__PropertyMedia=/app/uploads/property
+      - UploadSettings__Paths__BlogAttachments=/app/uploads/blog
+    ports:
+      - "9000:9000"
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+
+volumes:
+  db_data:
