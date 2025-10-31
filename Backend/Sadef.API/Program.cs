@@ -41,11 +41,26 @@ using Sadef.Common.Infrastructure.EfCore.Db;
 using Sadef.Common.RestTemplate;
 using Sadef.Common.RestTemplate.Db;
 using Sadef.Infrastructure.DBContext;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
+// Increase upload limits (matches IIS/web.config). Set to 150 MB.
+const long MaxUploadBytes = 150L * 1024 * 1024;
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = MaxUploadBytes;
+});
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = MaxUploadBytes;
+});
+builder.Services.Configure<Microsoft.AspNetCore.Builder.IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = MaxUploadBytes;
+});
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
 
