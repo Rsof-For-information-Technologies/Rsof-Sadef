@@ -104,7 +104,7 @@ namespace Sadef.Application.Services.FormSubmission
         {
             if (file == null) return true;
 
-            const long maxSize = 10 * 1024 * 1024; // 10MB
+            const long maxSize = 100 * 1024 * 1024; // 100MB
             return file.Length <= maxSize;
         }
     }
