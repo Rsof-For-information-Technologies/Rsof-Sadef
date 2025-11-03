@@ -28,9 +28,8 @@ services:
       - "9000:9000"
       - "8080:8080"
     volumes:
-      - ./uploads:/app/uploads
+      - /media/sadef/Backend/uploads:/app/uploads
     restart: unless-stopped
 
 volumes:
   mssql_data:
- 
