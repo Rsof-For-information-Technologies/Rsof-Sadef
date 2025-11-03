@@ -59,7 +59,7 @@ jobs:
             echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             echo "Switching to project directory..."
-            cd /root/sadef/Backend || { echo "Directory not found!"; exit 1; }
+            cd /media/sadef/Backend || { echo "Directory not found!"; exit 1; }
 
             echo "Pulling latest API image..."
             docker compose pull api
